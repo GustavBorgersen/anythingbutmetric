@@ -63,18 +63,63 @@ export default function HomeClient({ units, edges }: Props) {
   const fromUnit = units.find((u) => u.id === fromId) ?? null;
   const toUnit = units.find((u) => u.id === toId) ?? null;
 
+  const cardList = (
+    <>
+      {noPath && fromId && toId && (
+        <div className="rounded-xl border border-zinc-700 bg-zinc-800/95 p-4 shadow-2xl text-sm">
+          <div className="text-amber-400 font-semibold mb-1">Missing Link</div>
+          <div className="text-zinc-400">
+            No path found between{" "}
+            <span className="text-zinc-200">{fromUnit?.label}</span> and{" "}
+            <span className="text-zinc-200">{toUnit?.label}</span> in the
+            current graph.
+          </div>
+        </div>
+      )}
+
+      {!noPath &&
+        fromUnit &&
+        toUnit &&
+        routes.map((route) => (
+          <ResultCard
+            key={route.routeIndex}
+            route={route}
+            fromUnit={fromUnit}
+            toUnit={toUnit}
+            quantity={quantity}
+            units={units}
+          />
+        ))}
+    </>
+  );
+
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100">
       {/* Controls bar */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-zinc-800 flex-wrap">
-        <UnitSelector
-          units={units}
-          value={fromId}
-          onChange={setFromId}
-          placeholder="From unit…"
-        />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-3 border-b border-zinc-800">
+        {/* Row 1 (mobile) / inline (desktop): From → To selectors */}
+        <div className="flex items-center gap-2 flex-1">
+          <div className="flex-1 sm:w-56 sm:flex-none">
+            <UnitSelector
+              units={units}
+              value={fromId}
+              onChange={setFromId}
+              placeholder="From unit…"
+            />
+          </div>
+          <span className="text-zinc-500 text-sm shrink-0">→</span>
+          <div className="flex-1 sm:w-56 sm:flex-none">
+            <UnitSelector
+              units={units}
+              value={toId}
+              onChange={setToId}
+              placeholder="To unit…"
+            />
+          </div>
+        </div>
 
-        <div className="flex items-center gap-1">
+        {/* Row 2 (mobile) / inline (desktop): qty + loading */}
+        <div className="flex items-center gap-3">
           <label htmlFor="qty" className="text-zinc-500 text-sm sr-only">
             Quantity
           </label>
@@ -89,55 +134,29 @@ export default function HomeClient({ units, edges }: Props) {
             className="w-24 rounded-lg border border-zinc-600 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 text-right outline-none focus:border-zinc-400"
             step="any"
           />
+          {loading && (
+            <span className="text-xs text-zinc-500 animate-pulse">
+              Computing…
+            </span>
+          )}
         </div>
-
-        <UnitSelector
-          units={units}
-          value={toId}
-          onChange={setToId}
-          placeholder="To unit…"
-        />
-
-        {loading && (
-          <span className="text-xs text-zinc-500 animate-pulse">
-            Computing…
-          </span>
-        )}
       </div>
 
-      {/* Main content: graph fills flex-1, result cards overlay top-left */}
-      <div className="relative flex-1 overflow-hidden">
-        <GraphCanvas units={units} edges={edges} highlights={highlights} />
+      {/* Main content */}
+      <div className="flex-1 flex flex-col overflow-hidden sm:relative">
+        {/* Mobile: result cards in normal flow, scrollable */}
+        <div className="sm:hidden overflow-y-auto shrink-0 max-h-[45vh] px-4 py-3 space-y-3">
+          {cardList}
+        </div>
 
-        {/* Result cards overlay */}
-        <div className="absolute top-4 left-4 space-y-3 max-w-sm w-full z-10 max-h-[calc(100vh-120px)] overflow-y-auto pr-1">
-          {noPath && fromId && toId && (
-            <div className="rounded-xl border border-zinc-700 bg-zinc-800/95 p-4 shadow-2xl text-sm">
-              <div className="text-amber-400 font-semibold mb-1">
-                Missing Link
-              </div>
-              <div className="text-zinc-400">
-                No path found between{" "}
-                <span className="text-zinc-200">{fromUnit?.label}</span> and{" "}
-                <span className="text-zinc-200">{toUnit?.label}</span> in the
-                current graph.
-              </div>
-            </div>
-          )}
+        {/* Graph: fills remaining height on mobile, full area on desktop */}
+        <div className="flex-1 min-h-0 sm:absolute sm:inset-0">
+          <GraphCanvas units={units} edges={edges} highlights={highlights} />
+        </div>
 
-          {!noPath &&
-            fromUnit &&
-            toUnit &&
-            routes.map((route) => (
-              <ResultCard
-                key={route.routeIndex}
-                route={route}
-                fromUnit={fromUnit}
-                toUnit={toUnit}
-                quantity={quantity}
-                units={units}
-              />
-            ))}
+        {/* Desktop: result cards overlay top-left */}
+        <div className="hidden sm:block absolute top-4 left-4 space-y-3 max-w-sm w-full z-10 max-h-[calc(100vh-120px)] overflow-y-auto pr-1">
+          {cardList}
         </div>
       </div>
     </div>

@@ -89,7 +89,7 @@ export default function UnitSelector({
     : "";
 
   return (
-    <div ref={containerRef} className="relative w-56">
+    <div ref={containerRef} className="relative w-full">
       {/* Trigger / input area */}
       <div
         className="flex items-center gap-1 rounded-lg border border-zinc-600 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 cursor-text"

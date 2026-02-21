@@ -122,7 +122,7 @@ export default function GraphCanvasInner({ units, edges, highlights }: Props) {
   );
 
   return (
-    <div ref={containerRef} className="w-full h-full">
+    <div ref={containerRef} className="w-full h-full touch-none">
       <ForceGraph2D
         graphData={graphData}
         nodeId="id"
