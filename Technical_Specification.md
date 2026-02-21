@@ -1,4 +1,4 @@
-# Technical Specification: The Absolute Unit
+# Technical Specification: The Anything But Metric converter
 
 **Version:** 1.0
 **Status:** Locked
@@ -44,7 +44,7 @@ A flat array of unit objects.
 | :--- | :--- | :--- | :--- |
 | `id` | string | yes | Unique slug. Lowercase, underscores. Used as the primary key across both files. |
 | `label` | string | yes | Display name shown in the UI. |
-| `emoji` | string | no | Single emoji character for Universe View nodes. Omit if none fits. |
+| `emoji` | string | no | Single emoji character for graph canvas nodes. Omit if none fits. |
 | `aliases` | string[] | no | Alternative names accepted in search / extraction (e.g. plural forms). |
 | `tags` | string[] | no | Optional taxonomy for clustering hints (e.g. `"animal"`, `"building"`, `"country"`). |
 
@@ -80,7 +80,7 @@ A flat array of sourced comparison objects. Each object represents one direction
 
 **Notes:**
 - Edges are **undirected** for pathfinding purposes. The factor `f` for edge `A → B` implies `1/f` for `B → A`.
-- Multiple edges between the same `from`/`to` pair are intentional and expected. They produce the Range of Uncertainty displayed in the UI.
+- Multiple edges between the same `from`/`to` pair are intentional and expected. They are surfaced as conflicting sources within the relevant step of the Chain of Evidence.
 
 ---
 
@@ -99,14 +99,12 @@ anythingbutmetric/
 │
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx            # Home / converter UI
-│   │   ├── universe/
-│   │   │   └── page.tsx        # Universe View (force-directed graph)
+│   │   ├── page.tsx            # Home — graph canvas + conversion controls + result panel
 │   │   ├── bounty/
 │   │   │   └── page.tsx        # Missing Link Bounty Board
 │   │   └── api/
 │   │       ├── convert/
-│   │       │   └── route.ts    # POST /api/convert — runs BFS, returns path + factors
+│   │       │   └── route.ts    # POST /api/convert — runs BFS, returns all routes
 │   │       └── submit/
 │   │           └── route.ts    # POST /api/submit — creates GitHub Issue
 │   │
@@ -117,9 +115,9 @@ anythingbutmetric/
 │   │
 │   └── components/
 │       ├── UnitSelector.tsx    # Searchable dropdown component
-│       ├── ResultCard.tsx      # Conversion result + range display
-│       ├── EvidenceChain.tsx   # Breadcrumb trail + citations
-│       └── UniverseGraph.tsx   # react-force-graph-2d wrapper
+│       ├── GraphCanvas.tsx     # react-force-graph-2d wrapper; accepts highlight state
+│       ├── ResultCard.tsx      # Single route result + Chain of Evidence
+│       └── EvidenceChain.tsx   # Breadcrumb trail + citations
 │
 ├── .github/
 │   └── workflows/
@@ -156,20 +154,20 @@ Next.js (server-side)                       (community submissions
     │                                        await verification,
     ├── /api/convert                         then merged to JSON)
     │     Loads graph from JSON
-    │     Runs BFS pathfinder
-    │     Returns path + min/max factors
+    │     Runs BFS for all shortest paths
+    │     Returns all routes + per-step conflict data
     │
     ├── /api/submit
     │     Validates submission form
     │     Creates GitHub Issue via API
     │
     └── Pages (React)
-          Converter UI ──► ResultCard + EvidenceChain
-          Universe View ──► UniverseGraph (react-force-graph-2d)
+          Home page ──► GraphCanvas (full-page) + UnitSelector controls
+                    ──► ResultCard + EvidenceChain (appear on second selection)
           Bounty Board ──► list of unconnected components
 ```
 
-All data is read from flat files at request time (or cached at build time for the Universe View). There is no runtime database.
+All data is read from flat files at request time. The full graph data for `GraphCanvas` is fetched once on page load and held in client state. There is no runtime database.
 
 ---
 
@@ -179,7 +177,8 @@ All data is read from flat files at request time (or cached at build time for th
 
 - **BFS (Breadth-First Search)** runs server-side in `/api/convert`.
 - The graph is constructed in memory from `edges.json` on each request (or cached via Next.js `unstable_cache`).
-- BFS finds the **shortest path** (fewest steps) between Source Unit and Target Unit.
+- BFS finds **all shortest paths** (same minimum step count) between Source Unit and Target Unit, not just the first one encountered.
+- Each distinct path through different intermediate nodes is returned as a separate route.
 - Dimensional consistency is explicitly ignored — any edge is traversable regardless of the physical quantities involved.
 
 ### 5.2 Factor Math
@@ -193,25 +192,50 @@ factor_BC = edge(B→C).factor
 result = quantity * factor_AB * factor_BC
 ```
 
-### 5.3 Range of Uncertainty
+Each route produces its own independent result value using this formula.
 
-Multiple edges may exist between the same pair of nodes (different articles, different claims).
+### 5.3 Multiple Routes
 
-For each step in the BFS path, collect all edges between the pair:
+When BFS finds more than one shortest path, the API returns all of them as an ordered array of route objects. Routes are ordered by path length (ascending), with ties broken arbitrarily.
 
-```
-min_step = min(all factors for this pair)
-max_step = max(all factors for this pair)
-```
-
-Propagate across the full path:
+Each route object in the response:
 
 ```
-result_min = quantity * (min_step_1 * min_step_2 * ... * min_step_n)
-result_max = quantity * (max_step_1 * max_step_2 * ... * max_step_n)
+{
+  "routeIndex": 0,                     // 0-based; used to match result card colour to graph highlight
+  "label": "via Football Fields",      // constructed from intermediate node labels
+  "result": 847,                       // computed result for this route
+  "nodeIds": ["blue_whale", "football_field", "double_decker_bus"],  // ordered path for graph highlight
+  "edgeIds": ["edge_012", "edge_047"],                               // edges to highlight in graph
+  "steps": [                           // the Chain of Evidence for this route
+    {
+      "from": "blue_whale",
+      "to": "football_field",
+      "factor": 3.2,
+      "sources": [ ... ]               // all edges for this pair (see 5.4)
+    },
+    ...
+  ]
+}
 ```
 
-If `result_min === result_max`, display as a single value. Otherwise display as "between X and Y."
+`nodeIds` and `edgeIds` are passed directly to `GraphCanvas` to drive the highlight state. The `routeIndex` is used to assign a consistent colour across the result card and the corresponding graph highlight — index 0 gets colour 0, index 1 gets colour 1, and so on.
+
+The UI renders one result card per route. If only one route exists, a single card is shown with no route label or colour accent needed.
+
+**Reactive trigger:** `/api/convert` is called automatically when the second unit is selected in the UI — there is no explicit Convert button. The request fires on the `onChange` of the second dropdown (or immediately if the second field is filled first).
+
+### 5.4 Conflicting Sources on a Step
+
+Multiple edges may exist between the same pair of nodes (different articles, different claims). These are not averaged or collapsed — all are passed to the client.
+
+For each step, collect all edges between the pair:
+
+```
+sources = all edges where (from === A and to === B) or (from === B and to === A)
+```
+
+The response includes the full `sources` array for every step. The UI is responsible for rendering the disagreement with appropriate editorial commentary. The primary `factor` used for the route's result computation is the factor from the most recently scraped source (newest `date_scraped`).
 
 ---
 
