@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "The Absolute Unit",
+  title: "Anything But Metric",
   description:
     "Convert any quantity into absurd-but-sourced journalistic units — Double-Decker Buses, Olympic Swimming Pools, Wales, Whales.",
 };
