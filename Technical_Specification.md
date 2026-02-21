@@ -14,7 +14,7 @@
 | **Data store** | Flat JSON files in repo | Eliminates database infrastructure for v1; git history doubles as an audit log. |
 | **Graph library** | react-force-graph-2d | Purpose-built for force-directed graphs in React; handles large node counts with canvas rendering. |
 | **Scraper runtime** | Python 3.x | Mature HTTP + parsing ecosystem; GitHub Actions native support. |
-| **Extraction AI** | Claude Haiku (Anthropic API) | Cheapest capable model for structured extraction; fast enough for batch scraping. |
+| **Extraction AI** | Gemini Flash (Google AI API) | Generous free tier (1M tokens/day) covers daily scrape volume; native JSON output mode simplifies extraction. |
 | **CI/CD** | GitHub Actions | Free for public repos; native cron scheduling for daily scraper runs. |
 | **Submission queue** | GitHub Issues | No extra infrastructure; labels provide a built-in triage workflow. |
 
@@ -93,7 +93,7 @@ anythingbutmetric/
 │   └── edges.json              # All sourced comparisons
 │
 ├── scraper/
-│   ├── scraper.py              # RSS fetch + Claude Haiku extraction
+│   ├── scraper.py              # RSS fetch + Gemini Flash extraction
 │   ├── requirements.txt        # Python dependencies
 │   └── feeds.txt               # List of RSS feed URLs to monitor
 │
@@ -142,7 +142,7 @@ scraper.py (Python)
     │  Fetches headlines + summaries from feeds.txt
     │
     ▼
-Claude Haiku (Anthropic API)
+Gemini Flash (Google AI API)
     │  Extracts structured comparisons from text
     │  Returns: { from, to, factor, source_quote }
     │
@@ -258,7 +258,7 @@ The response includes the full `sources` array for every step. The UI is respons
 
 | Variable | Used by | Description |
 | :--- | :--- | :--- |
-| `ANTHROPIC_API_KEY` | `scraper.py` | API key for Claude Haiku extraction calls. |
+| `GOOGLE_AI_API_KEY` | `scraper.py` | API key for Gemini Flash extraction calls. |
 | `GITHUB_TOKEN` | `src/lib/github.ts` | Personal access token with `repo` scope, for creating Issues. |
 | `GITHUB_REPO` | `src/lib/github.ts` | Target repo in `owner/repo` format (e.g. `zealotry/anythingbutmetric`). |
 
