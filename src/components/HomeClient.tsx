@@ -14,7 +14,7 @@ interface Props {
 export default function HomeClient({ units, edges }: Props) {
   const [fromId, setFromId] = useState<string | null>(null);
   const [toId, setToId] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState<number>(1);
+  const quantity = 1;
   const [routes, setRoutes] = useState<Route[]>([]);
   const [loading, setLoading] = useState(false);
   const [noPath, setNoPath] = useState(false);
@@ -95,51 +95,29 @@ export default function HomeClient({ units, edges }: Props) {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100">
-      {/* Controls bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-3 border-b border-zinc-800">
-        {/* Row 1 (mobile) / inline (desktop): From → To selectors */}
-        <div className="flex items-center gap-2 flex-1">
-          <div className="flex-1 sm:w-56 sm:flex-none">
-            <UnitSelector
-              units={units}
-              value={fromId}
-              onChange={setFromId}
-              placeholder="From unit…"
-            />
-          </div>
-          <span className="text-zinc-500 text-sm shrink-0">→</span>
-          <div className="flex-1 sm:w-56 sm:flex-none">
-            <UnitSelector
-              units={units}
-              value={toId}
-              onChange={setToId}
-              placeholder="To unit…"
-            />
-          </div>
+      {/* Controls bar — single row on all sizes */}
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
+        <div className="flex-1 min-w-0">
+          <UnitSelector
+            units={units}
+            value={fromId}
+            onChange={setFromId}
+            placeholder="From unit…"
+          />
         </div>
 
-        {/* Row 2 (mobile) / inline (desktop): qty + loading */}
-        <div className="flex items-center gap-3">
-          <label htmlFor="qty" className="text-zinc-500 text-sm sr-only">
-            Quantity
-          </label>
-          <input
-            id="qty"
-            type="number"
-            value={quantity}
-            onChange={(e) => {
-              const v = parseFloat(e.target.value);
-              if (isFinite(v)) setQuantity(v);
-            }}
-            className="w-24 rounded-lg border border-zinc-600 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 text-right outline-none focus:border-zinc-400"
-            step="any"
+        <div className="flex-1 min-w-0">
+          <UnitSelector
+            units={units}
+            value={toId}
+            onChange={setToId}
+            placeholder="To unit…"
           />
-          {loading && (
-            <span className="text-xs text-zinc-500 animate-pulse">
-              Computing…
-            </span>
-          )}
         </div>
+
+        {loading && (
+          <span className="text-xs text-zinc-500 animate-pulse shrink-0">…</span>
+        )}
       </div>
 
       {/* Main content */}
@@ -150,7 +128,7 @@ export default function HomeClient({ units, edges }: Props) {
         </div>
 
         {/* Graph: fills remaining height on mobile, full area on desktop */}
-        <div className="flex-1 min-h-0 sm:absolute sm:inset-0">
+        <div className="flex-1 min-h-0 overflow-hidden sm:absolute sm:inset-0">
           <GraphCanvas units={units} edges={edges} highlights={highlights} />
         </div>
 

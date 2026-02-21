@@ -36,7 +36,7 @@ export default function EvidenceChain({ steps, units }: Props) {
             className="rounded-md border border-zinc-700 bg-zinc-900/60 p-3 text-xs"
           >
             {/* Step header */}
-            <div className="flex items-center gap-2 font-mono text-zinc-100">
+            <div className="flex items-center gap-2 font-mono text-zinc-100 flex-wrap">
               <span className="text-zinc-400">{unitLabel(units, step.fromId)}</span>
               <span className="text-zinc-600">→</span>
               <span className="font-semibold text-amber-400">
