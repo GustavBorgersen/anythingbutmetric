@@ -12,10 +12,15 @@ function unitLabel(units: Unit[], id: string): string {
 
 function formatFactor(n: number): string {
   if (n === 0) return "0";
-  if (Math.abs(n) >= 1000 || Math.abs(n) < 0.001) {
-    return n.toExponential(3);
+  const abs = Math.abs(n);
+  if (abs >= 1000) {
+    return Math.round(n).toLocaleString("en-GB");
   }
-  return n.toPrecision(4);
+  if (abs < 0.001) {
+    const dp = -Math.floor(Math.log10(abs)) + 2;
+    return n.toFixed(dp);
+  }
+  return parseFloat(n.toPrecision(4)).toString();
 }
 
 export default function EvidenceChain({ steps, units }: Props) {

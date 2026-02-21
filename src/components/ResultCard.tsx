@@ -14,16 +14,17 @@ function formatResult(n: number): string {
   if (!isFinite(n)) return "∞";
   if (n === 0) return "0";
   const abs = Math.abs(n);
-  // Very small numbers — keep sig figs, no scientific notation
-  if (abs > 0 && abs < 0.001) {
-    return n.toPrecision(3);
-  }
-  // Large numbers: plain integer with commas, no decimals
+  // Large: plain integer with commas
   if (abs >= 100) {
-    return n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    return Math.round(n).toLocaleString("en-GB");
   }
-  // Mid-range: up to 3 significant figures, no trailing zeros
-  return n.toLocaleString(undefined, { maximumSignificantDigits: 3 });
+  // Very small: toFixed with enough decimal places for 3 sig figs (never scientific notation)
+  if (abs < 0.001) {
+    const dp = -Math.floor(Math.log10(abs)) + 2;
+    return n.toFixed(dp);
+  }
+  // Mid-range: 3 sig figs, strip trailing zeros
+  return parseFloat(n.toPrecision(3)).toString();
 }
 
 export default function ResultCard({
