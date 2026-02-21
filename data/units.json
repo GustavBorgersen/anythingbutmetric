@@ -1,0 +1,191 @@
+[
+  {
+    "id": "double_decker_bus",
+    "label": "Double-Decker Bus",
+    "emoji": "🚌",
+    "aliases": ["bus", "london bus", "routemaster"],
+    "tags": ["length", "vehicle", "british"]
+  },
+  {
+    "id": "olympic_pool",
+    "label": "Olympic Swimming Pool",
+    "emoji": "🏊",
+    "aliases": ["swimming pool", "olympic pool", "pool"],
+    "tags": ["length", "volume", "sport"]
+  },
+  {
+    "id": "wales",
+    "label": "Wales",
+    "emoji": "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+    "aliases": ["wales", "country of wales"],
+    "tags": ["area", "geography", "british"]
+  },
+  {
+    "id": "blue_whale",
+    "label": "Blue Whale",
+    "emoji": "🐋",
+    "aliases": ["whale", "blue whale"],
+    "tags": ["length", "weight", "animal"]
+  },
+  {
+    "id": "elephant",
+    "label": "African Elephant",
+    "emoji": "🐘",
+    "aliases": ["elephant", "african elephant"],
+    "tags": ["mass", "animal"]
+  },
+  {
+    "id": "eiffel_tower",
+    "label": "Eiffel Tower",
+    "emoji": "🗼",
+    "aliases": ["eiffel tower", "tour eiffel"],
+    "tags": ["height", "mass", "landmark"]
+  },
+  {
+    "id": "football_pitch",
+    "label": "Football Pitch",
+    "emoji": "⚽",
+    "aliases": ["football field", "soccer pitch", "soccer field"],
+    "tags": ["area", "sport"]
+  },
+  {
+    "id": "bathtub",
+    "label": "Bathtub",
+    "emoji": "🛁",
+    "aliases": ["bath", "bathtub", "tub"],
+    "tags": ["volume"]
+  },
+  {
+    "id": "empire_state",
+    "label": "Empire State Building",
+    "emoji": "🏙️",
+    "aliases": ["empire state", "esb"],
+    "tags": ["height", "landmark"]
+  },
+  {
+    "id": "football_field_length",
+    "label": "Football Field (American)",
+    "emoji": "🏈",
+    "aliases": ["american football field", "gridiron"],
+    "tags": ["length", "sport"]
+  },
+  {
+    "id": "great_wall",
+    "label": "Great Wall of China",
+    "emoji": "🧱",
+    "aliases": ["great wall", "china wall"],
+    "tags": ["length", "landmark"]
+  },
+  {
+    "id": "amazon_river",
+    "label": "Amazon River",
+    "emoji": "🌊",
+    "aliases": ["amazon", "amazon river"],
+    "tags": ["length", "geography"]
+  },
+  {
+    "id": "new_zealand",
+    "label": "New Zealand",
+    "emoji": "🥝",
+    "aliases": ["new zealand", "nz", "aotearoa"],
+    "tags": ["area", "geography"]
+  },
+  {
+    "id": "texas",
+    "label": "Texas",
+    "emoji": "🤠",
+    "aliases": ["texas", "state of texas"],
+    "tags": ["area", "geography"]
+  },
+  {
+    "id": "moon_distance",
+    "label": "Earth–Moon Distance",
+    "emoji": "🌙",
+    "aliases": ["distance to moon", "lunar distance", "moon distance"],
+    "tags": ["length", "astronomy"]
+  },
+  {
+    "id": "iphone",
+    "label": "iPhone 15",
+    "emoji": "📱",
+    "aliases": ["iphone", "smartphone", "phone"],
+    "tags": ["length", "mass"]
+  },
+  {
+    "id": "bowling_ball",
+    "label": "Bowling Ball",
+    "emoji": "🎳",
+    "aliases": ["bowling ball"],
+    "tags": ["mass"]
+  },
+  {
+    "id": "mount_everest",
+    "label": "Mount Everest",
+    "emoji": "🏔️",
+    "aliases": ["everest", "mount everest", "chomolungma"],
+    "tags": ["height", "geography"]
+  },
+  {
+    "id": "human_hair",
+    "label": "Human Hair Width",
+    "emoji": "💇",
+    "aliases": ["hair", "hair width", "hair diameter"],
+    "tags": ["length"]
+  },
+  {
+    "id": "international_space_station",
+    "label": "International Space Station",
+    "emoji": "🛸",
+    "aliases": ["iss", "space station"],
+    "tags": ["length", "mass", "altitude"]
+  },
+  {
+    "id": "aircraft_carrier",
+    "label": "Aircraft Carrier",
+    "emoji": "⚓",
+    "aliases": ["carrier", "aircraft carrier", "navy carrier"],
+    "tags": ["length", "mass"]
+  },
+  {
+    "id": "pizza",
+    "label": "Pizza (12-inch)",
+    "emoji": "🍕",
+    "aliases": ["pizza", "pizza box"],
+    "tags": ["length", "area"]
+  },
+  {
+    "id": "tennis_court",
+    "label": "Tennis Court",
+    "emoji": "🎾",
+    "aliases": ["tennis court"],
+    "tags": ["area", "length", "sport"]
+  },
+  {
+    "id": "milk_carton",
+    "label": "Pint of Milk",
+    "emoji": "🥛",
+    "aliases": ["pint", "milk", "milk carton", "pint of milk"],
+    "tags": ["volume"]
+  },
+  {
+    "id": "olympic_marathon",
+    "label": "Olympic Marathon",
+    "emoji": "🏃",
+    "aliases": ["marathon", "26.2 miles"],
+    "tags": ["length", "sport"]
+  },
+  {
+    "id": "big_ben",
+    "label": "Big Ben",
+    "emoji": "🕰️",
+    "aliases": ["big ben", "clock tower", "elizabeth tower"],
+    "tags": ["height", "landmark", "british"]
+  },
+  {
+    "id": "rhino",
+    "label": "White Rhinoceros",
+    "emoji": "🦏",
+    "aliases": ["rhino", "rhinoceros", "white rhino"],
+    "tags": ["mass", "animal"]
+  }
+]
