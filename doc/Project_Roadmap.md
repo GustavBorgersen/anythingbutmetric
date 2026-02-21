@@ -11,7 +11,7 @@ Four phases, each independently deployable. Each phase ends with something live 
 
 ---
 
-## Phase 1 — Core Demo
+## Phase 1 — Core Demo ✓ Complete
 
 **Goal:** A working converter with seed data, deployed publicly. Proves the concept end-to-end.
 
@@ -19,20 +19,27 @@ Four phases, each independently deployable. Each phase ends with something live 
 
 ### Tasks
 
-- [ ] Initialise Next.js project with App Router
-- [ ] Create `/data/units.json` with ~30 seed units (manually curated)
-- [ ] Create `/data/edges.json` with ~50 seed edges (manually sourced from real articles)
-- [ ] Implement `src/lib/graph.ts` — load and index units + edges from JSON files
-- [ ] Implement `src/lib/pathfinder.ts` — BFS all shortest paths; multi-route response with nodeIds, edgeIds, routeIndex per route
-- [ ] Build `POST /api/convert` route — accepts `{ from, to, quantity }`, returns array of route objects each with routeIndex, label, result, nodeIds, edgeIds, steps
-- [ ] Build `UnitSelector` component — searchable dropdown backed by units catalogue
-- [ ] Build `ResultCard` component — displays one route's result and its Chain of Evidence; conflicting sources shown inline
-- [ ] Build `EvidenceChain` component — renders breadcrumb trail with inline citations and clickable source links
-- [ ] Build `GraphCanvas` component — react-force-graph-2d wrapper; renders all nodes and edges; accepts highlight state (nodeIds[], edgeIds[], routeIndex) as props; basic zoom/pan only at this stage
-- [ ] Implement reactive convert trigger — on second unit selection, POST to /api/convert, pass returned route nodeIds/edgeIds to GraphCanvas; no Convert button
-- [ ] Build home page (`/`) — wires together UnitSelector + ResultCard + EvidenceChain + GraphCanvas
-- [ ] Handle Missing Link state on home page — clear error message when no path exists
-- [ ] Deploy to Vercel, confirm public URL resolves correctly
+- [x] Initialise Next.js project with App Router
+- [x] Create `/data/units.json` with ~30 seed units (manually curated)
+- [x] Create `/data/edges.json` with ~50 seed edges (manually sourced from real articles)
+- [x] Implement `src/lib/graph.ts` — load and index units + edges from JSON files
+- [x] Implement `src/lib/pathfinder.ts` — BFS all shortest paths; multi-route response with nodeIds, edgeIds, routeIndex per route
+- [x] Build `POST /api/convert` route — accepts `{ from, to, quantity }`, returns array of route objects each with routeIndex, label, result, nodeIds, edgeIds, steps
+- [x] Build `UnitSelector` component — searchable dropdown backed by units catalogue
+- [x] Build `ResultCard` component — displays one route's result and its Chain of Evidence; conflicting sources shown inline
+- [x] Build `EvidenceChain` component — renders breadcrumb trail with inline citations and clickable source links
+- [x] Build `GraphCanvas` component — react-force-graph-2d wrapper; renders all nodes and edges; accepts highlight state (nodeIds[], edgeIds[], routeIndex) as props; basic zoom/pan only at this stage
+- [x] Implement reactive convert trigger — on second unit selection, POST to /api/convert, pass returned route nodeIds/edgeIds to GraphCanvas; no Convert button
+- [x] Build home page (`/`) — wires together UnitSelector + ResultCard + EvidenceChain + GraphCanvas
+- [x] Handle Missing Link state on home page — clear error message when no path exists
+- [x] Deploy to Vercel, confirm public URL resolves correctly
+
+### Post-launch polish (complete)
+
+- [x] Mobile responsive layout — single-row controls bar with `min-w-0` flex constraints; result cards stack below controls on mobile (scrollable, max-h 45vh); graph fills remaining viewport height
+- [x] Collapsible result cards — header always shows a one-line summary; body toggles open/closed
+- [x] Graph touch support — `touch-action: none` on canvas container so d3-zoom receives touch events on mobile
+- [x] Prevent overscroll bleed — `background-color`, `overflow: hidden`, and `overscroll-behavior: none` on `html`/`body`
 
 ---
 
@@ -40,7 +47,7 @@ Four phases, each independently deployable. Each phase ends with something live 
 
 **Goal:** Automate data growth. New journalistic comparisons are extracted daily without manual intervention.
 
-**Deliverable:** A GitHub Actions workflow that runs every 24 hours, reads RSS feeds, extracts new unit comparisons via Gemini Flash, and opens a pull request with additions to `edges.json`.
+**Deliverable:** A GitHub Actions workflow that runs every 24 hours, reads RSS feeds, extracts new unit comparisons via Claude Haiku, and opens a pull request with additions to `edges.json`.
 
 **Prerequisite:** Phase 1 complete (need the JSON schema locked before the scraper targets it).
 
@@ -50,16 +57,16 @@ Four phases, each independently deployable. Each phase ends with something live 
 - [ ] Write `scraper/scraper.py`:
   - Fetch and parse RSS feeds
   - Filter items not yet seen (compare against existing `edges.json` source URLs)
-  - For each new item, call Gemini Flash with a structured extraction prompt
+  - For each new item, call Claude Haiku with a structured extraction prompt
   - Parse the response into the `edges.json` schema
   - Append new edges (with `verified: false`) to a staging output
 - [ ] Write `scraper/requirements.txt` with pinned dependencies
 - [ ] Implement deduplication logic — do not add an edge if an identical `(from, to, factor, source_url)` already exists
-- [ ] Write extraction prompt for Gemini Flash — must return structured JSON matching the edge schema
+- [ ] Write extraction prompt for Claude Haiku — must return structured JSON matching the edge schema
 - [ ] Create `.github/workflows/scraper.yml`:
   - Cron trigger: daily at 06:00 UTC
   - Steps: checkout repo, install Python deps, run scraper, open PR if new edges found
-- [ ] Add `GOOGLE_AI_API_KEY` as a GitHub Actions secret
+- [ ] Add `ANTHROPIC_API_KEY` as a GitHub Actions secret
 - [ ] Test workflow manually via `workflow_dispatch` trigger before enabling cron
 - [ ] Review first 10 automatically extracted edges for quality; adjust prompt if needed
 
