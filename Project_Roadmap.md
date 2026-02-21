@@ -1,4 +1,4 @@
-# Project Roadmap: The Absolute Unit
+# Project Roadmap: The Anything But Metric converter
 
 **Version:** 1.0
 **Status:** Active
@@ -15,7 +15,7 @@ Four phases, each independently deployable. Each phase ends with something live 
 
 **Goal:** A working converter with seed data, deployed publicly. Proves the concept end-to-end.
 
-**Deliverable:** A live Vercel URL where a user can pick two units, hit Convert, and see a result with a Chain of Evidence.
+**Deliverable:** A live Vercel URL where a user can pick two units and immediately see results with a Chain of Evidence alongside an interactive graph canvas — a graph-first single-page app with no Convert button.
 
 ### Tasks
 
@@ -23,12 +23,14 @@ Four phases, each independently deployable. Each phase ends with something live 
 - [ ] Create `/data/units.json` with ~30 seed units (manually curated)
 - [ ] Create `/data/edges.json` with ~50 seed edges (manually sourced from real articles)
 - [ ] Implement `src/lib/graph.ts` — load and index units + edges from JSON files
-- [ ] Implement `src/lib/pathfinder.ts` — BFS shortest path + factor multiplication + range computation
-- [ ] Build `POST /api/convert` route — accepts `{ from, to, quantity }`, returns `{ path, result_min, result_max, evidence }`
+- [ ] Implement `src/lib/pathfinder.ts` — BFS all shortest paths; multi-route response with nodeIds, edgeIds, routeIndex per route
+- [ ] Build `POST /api/convert` route — accepts `{ from, to, quantity }`, returns array of route objects each with routeIndex, label, result, nodeIds, edgeIds, steps
 - [ ] Build `UnitSelector` component — searchable dropdown backed by units catalogue
-- [ ] Build `ResultCard` component — displays result range and "between X and Y" formatting
+- [ ] Build `ResultCard` component — displays one route's result and its Chain of Evidence; conflicting sources shown inline
 - [ ] Build `EvidenceChain` component — renders breadcrumb trail with inline citations and clickable source links
-- [ ] Build home page (`/`) — wires together UnitSelector + ResultCard + EvidenceChain
+- [ ] Build `GraphCanvas` component — react-force-graph-2d wrapper; renders all nodes and edges; accepts highlight state (nodeIds[], edgeIds[], routeIndex) as props; basic zoom/pan only at this stage
+- [ ] Implement reactive convert trigger — on second unit selection, POST to /api/convert, pass returned route nodeIds/edgeIds to GraphCanvas; no Convert button
+- [ ] Build home page (`/`) — wires together UnitSelector + ResultCard + EvidenceChain + GraphCanvas
 - [ ] Handle Missing Link state on home page — clear error message when no path exists
 - [ ] Deploy to Vercel, confirm public URL resolves correctly
 
@@ -57,33 +59,31 @@ Four phases, each independently deployable. Each phase ends with something live 
 - [ ] Create `.github/workflows/scraper.yml`:
   - Cron trigger: daily at 06:00 UTC
   - Steps: checkout repo, install Python deps, run scraper, open PR if new edges found
-- [ ] Add `ANTHROPIC_API_KEY` as a GitHub Actions secret
+- [ ] Add `GOOGLE_AI_API_KEY` as a GitHub Actions secret
 - [ ] Test workflow manually via `workflow_dispatch` trigger before enabling cron
 - [ ] Review first 10 automatically extracted edges for quality; adjust prompt if needed
 
 ---
 
-## Phase 3 — Universe View
+## Phase 3 — Graph Polish & Interactions
 
-**Goal:** Make the data visually explorable. Users can browse the entire knowledge graph as an interactive force-directed diagram.
+**Goal:** Elevate the basic graph canvas from Phase 1 into the full interactive experience described in the functional spec.
 
-**Deliverable:** A live `/universe` page showing all units and connections, zoomable and pannable, with emoji nodes and clickable edges.
+**Deliverable:** The graph canvas has emoji nodes, colour-coded multi-route highlighting, auto-camera, full click interactions in both default and active states, and Missing Link visual treatment. Performs acceptably at 500+ nodes.
 
-**Prerequisite:** Phase 1 complete (need the graph data and its structure).
+**Prerequisite:** Phase 1 complete (GraphCanvas component exists with basic zoom/pan).
 
 ### Tasks
 
-- [ ] Install `react-force-graph-2d`
-- [ ] Build `UniverseGraph` component:
-  - Load all nodes from `units.json` and all verified edges from `edges.json`
-  - Render nodes with emoji label (fallback to text label if no emoji)
-  - Render edges with weight proportional to factor magnitude (optional visual polish)
-  - Implement zoom and pan controls
-- [ ] On node click: highlight all direct neighbours and their connecting edges; dim everything else
-- [ ] On edge click: surface a tooltip showing `source_quote` and `source_url` link
-- [ ] Build `/universe` page — wraps `UniverseGraph` with a title and brief explanatory text
-- [ ] Link to Universe View from the home page result area and main navigation
-- [ ] Performance check: confirm the graph renders acceptably with 500+ nodes (canvas rendering should handle this)
+- [ ] Add emoji/icon rendering to graph nodes (fallback to text label if none)
+- [ ] Implement colour-per-route: each route's nodeIds/edgeIds highlighted in a distinct colour matching its result card accent
+- [ ] Implement auto-pan and zoom-to-fit animation when a path is highlighted
+- [ ] Default state — on node click: highlight direct connections, dim everything else
+- [ ] Default state — on edge click: surface tooltip with source_quote + clickable source_url
+- [ ] Active state — dimmed nodes/edges remain clickable; clicking a dimmed node shows its connections without clearing the current conversion
+- [ ] Missing Link visual: highlight the two disconnected islands in distinct colours in the graph
+- [ ] Smooth transitions between default/active/missing-link states
+- [ ] Performance check: confirm graph renders acceptably at 500+ nodes
 
 ---
 
