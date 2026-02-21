@@ -47,7 +47,7 @@ Four phases, each independently deployable. Each phase ends with something live 
 
 **Goal:** Automate data growth. New journalistic comparisons are extracted daily without manual intervention.
 
-**Deliverable:** A GitHub Actions workflow that runs every 24 hours, reads RSS feeds, extracts new unit comparisons via Claude Haiku, and opens a pull request with additions to `edges.json`.
+**Deliverable:** A GitHub Actions workflow that runs every 24 hours, reads RSS feeds, extracts new unit comparisons via Gemini Flash, and opens a pull request with additions to `edges.json`.
 
 **Prerequisite:** Phase 1 complete (need the JSON schema locked before the scraper targets it).
 
@@ -57,16 +57,16 @@ Four phases, each independently deployable. Each phase ends with something live 
 - [ ] Write `scraper/scraper.py`:
   - Fetch and parse RSS feeds
   - Filter items not yet seen (compare against existing `edges.json` source URLs)
-  - For each new item, call Claude Haiku with a structured extraction prompt
+  - For each new item, call Gemini Flash with a structured extraction prompt
   - Parse the response into the `edges.json` schema
   - Append new edges (with `verified: false`) to a staging output
 - [ ] Write `scraper/requirements.txt` with pinned dependencies
 - [ ] Implement deduplication logic — do not add an edge if an identical `(from, to, factor, source_url)` already exists
-- [ ] Write extraction prompt for Claude Haiku — must return structured JSON matching the edge schema
+- [ ] Write extraction prompt for Gemini Flash — must return structured JSON matching the edge schema
 - [ ] Create `.github/workflows/scraper.yml`:
   - Cron trigger: daily at 06:00 UTC
   - Steps: checkout repo, install Python deps, run scraper, open PR if new edges found
-- [ ] Add `ANTHROPIC_API_KEY` as a GitHub Actions secret
+- [ ] Add `GOOGLE_AI_API_KEY` as a GitHub Actions secret
 - [ ] Test workflow manually via `workflow_dispatch` trigger before enabling cron
 - [ ] Review first 10 automatically extracted edges for quality; adjust prompt if needed
 
