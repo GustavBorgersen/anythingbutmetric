@@ -402,12 +402,14 @@ def resolve_unit(
         suggested_id = unit_ref.get("id") or slugify(unit_ref.get("label", "unknown"))
         # Ensure the id is valid snake_case
         suggested_id = slugify(suggested_id)
-        # Deduplicate against existing and already-queued new units
+        # If already queued this run, reuse it (same article can reference a
+        # new unit multiple times — don't create _2 duplicates)
+        if suggested_id in new_units_map:
+            return suggested_id, None
+        # Deduplicate against existing unit ids only
         final_id = suggested_id
         counter = 2
-        while final_id in existing_ids or (
-            final_id in new_units_map and new_units_map[final_id] != unit_ref
-        ):
+        while final_id in existing_ids:
             final_id = f"{suggested_id}_{counter}"
             counter += 1
 
