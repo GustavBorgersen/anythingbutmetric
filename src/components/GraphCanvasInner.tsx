@@ -141,28 +141,6 @@ export default function GraphCanvasInner({
     return neighbors;
   }, [clickedNodeId, edges]);
 
-  // Debug: 3 s after mount, log DOM geometry and all node screen positions.
-  // This tells us whether the canvas is correctly sized/placed and where each
-  // node should appear so we can compare against actual click positions.
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!graphRef.current) return;
-      const canvasEl = containerRef.current?.querySelector("canvas");
-      const containerRect = containerRef.current?.getBoundingClientRect();
-      const canvasRect = canvasEl?.getBoundingClientRect();
-
-      // One-shot geometry check
-      console.log(
-        `[debug] canvas: ${canvasEl?.width}×${canvasEl?.height} attrs | ` +
-        `CSS ${canvasRect?.width?.toFixed(0)}×${canvasRect?.height?.toFixed(0)} | ` +
-        `offset from container: ${(canvasRect && containerRect ? canvasRect.left - containerRect.left : "?").toString().slice(0,6)},` +
-        `${(canvasRect && containerRect ? canvasRect.top - containerRect.top : "?").toString().slice(0,6)} | ` +
-        `dpr=${window.devicePixelRatio} | dimensions prop=${dimensions.width}×${dimensions.height}`
-      );
-    }, 3000);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphData, dimensions]);
 
   // Auto-zoom when highlights or missingLinkGroups change
   useEffect(() => {
@@ -310,32 +288,6 @@ export default function GraphCanvasInner({
     [highlights, clickedNodeId, neighborIds, missingLinkGroups]
   );
 
-  // Explicit click area for each node — hit radius is kept at a fixed ~8px in
-  // screen space regardless of zoom level (graph-space radius = 8 / globalScale).
-  const nodePointerAreaPaint = useCallback(
-    (node: object, color: string, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const n = node as GraphNode & { x?: number; y?: number };
-      // Guard: skip nodes that the simulation hasn't positioned yet.
-      if (n.x == null || n.y == null || isNaN(n.x) || isNaN(n.y)) return;
-      const radius = 8 / globalScale;
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, radius, 0, 2 * Math.PI);
-      ctx.fill();
-      // Debug: only log the two nodes we're comparing
-      if (n.id === "france" || n.id === "great_pacific_garbage_patch") {
-        const t = ctx.getTransform();
-        const sx = t.a * n.x + t.e;
-        const sy = t.d * n.y + t.f;
-        const sr = radius * t.a;
-        console.log(
-          `[shadow] ${n.id}: canvas-px(${sx.toFixed(1)},${sy.toFixed(1)}) r=${sr.toFixed(1)} color=${color}`
-        );
-      }
-    },
-    []
-  );
-
   // Explicit click area for each link — kept at ~8px screen-space width so
   // thin edges remain reliably clickable at any zoom level.
   const linkPointerAreaPaint = useCallback(
@@ -411,17 +363,6 @@ export default function GraphCanvasInner({
       onPointerMove={(e) => {
         pointerRef.current = { x: e.clientX, y: e.clientY };
       }}
-      onPointerDown={(e) => {
-        // Log every click attempt so we can compare with node screen positions
-        const canvasEl = containerRef.current?.querySelector("canvas");
-        const canvasRect = canvasEl?.getBoundingClientRect();
-        const localX = e.clientX - (canvasRect?.left ?? 0);
-        const localY = e.clientY - (canvasRect?.top ?? 0);
-        console.log(
-          `[click] client(${e.clientX}, ${e.clientY}) → canvas-local(${localX.toFixed(1)}, ${localY.toFixed(1)})` +
-          ` | canvas rect: left=${canvasRect?.left?.toFixed(1)} top=${canvasRect?.top?.toFixed(1)} w=${canvasRect?.width?.toFixed(1)} h=${canvasRect?.height?.toFixed(1)}`
-        );
-      }}
     >
       {dimensions.width > 0 && (
         <ForceGraph2D
@@ -430,7 +371,7 @@ export default function GraphCanvasInner({
           nodeId="id"
           nodeCanvasObject={nodeCanvasObject}
           nodeCanvasObjectMode={() => "replace"}
-          nodePointerAreaPaint={nodePointerAreaPaint}
+          nodeRelSize={5}
           linkPointerAreaPaint={linkPointerAreaPaint}
           linkColor={linkColor}
           linkWidth={linkWidth}
@@ -444,7 +385,6 @@ export default function GraphCanvasInner({
           d3AlphaDecay={0.05}
           onNodeClick={(node) => {
             const n = node as GraphNode;
-            console.log("[picking] node clicked:", n.id);
             setClickedNodeId((prev) => (prev === n.id ? null : n.id));
             setClickedEdgeInfo(null);
           }}
@@ -483,15 +423,6 @@ export default function GraphCanvasInner({
             setClickedNodeId(null);
           }}
           onBackgroundClick={() => {
-            // Fires whenever a click doesn't hit any node — log so we can
-            // compare against the node positions logged above
-            const canvasEl = containerRef.current?.querySelector("canvas");
-            const canvasRect = canvasEl?.getBoundingClientRect();
-            const localX = pointerRef.current.x - (canvasRect?.left ?? 0);
-            const localY = pointerRef.current.y - (canvasRect?.top ?? 0);
-            console.log(
-              `[background click] canvas-local(${localX.toFixed(1)}, ${localY.toFixed(1)})`
-            );
             setClickedNodeId(null);
             setClickedEdgeInfo(null);
           }}
