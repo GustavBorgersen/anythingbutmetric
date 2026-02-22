@@ -378,5 +378,9 @@
       "iceberg",
       "area"
     ]
+  },
+  {
+    "id": "giant_block",
+    "label": "Giant Block"
   }
 ]
