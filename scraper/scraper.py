@@ -48,7 +48,7 @@ FEEDS_FILE = Path(__file__).parent / "feeds.txt"
 # ---------------------------------------------------------------------------
 FETCH_TIMEOUT = 15          # seconds for raw HTML requests
 JINA_TIMEOUT = 30           # seconds for Jina Reader (headless browser, needs more time)
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "meta-llama/llama-4-maverick-17b-128e-instruct"
 GROQ_RPM = 25               # free tier allows 30 RPM; stay a little under
 GEMINI_MODEL = "gemini-2.5-flash"
 GEMINI_RPM = 5              # free-tier requests per minute; enforced with sleep
@@ -136,10 +136,22 @@ def build_units_prompt_block(units: list[dict]) -> str:
 EXTRACTION_PROMPT_TEMPLATE = """\
 You are extracting journalistic unit comparisons from a news article.
 
-A journalistic unit comparison is a sentence like:
-  "The lake is the size of 200 football pitches."
+A journalistic unit comparison uses something UNFAMILIAR to help the reader picture scale by \
+comparing it to something FAMILIAR and PHYSICAL. The reader should finish the sentence with a \
+clearer mental image of the size, weight, area, or volume being described.
+
+GOOD examples — these are comparisons:
+  "The iceberg is a quarter the size of Wales."
   "Scientists discovered a deposit 3 times the size of Wales."
   "The whale weighs as much as 30 double-decker buses."
+  "The Great Barrier Reef is the size of 70 million football pitches."
+
+BAD examples — these are NOT comparisons; return [] for articles that only contain these:
+  "The temperature rose by 2.5°C."          ← raw statistic; no reference unit
+  "The mission lasted 9 months."             ← duration; not compared to anything physical
+  "1 in 4 properties face flood risk."       ← ratio/proportion; no physical unit
+  "The deposit contains £1 billion of ore."  ← monetary value; not a size comparison
+  "The asteroid is 500 million years old."   ← age; not compared to a relatable unit
 
 Known units (use their exact `id` when you recognise them):
 {units_block}
@@ -157,14 +169,25 @@ Return a JSON array of comparison objects found in the article. Each object must
   "source_quote": "<verbatim sentence from the article>"
 }}
 
-Rules:
+Hard rules — a comparison is only valid when ALL of the following are true:
+1. `from` and `to` are DIFFERENT things — never the same unit compared to itself.
+2. Both `from` and `to` are physical, tangible, visualisable things (not time periods,
+   currencies, percentages, or abstract concepts like "property", "mission", or "temperature").
+3. The source_quote contains explicit comparative language — at least one of:
+   "as big as", "the size of", "times the size", "equivalent to", "as long as",
+   "as heavy as", "as tall as", "as wide as", "as much as", "the weight of",
+   "the length of", "the height of", "the area of", "the volume of".
+4. The comparison helps a reader visualise scale — the familiar unit gives an intuitive
+   sense of how big, heavy, or large the unfamiliar thing is.
+
+Additional rules:
 - If a unit matches something in the known list, return its exact string id.
 - If a unit is genuinely new, return a full object:
   {{"id": "suggested_snake_case_id", "label": "Human Label", "emoji": "🔵",
     "aliases": ["plural", "alt name"], "tags": ["category"]}}
 - `factor` must be a positive float (e.g. if 1 from = 200 to, factor = 200.0).
 - `source_quote` must be a verbatim sentence copied from the article text above.
-- Return [] if no journalistic comparisons are found.
+- Return [] when in doubt — it is far better to miss a real comparison than to invent a fake one.
 - Do not invent comparisons not stated in the article.
 """
 

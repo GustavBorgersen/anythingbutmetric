@@ -42,12 +42,13 @@ jobs:
           BRANCH="scraper/$(date +%Y-%m-%d)"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b "$BRANCH"
+          git checkout -B "$BRANCH"
           git add data/edges.json data/units.json
           git commit -m "scraper: add ${{ steps.run_scraper.outputs.NEW_EDGES }} new edges"
-          git push origin "$BRANCH"
+          git push -f origin "$BRANCH"
           gh pr create \
             --title "Scraper: ${{ steps.run_scraper.outputs.NEW_EDGES }} new edges ($(date +%Y-%m-%d))" \
             --body "Automatically extracted by daily scraper. All edges have \`verified: false\`. New units (if any) are also included — review both files before merging." \
             --base main \
-            --head "$BRANCH"
+            --head "$BRANCH" || \
+            echo "PR already exists for $BRANCH — skipping creation"
