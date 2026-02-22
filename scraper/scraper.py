@@ -90,7 +90,7 @@ def fetch_article_text(url: str) -> str | None:
         if resp.ok:
             result = trafilatura.extract(resp.content)
             if result and len(result) > 200:
-                log.debug("  trafilatura succeeded (%d chars)", len(result))
+                log.info("  trafilatura succeeded (%d chars)", len(result))
                 return result
     except Exception as exc:
         log.warning("  trafilatura fetch failed for %s: %s", url, exc)
@@ -108,7 +108,7 @@ def fetch_article_text(url: str) -> str | None:
         if resp.ok:
             text = resp.text.strip()
             if len(text) > 200:
-                log.debug("  Jina fallback succeeded (%d chars)", len(text))
+                log.info("  Jina fallback succeeded (%d chars)", len(text))
                 return text
             log.warning("  Jina returned too little text (%d chars): %s", len(text), url)
     except Exception as exc:
