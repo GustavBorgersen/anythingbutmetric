@@ -308,5 +308,15 @@
     "source_quote": "An iPhone 15 (171g) weighs about 1/42nd as much as a regulation bowling ball (7,257g).",
     "date_scraped": "2026-02-01",
     "verified": true
+  },
+  {
+    "id": "e060",
+    "from": "larsen_c_iceberg",
+    "to": "wales",
+    "factor": 0.25,
+    "source_url": "https://www.bbc.com/news/science-environment-40321674",
+    "source_quote": "The giant block is estimated to cover an area of roughly 6,000 sq km; that's about a quarter the size of Wales.",
+    "date_scraped": "2026-02-22",
+    "verified": false
   }
 ]

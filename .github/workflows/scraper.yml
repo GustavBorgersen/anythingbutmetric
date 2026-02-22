@@ -1,0 +1,52 @@
+name: Daily scraper
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 06:00 UTC daily
+  workflow_dispatch:        # manual trigger for testing
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r scraper/requirements.txt
+
+      - name: Run scraper
+        id: run_scraper
+        env:
+          GOOGLE_AI_API_KEY: ${{ secrets.GOOGLE_AI_API_KEY }}
+        run: |
+          output=$(python scraper/scraper.py)
+          echo "$output"
+          echo "$output" >> $GITHUB_OUTPUT
+
+      - name: Open PR if new edges found
+        if: ${{ steps.run_scraper.outputs.NEW_EDGES != '0' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="scraper/$(date +%Y-%m-%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add data/edges.json data/units.json
+          git commit -m "scraper: add ${{ steps.run_scraper.outputs.NEW_EDGES }} new edges"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "Scraper: ${{ steps.run_scraper.outputs.NEW_EDGES }} new edges ($(date +%Y-%m-%d))" \
+            --body "Automatically extracted by daily scraper. All edges have \`verified: false\`. New units (if any) are also included — review both files before merging." \
+            --base main \
+            --head "$BRANCH"

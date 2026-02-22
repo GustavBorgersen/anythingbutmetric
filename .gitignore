@@ -37,3 +37,9 @@ next-env.d.ts
 
 # Windows Zone.Identifier artifacts
 *:Zone.Identifier
+
+# Python virtual environments
+.venv/
+venv/
+__pycache__/
+*.pyc
