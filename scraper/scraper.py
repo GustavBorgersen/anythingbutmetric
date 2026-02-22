@@ -377,7 +377,8 @@ def resolve_unit(
         # dropping the whole comparison (the LLM should have returned an object,
         # but sometimes it returns a plausible-looking snake_case string instead)
         log.info("Unknown unit id %r — creating as new unit", unit_ref)
-        unit_ref = {"id": unit_ref, "label": unit_ref.replace("_", " ").title()}
+        human = unit_ref.replace("_", " ")
+        unit_ref = {"id": unit_ref, "label": human.title(), "aliases": [human]}
 
     if isinstance(unit_ref, dict):
         suggested_id = unit_ref.get("id") or slugify(unit_ref.get("label", "unknown"))
