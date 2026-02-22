@@ -3,7 +3,7 @@
     "id": "e001",
     "from": "larsen_c_iceberg",
     "to": "wales",
-    "factor": 4.0,
+    "factor": 0.25,
     "source_url": "https://www.bbc.com/news/science-environment-40321674",
     "source_quote": "The giant block is estimated to cover an area of roughly 6,000 sq km; that's about a quarter the size of Wales.",
     "date_scraped": "2026-02-22",
@@ -66,16 +66,6 @@
     "factor": 2.0,
     "source_url": "https://edition.cnn.com/2019/12/11/world/swim-great-pacific-garbage-patch-c2e-intl-hnk",
     "source_quote": "the garbage spans an area between North America and Japan of roughly 1.6 million square kilometers – three times the size of France, and more than double the size of Texas.",
-    "date_scraped": "2026-02-22",
-    "verified": false
-  },
-  {
-    "id": "e008",
-    "from": "microplastic_concentration",
-    "to": "snowy_day",
-    "factor": 1.0,
-    "source_url": "https://edition.cnn.com/2019/12/11/world/swim-great-pacific-garbage-patch-c2e-intl-hnk",
-    "source_quote": "“it’s like looking up at the skies on a snowy day – but in reverse,” he tells CNN.",
     "date_scraped": "2026-02-22",
     "verified": false
   }
