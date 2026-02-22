@@ -19,7 +19,7 @@ export default function HomeClient({
   liveUnits,
   liveEdges,
 }: Props) {
-  const [mode, setMode] = useState<"seed" | "live">("seed");
+  const [mode, setMode] = useState<"seed" | "live">("live");
   const [fromId, setFromId] = useState<string | null>(null);
   const [toId, setToId] = useState<string | null>(null);
   const quantity = 1;
