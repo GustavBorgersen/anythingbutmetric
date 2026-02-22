@@ -13,6 +13,21 @@ interface Props {
   liveEdges: Edge[];
 }
 
+function getIsland(startId: string, edges: Edge[]): Set<string> {
+  const visited = new Set<string>();
+  const queue = [startId];
+  while (queue.length) {
+    const cur = queue.shift()!;
+    if (visited.has(cur)) continue;
+    visited.add(cur);
+    for (const e of edges) {
+      if (e.from === cur && !visited.has(e.to)) queue.push(e.to);
+      if (e.to === cur && !visited.has(e.from)) queue.push(e.from);
+    }
+  }
+  return visited;
+}
+
 export default function HomeClient({
   seedUnits,
   seedEdges,
@@ -80,6 +95,15 @@ export default function HomeClient({
     edgeIds: r.edgeIds,
     routeIndex: r.routeIndex,
   }));
+
+  // Missing link: highlight the two disconnected islands
+  const missingLinkGroups: [string[], string[]] | null =
+    noPath && fromId && toId
+      ? [
+          Array.from(getIsland(fromId, activeEdges)),
+          Array.from(getIsland(toId, activeEdges)),
+        ]
+      : null;
 
   const fromUnit = activeUnits.find((u) => u.id === fromId) ?? null;
   const toUnit = activeUnits.find((u) => u.id === toId) ?? null;
@@ -174,7 +198,12 @@ export default function HomeClient({
 
         {/* Graph: fills remaining height on mobile, full area on desktop */}
         <div className="flex-1 min-h-0 overflow-hidden sm:absolute sm:inset-0">
-          <GraphCanvas units={activeUnits} edges={activeEdges} highlights={highlights} />
+          <GraphCanvas
+            units={activeUnits}
+            edges={activeEdges}
+            highlights={highlights}
+            missingLinkGroups={missingLinkGroups}
+          />
         </div>
 
         {/* Desktop: result cards overlay top-left */}
