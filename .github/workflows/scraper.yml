@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '0 6 * * *'   # 06:00 UTC daily
   workflow_dispatch:        # manual trigger for testing
+    inputs:
+      clear_scraped:
+        description: 'Wipe live data before running (fresh test — resets edges.json to [])'
+        type: boolean
+        default: false
 
 jobs:
   scrape:
@@ -23,6 +28,12 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r scraper/requirements.txt
+
+      - name: Clear scraped data (test reset)
+        if: ${{ github.event.inputs.clear_scraped == 'true' }}
+        run: |
+          echo "[]" > data/edges.json
+          cp data/seed-units.json data/units.json
 
       - name: Run scraper
         id: run_scraper

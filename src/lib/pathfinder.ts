@@ -15,11 +15,12 @@ export function findRoutes(
   fromId: string,
   toId: string,
   quantity: number,
+  mode: "seed" | "live" = "seed",
   maxRoutes = 5
 ): Route[] {
   if (fromId === toId) return [];
 
-  const adjacency = getAdjacency();
+  const adjacency = getAdjacency(mode);
   if (!adjacency.has(fromId) || !adjacency.has(toId)) return [];
 
   // BFS with parent-list tracking
@@ -118,9 +119,9 @@ export function findRoutes(
       const stepFromId = i === 0 ? fromId : path[i - 1].nodeId;
       const stepToId = p.nodeId;
 
-      const edge = getEdgeById(p.edgeId)!;
+      const edge = getEdgeById(p.edgeId, mode)!;
       const factor = p.forward ? edge.factor : 1 / edge.factor;
-      const allEdges = getAllEdgesForPair(stepFromId, stepToId);
+      const allEdges = getAllEdgesForPair(stepFromId, stepToId, mode);
 
       return { fromId: stepFromId, toId: stepToId, factor, edges: allEdges };
     });
@@ -129,7 +130,7 @@ export function findRoutes(
     const accumulatedFactor = steps.reduce((acc, s) => acc * s.factor, 1);
     const result = quantity * accumulatedFactor;
 
-    const units = getUnits();
+    const units = getUnits(mode);
     const unitLabel = (id: string) =>
       units.find((u) => u.id === id)?.label ?? id;
 

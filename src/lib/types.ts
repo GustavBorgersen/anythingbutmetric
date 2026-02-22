@@ -37,6 +37,7 @@ export interface ConvertRequest {
   from: string;
   to: string;
   quantity: number;
+  mode?: "seed" | "live";
 }
 
 export interface GraphData {

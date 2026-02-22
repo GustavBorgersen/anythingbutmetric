@@ -7,11 +7,19 @@ import GraphCanvas from "./GraphCanvas";
 import type { Unit, Edge, Route, HighlightState } from "@/lib/types";
 
 interface Props {
-  units: Unit[];
-  edges: Edge[];
+  seedUnits: Unit[];
+  seedEdges: Edge[];
+  liveUnits: Unit[];
+  liveEdges: Edge[];
 }
 
-export default function HomeClient({ units, edges }: Props) {
+export default function HomeClient({
+  seedUnits,
+  seedEdges,
+  liveUnits,
+  liveEdges,
+}: Props) {
+  const [mode, setMode] = useState<"seed" | "live">("seed");
   const [fromId, setFromId] = useState<string | null>(null);
   const [toId, setToId] = useState<string | null>(null);
   const quantity = 1;
@@ -19,15 +27,18 @@ export default function HomeClient({ units, edges }: Props) {
   const [loading, setLoading] = useState(false);
   const [noPath, setNoPath] = useState(false);
 
+  const activeUnits = mode === "seed" ? seedUnits : liveUnits;
+  const activeEdges = mode === "seed" ? seedEdges : liveEdges;
+
   const doConvert = useCallback(
-    async (from: string, to: string, qty: number) => {
+    async (from: string, to: string, qty: number, m: "seed" | "live") => {
       setLoading(true);
       setNoPath(false);
       try {
         const res = await fetch("/api/convert", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ from, to, quantity: qty }),
+          body: JSON.stringify({ from, to, quantity: qty, mode: m }),
         });
         const data: Route[] = await res.json();
         setRoutes(data);
@@ -42,16 +53,24 @@ export default function HomeClient({ units, edges }: Props) {
     []
   );
 
+  // Reset selections when mode changes
+  useEffect(() => {
+    setFromId(null);
+    setToId(null);
+    setRoutes([]);
+    setNoPath(false);
+  }, [mode]);
+
   // Reactive convert: fires whenever both units are selected
   useEffect(() => {
     if (fromId && toId) {
-      doConvert(fromId, toId, quantity);
+      doConvert(fromId, toId, quantity, mode);
     } else {
       setRoutes([]);
       setNoPath(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fromId, toId, quantity]);
+  }, [fromId, toId, quantity, mode]);
 
   // Derive highlight state from routes
   const highlights: HighlightState[] = routes.map((r) => ({
@@ -60,8 +79,8 @@ export default function HomeClient({ units, edges }: Props) {
     routeIndex: r.routeIndex,
   }));
 
-  const fromUnit = units.find((u) => u.id === fromId) ?? null;
-  const toUnit = units.find((u) => u.id === toId) ?? null;
+  const fromUnit = activeUnits.find((u) => u.id === fromId) ?? null;
+  const toUnit = activeUnits.find((u) => u.id === toId) ?? null;
 
   const cardList = (
     <>
@@ -87,7 +106,7 @@ export default function HomeClient({ units, edges }: Props) {
             fromUnit={fromUnit}
             toUnit={toUnit}
             quantity={quantity}
-            units={units}
+            units={activeUnits}
           />
         ))}
     </>
@@ -99,7 +118,7 @@ export default function HomeClient({ units, edges }: Props) {
       <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
         <div className="flex-1 min-w-0">
           <UnitSelector
-            units={units}
+            units={activeUnits}
             value={fromId}
             onChange={setFromId}
             placeholder="From unit…"
@@ -108,11 +127,35 @@ export default function HomeClient({ units, edges }: Props) {
 
         <div className="flex-1 min-w-0">
           <UnitSelector
-            units={units}
+            units={activeUnits}
             value={toId}
             onChange={setToId}
             placeholder="To unit…"
           />
+        </div>
+
+        {/* Mode toggle */}
+        <div className="flex shrink-0 rounded-full border border-zinc-700 overflow-hidden text-xs font-medium">
+          <button
+            onClick={() => setMode("seed")}
+            className={`px-3 py-1 transition-colors ${
+              mode === "seed"
+                ? "bg-zinc-200 text-zinc-900"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            Demo
+          </button>
+          <button
+            onClick={() => setMode("live")}
+            className={`px-3 py-1 transition-colors ${
+              mode === "live"
+                ? "bg-zinc-200 text-zinc-900"
+                : "text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            Live
+          </button>
         </div>
 
         {loading && (
@@ -129,7 +172,7 @@ export default function HomeClient({ units, edges }: Props) {
 
         {/* Graph: fills remaining height on mobile, full area on desktop */}
         <div className="flex-1 min-h-0 overflow-hidden sm:absolute sm:inset-0">
-          <GraphCanvas units={units} edges={edges} highlights={highlights} />
+          <GraphCanvas units={activeUnits} edges={activeEdges} highlights={highlights} />
         </div>
 
         {/* Desktop: result cards overlay top-left */}

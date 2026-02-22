@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { from, to, quantity } = body;
+  const { from, to, quantity, mode = "seed" } = body;
 
   if (typeof from !== "string" || typeof to !== "string") {
     return NextResponse.json(
@@ -25,6 +25,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const routes = findRoutes(from, to, quantity);
+  const routes = findRoutes(from, to, quantity, mode);
   return NextResponse.json(routes);
 }

@@ -8,67 +8,96 @@ export interface AdjacencyEntry {
   forward: boolean; // true = use edge.factor; false = use 1/edge.factor
 }
 
-let _units: Unit[] | null = null;
-let _edges: Edge[] | null = null;
-let _adjacency: Map<string, AdjacencyEntry[]> | null = null;
+type DataCache = {
+  units: Unit[];
+  edges: Edge[];
+  adjacency: Map<string, AdjacencyEntry[]>;
+};
 
-function loadData() {
-  if (_units && _edges && _adjacency) return;
+let _seed: DataCache | null = null;
+let _live: DataCache | null = null;
 
-  const dataDir = path.join(process.cwd(), "data");
-  _units = JSON.parse(
-    fs.readFileSync(path.join(dataDir, "units.json"), "utf-8")
-  ) as Unit[];
-  _edges = JSON.parse(
-    fs.readFileSync(path.join(dataDir, "edges.json"), "utf-8")
-  ) as Edge[];
+function buildAdjacency(edges: Edge[]): Map<string, AdjacencyEntry[]> {
+  const adjacency = new Map<string, AdjacencyEntry[]>();
+  for (const edge of edges) {
+    if (!adjacency.has(edge.from)) adjacency.set(edge.from, []);
+    if (!adjacency.has(edge.to)) adjacency.set(edge.to, []);
 
-  _adjacency = new Map<string, AdjacencyEntry[]>();
-
-  for (const edge of _edges) {
-    if (!edge.verified) continue; // only verified edges for pathfinding
-
-    if (!_adjacency.has(edge.from)) _adjacency.set(edge.from, []);
-    if (!_adjacency.has(edge.to)) _adjacency.set(edge.to, []);
-
-    _adjacency.get(edge.from)!.push({
+    adjacency.get(edge.from)!.push({
       edgeId: edge.id,
       neighbourId: edge.to,
       forward: true,
     });
 
-    _adjacency.get(edge.to)!.push({
+    adjacency.get(edge.to)!.push({
       edgeId: edge.id,
       neighbourId: edge.from,
       forward: false,
     });
   }
+  return adjacency;
 }
 
-export function getUnits(): Unit[] {
-  loadData();
-  return _units!;
+function loadSeed(): DataCache {
+  if (_seed) return _seed;
+  const dataDir = path.join(process.cwd(), "data");
+  const units = JSON.parse(
+    fs.readFileSync(path.join(dataDir, "seed-units.json"), "utf-8")
+  ) as Unit[];
+  const edges = JSON.parse(
+    fs.readFileSync(path.join(dataDir, "seed-edges.json"), "utf-8")
+  ) as Edge[];
+  // All seed edges are hand-verified; no flag filtering needed
+  _seed = { units, edges, adjacency: buildAdjacency(edges) };
+  return _seed;
 }
 
-export function getEdges(): Edge[] {
-  loadData();
-  return _edges!;
+function loadLive(): DataCache {
+  if (_live) return _live;
+  const dataDir = path.join(process.cwd(), "data");
+  const units = JSON.parse(
+    fs.readFileSync(path.join(dataDir, "units.json"), "utf-8")
+  ) as Unit[];
+  const edges = JSON.parse(
+    fs.readFileSync(path.join(dataDir, "edges.json"), "utf-8")
+  ) as Edge[];
+  // verified flag ignored — merging the scraper PR is the approval step
+  _live = { units, edges, adjacency: buildAdjacency(edges) };
+  return _live;
 }
 
-export function getAdjacency(): Map<string, AdjacencyEntry[]> {
-  loadData();
-  return _adjacency!;
+function getCache(mode: "seed" | "live"): DataCache {
+  return mode === "seed" ? loadSeed() : loadLive();
 }
 
-export function getEdgeById(id: string): Edge | undefined {
-  loadData();
-  return _edges!.find((e) => e.id === id);
+export function getUnits(mode: "seed" | "live" = "seed"): Unit[] {
+  return getCache(mode).units;
 }
 
-/** All edges (verified or not) between two nodes, in either direction. */
-export function getAllEdgesForPair(aId: string, bId: string): Edge[] {
-  loadData();
-  return _edges!.filter(
+export function getEdges(mode: "seed" | "live" = "seed"): Edge[] {
+  return getCache(mode).edges;
+}
+
+export function getAdjacency(
+  mode: "seed" | "live" = "seed"
+): Map<string, AdjacencyEntry[]> {
+  return getCache(mode).adjacency;
+}
+
+export function getEdgeById(
+  id: string,
+  mode: "seed" | "live" = "seed"
+): Edge | undefined {
+  return getCache(mode).edges.find((e) => e.id === id);
+}
+
+/** All edges between two nodes, in either direction. */
+export function getAllEdgesForPair(
+  aId: string,
+  bId: string,
+  mode: "seed" | "live" = "seed"
+): Edge[] {
+  return getCache(mode).edges.filter(
     (e) =>
       (e.from === aId && e.to === bId) || (e.from === bId && e.to === aId)
   );
