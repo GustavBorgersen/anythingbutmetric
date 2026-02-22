@@ -151,47 +151,14 @@ export default function GraphCanvasInner({
       const containerRect = containerRef.current?.getBoundingClientRect();
       const canvasRect = canvasEl?.getBoundingClientRect();
 
-      console.group("[debug] DOM geometry (3 s after mount)");
-      console.log("container rect:", containerRect);
-      console.log("canvas rect:", canvasRect);
+      // One-shot geometry check
       console.log(
-        "canvas width/height attrs:",
-        canvasEl?.width,
-        canvasEl?.height
+        `[debug] canvas: ${canvasEl?.width}×${canvasEl?.height} attrs | ` +
+        `CSS ${canvasRect?.width?.toFixed(0)}×${canvasRect?.height?.toFixed(0)} | ` +
+        `offset from container: ${(canvasRect && containerRect ? canvasRect.left - containerRect.left : "?").toString().slice(0,6)},` +
+        `${(canvasRect && containerRect ? canvasRect.top - containerRect.top : "?").toString().slice(0,6)} | ` +
+        `dpr=${window.devicePixelRatio} | dimensions prop=${dimensions.width}×${dimensions.height}`
       );
-      console.log("dimensions state passed as props:", dimensions);
-      console.log("devicePixelRatio:", window.devicePixelRatio);
-      if (containerRect && canvasRect) {
-        console.log(
-          "canvas offset from container:",
-          (canvasRect.left - containerRect.left).toFixed(1),
-          (canvasRect.top - containerRect.top).toFixed(1),
-          "| size diff:",
-          (canvasRect.width - containerRect.width).toFixed(1),
-          (canvasRect.height - containerRect.height).toFixed(1)
-        );
-      }
-      console.groupEnd();
-
-      // Log every node's expected screen position (canvas-local CSS pixels)
-      const zoom = graphRef.current.zoom() as number;
-      const center = graphRef.current.centerAt() as { x: number; y: number };
-      console.group("[debug] Node screen positions (canvas-local, zoom=" + zoom.toFixed(3) + ")");
-      graphData.nodes.forEach((n) => {
-        if (n.x == null || n.y == null) {
-          console.warn("  " + n.id + ": NO POSITION");
-          return;
-        }
-        // Node at graph (gx,gy) appears at canvas-local CSS pixel:
-        //   x = width/2 + (gx - centerX) * zoom
-        //   y = height/2 + (gy - centerY) * zoom
-        const sx = dimensions.width / 2 + (n.x - center.x) * zoom;
-        const sy = dimensions.height / 2 + (n.y - center.y) * zoom;
-        console.log(
-          `  ${n.id}: graph(${n.x.toFixed(1)}, ${n.y.toFixed(1)}) → canvas-local(${sx.toFixed(1)}, ${sy.toFixed(1)})`
-        );
-      });
-      console.groupEnd();
     }, 3000);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -355,19 +322,16 @@ export default function GraphCanvasInner({
       ctx.beginPath();
       ctx.arc(n.x, n.y, radius, 0, 2 * Math.PI);
       ctx.fill();
-      // Debug: log the ACTUAL canvas-pixel position where this node is painted.
-      // ctx.getTransform() gives us the matrix applied to the shadow context, so
-      // we can compute the exact screen pixel without guessing the center.
-      const t = ctx.getTransform();
-      // transform is setTransform(k,0,0,k,tx,ty) so:
-      //   screenX = t.a * gx + t.e
-      //   screenY = t.d * gy + t.f
-      const sx = t.a * n.x + t.e;
-      const sy = t.d * n.y + t.f;
-      const sr = radius * t.a; // hit-area radius in canvas pixels
-      console.log(
-        `[shadow paint] ${n.id}: graph(${n.x.toFixed(1)},${n.y.toFixed(1)}) → canvas-px(${sx.toFixed(1)},${sy.toFixed(1)}) r=${sr.toFixed(1)} color=${color}`
-      );
+      // Debug: only log the two nodes we're comparing
+      if (n.id === "france" || n.id === "great_pacific_garbage_patch") {
+        const t = ctx.getTransform();
+        const sx = t.a * n.x + t.e;
+        const sy = t.d * n.y + t.f;
+        const sr = radius * t.a;
+        console.log(
+          `[shadow] ${n.id}: canvas-px(${sx.toFixed(1)},${sy.toFixed(1)}) r=${sr.toFixed(1)} color=${color}`
+        );
+      }
     },
     []
   );
