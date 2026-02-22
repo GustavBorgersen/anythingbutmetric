@@ -29,6 +29,8 @@ export default function HomeClient({
 
   const activeUnits = mode === "seed" ? seedUnits : liveUnits;
   const activeEdges = mode === "seed" ? seedEdges : liveEdges;
+  const connectedIds = new Set(activeEdges.flatMap((e) => [e.from, e.to]));
+  const selectableUnits = activeUnits.filter((u) => connectedIds.has(u.id));
 
   const doConvert = useCallback(
     async (from: string, to: string, qty: number, m: "seed" | "live") => {
@@ -118,7 +120,7 @@ export default function HomeClient({
       <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
         <div className="flex-1 min-w-0">
           <UnitSelector
-            units={activeUnits}
+            units={selectableUnits}
             value={fromId}
             onChange={setFromId}
             placeholder="From unit…"
@@ -127,7 +129,7 @@ export default function HomeClient({
 
         <div className="flex-1 min-w-0">
           <UnitSelector
-            units={activeUnits}
+            units={selectableUnits}
             value={toId}
             onChange={setToId}
             placeholder="To unit…"
