@@ -90,10 +90,13 @@ def fetch_article_text(url: str) -> str | None:
         if resp.ok:
             result = trafilatura.extract(resp.content)
             if result and len(result) > 200:
-                log.info("  trafilatura succeeded (%d chars)", len(result))
+                log.info("  fetch: trafilatura OK (%d chars)", len(result))
                 return result
+            log.info("  fetch: trafilatura got no content — trying Jina")
+        else:
+            log.info("  fetch: trafilatura HTTP %s — trying Jina", resp.status_code)
     except Exception as exc:
-        log.warning("  trafilatura fetch failed for %s: %s", url, exc)
+        log.warning("  fetch: trafilatura error (%s) — trying Jina", exc)
 
     # 2. Jina Reader — external API, headless browser for JS-rendered pages
     try:
@@ -108,11 +111,13 @@ def fetch_article_text(url: str) -> str | None:
         if resp.ok:
             text = resp.text.strip()
             if len(text) > 200:
-                log.info("  Jina fallback succeeded (%d chars)", len(text))
+                log.info("  fetch: Jina OK (%d chars)", len(text))
                 return text
-            log.warning("  Jina returned too little text (%d chars): %s", len(text), url)
+            log.warning("  fetch: Jina too little text (%d chars)", len(text))
+        else:
+            log.warning("  fetch: Jina HTTP %s", resp.status_code)
     except Exception as exc:
-        log.warning("  Jina fetch failed for %s: %s", url, exc)
+        log.warning("  fetch: Jina error (%s)", exc)
 
     return None
 
@@ -305,23 +310,29 @@ def process_article(
     today: str,
 ) -> None:
     """Fetch, extract, validate and collect edges for a single article URL."""
+    log.info("--- %s", article_url)
+
     if fallback_text:
         # Supplied text (--text flag or RSS summary) — skip HTTP fetch
         text = BeautifulSoup(fallback_text, "html.parser").get_text(separator=" ", strip=True)
+        log.info("  fetch: using supplied/RSS text (%d chars)", len(text))
     else:
         text = fetch_article_text(article_url)
+
     if not text:
-        log.debug("  No text for: %s", article_url)
+        log.info("  fetch: no text — skipping")
         return
 
-    log.info("  Calling Gemini for: %s", article_url)
+    log.info("  gemini: calling...")
     all_units = units + list(new_units_map.values())
     comparisons = call_gemini(text, all_units)
 
     if not comparisons:
+        if not _quota_exhausted:
+            log.info("  gemini: no comparisons found")
         return
 
-    log.info("  Got %d comparisons", len(comparisons))
+    log.info("  gemini: %d comparison(s) found", len(comparisons))
 
     for comp in comparisons:
         if not validate_comparison(comp, existing_unit_ids):
@@ -428,6 +439,9 @@ def main() -> None:
         log.info("Processing %d feed URLs", len(feed_urls))
 
         for feed_url in feed_urls:
+            if _quota_exhausted:
+                break
+
             log.info("Fetching feed: %s", feed_url)
             try:
                 feed = feedparser.parse(feed_url)
@@ -438,14 +452,16 @@ def main() -> None:
             entries = feed.get("entries", [])
             if args.max_entries:
                 entries = entries[:args.max_entries]
-            log.info("  %d entries to process", len(entries))
+            log.info("  %d entries", len(entries))
 
             for entry in entries:
+                if _quota_exhausted:
+                    break
+
                 article_url = entry.get("link", "")
                 if not article_url:
                     continue
                 if article_url in existing_source_urls:
-                    log.debug("  Already seen: %s", article_url)
                     continue
                 existing_source_urls.add(article_url)
 
@@ -456,14 +472,19 @@ def main() -> None:
     n_new_units = len(new_units_map)
     n_new_edges = len(new_edges)
 
+    log.info("=" * 60)
+    if _quota_exhausted:
+        log.warning("Daily Gemini quota was exhausted — not all articles were processed")
+    log.info("New edges: %d  |  New units: %d", n_new_edges, n_new_units)
+
     if n_new_units > 0 or n_new_edges > 0:
         if n_new_units > 0:
-            log.info("Appending %d new units", n_new_units)
+            log.info("Writing %d new unit(s) to %s", n_new_units, UNITS_FILE)
             units.extend(new_units_map.values())
             save_json(UNITS_FILE, units)
 
         if n_new_edges > 0:
-            log.info("Appending %d new edges", n_new_edges)
+            log.info("Writing %d new edge(s) to %s", n_new_edges, EDGES_FILE)
             edges.extend(new_edges)
             save_json(EDGES_FILE, edges)
 
