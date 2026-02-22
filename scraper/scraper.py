@@ -163,12 +163,16 @@ Rules:
 
 
 _last_gemini_call: float = 0.0   # module-level timestamp for rate limiting
+_quota_exhausted: bool = False   # set True when daily quota is hit; stops all further calls
 
 
 def call_gemini(article_text: str, units: list[dict]) -> list[dict]:
     """Call Gemini Flash and return parsed comparison objects."""
-    global _last_gemini_call
+    global _last_gemini_call, _quota_exhausted
     import google.generativeai as genai
+
+    if _quota_exhausted:
+        return []
 
     api_key = os.environ.get("GOOGLE_AI_API_KEY")
     if not api_key:
@@ -209,7 +213,19 @@ def call_gemini(article_text: str, units: list[dict]) -> list[dict]:
         log.warning("Gemini JSON parse error: %s", exc)
         return []
     except Exception as exc:
-        log.warning("Gemini API error: %s", exc)
+        err = str(exc)
+        # Parse retry_delay from the 429 response body
+        m = re.search(r"retry_delay\s*\{\s*seconds:\s*(\d+)", err)
+        retry_secs = int(m.group(1)) if m else None
+        # Daily quota exhausted — no point retrying anything this run
+        if "PerDay" in err:
+            log.warning("  Daily quota exhausted — stopping Gemini calls for this run")
+            _quota_exhausted = True
+        elif retry_secs:
+            log.warning("  Rate-limited; sleeping %ds as requested then skipping article", retry_secs)
+            time.sleep(retry_secs)
+        else:
+            log.warning("Gemini API error: %s", exc)
         return []
 
 
