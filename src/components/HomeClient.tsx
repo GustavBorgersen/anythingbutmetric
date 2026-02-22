@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import UnitSelector from "./UnitSelector";
 import ResultCard from "./ResultCard";
 import GraphCanvas from "./GraphCanvas";
@@ -89,21 +89,29 @@ export default function HomeClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromId, toId, quantity, mode]);
 
-  // Derive highlight state from routes
-  const highlights: HighlightState[] = routes.map((r) => ({
-    nodeIds: r.nodeIds,
-    edgeIds: r.edgeIds,
-    routeIndex: r.routeIndex,
-  }));
+  // Memoised so GraphCanvasInner's auto-zoom effect only fires when routes
+  // actually change, not on every HomeClient re-render.
+  const highlights: HighlightState[] = useMemo(
+    () =>
+      routes.map((r) => ({
+        nodeIds: r.nodeIds,
+        edgeIds: r.edgeIds,
+        routeIndex: r.routeIndex,
+      })),
+    [routes]
+  );
 
-  // Missing link: highlight the two disconnected islands
-  const missingLinkGroups: [string[], string[]] | null =
-    noPath && fromId && toId
-      ? [
-          Array.from(getIsland(fromId, activeEdges)),
-          Array.from(getIsland(toId, activeEdges)),
-        ]
-      : null;
+  const missingLinkGroups: [string[], string[]] | null = useMemo(
+    () =>
+      noPath && fromId && toId
+        ? [
+            Array.from(getIsland(fromId, activeEdges)),
+            Array.from(getIsland(toId, activeEdges)),
+          ]
+        : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [noPath, fromId, toId, activeEdges]
+  );
 
   const fromUnit = activeUnits.find((u) => u.id === fromId) ?? null;
   const toUnit = activeUnits.find((u) => u.id === toId) ?? null;

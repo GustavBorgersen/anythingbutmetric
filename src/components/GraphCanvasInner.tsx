@@ -46,12 +46,42 @@ export default function GraphCanvasInner({
   const graphRef = useRef<any>(null);
   const [clickedNodeId, setClickedNodeId] = useState<string | null>(null);
   const [clickedEdgeInfo, setClickedEdgeInfo] = useState<EdgeTooltip | null>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  // Track real pointer position for tooltip placement
+  const pointerRef = useRef({ x: 0, y: 0 });
 
-  // Fix 1: Prevent browser scroll from consuming wheel events before d3-zoom sees them
+  // --- Fix: track container size so ForceGraph2D gets correct canvas dimensions.
+  // Without this, width/height are undefined on first render → canvas defaults to
+  // 300×150px → click hit-testing is completely broken on large screens.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const onWheel = (e: WheelEvent) => e.preventDefault();
+    const ro = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      setDimensions({ width, height });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // --- Fix: smooth wheel zoom.
+  // We disable d3-zoom's built-in wheel handler (enableZoomInteraction={false}) and
+  // implement our own with delta normalisation so trackpad steps are not jumpy.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (!graphRef.current) return;
+      // Normalise deltaMode differences then cap magnitude to avoid large single steps
+      let dy = e.deltaY;
+      if (e.deltaMode === 1) dy *= 16; // lines → pixels
+      if (e.deltaMode === 2) dy *= 400; // pages → pixels
+      const capped = Math.sign(dy) * Math.min(Math.abs(dy), 50);
+      const factor = Math.exp(-capped * 0.002);
+      const cur = graphRef.current.zoom() as number;
+      graphRef.current.zoom(Math.max(0.1, Math.min(10, cur * factor)), 0);
+    };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
@@ -92,7 +122,7 @@ export default function GraphCanvasInner({
     })) as GraphLink[],
   };
 
-  // Build neighbour set for clicked node (use edges prop directly for stability)
+  // Neighbour set for clicked node (uses stable edges prop)
   const neighborIds = useMemo(() => {
     if (!clickedNodeId) return new Set<string>();
     const neighbors = new Set<string>();
@@ -103,20 +133,30 @@ export default function GraphCanvasInner({
     return neighbors;
   }, [clickedNodeId, edges]);
 
-  // Auto-zoom-to-fit when highlights change
+  // Auto-zoom when highlights or missingLinkGroups change
   useEffect(() => {
     if (!graphRef.current) return;
-    if (highlightedNodeIds.size > 0) {
-      setTimeout(() => {
-        graphRef.current.zoomToFit(400, 60, (node: GraphNode) =>
-          highlightedNodeIds.has(node.id)
+    const timer = setTimeout(() => {
+      if (!graphRef.current) return;
+      if (highlightedNodeIds.size > 0) {
+        graphRef.current.zoomToFit(400, 60, (n: GraphNode) =>
+          highlightedNodeIds.has(n.id)
         );
-      }, 300);
-    } else {
-      setTimeout(() => graphRef.current.zoomToFit(400, 40), 300);
-    }
+      } else if (missingLinkGroups) {
+        const bothIds = new Set([
+          ...missingLinkGroups[0],
+          ...missingLinkGroups[1],
+        ]);
+        graphRef.current.zoomToFit(400, 40, (n: GraphNode) =>
+          bothIds.has(n.id)
+        );
+      } else {
+        graphRef.current.zoomToFit(400, 40);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [highlights]);
+  }, [highlights, missingLinkGroups]);
 
   // Missing link island sets
   const islandA = missingLinkGroups ? new Set(missingLinkGroups[0]) : null;
@@ -235,6 +275,37 @@ export default function GraphCanvasInner({
     [highlights, clickedNodeId, neighborIds, missingLinkGroups]
   );
 
+  // Explicit click area for each node — larger than the drawn radius so it's
+  // easy to tap even on small nodes.
+  const nodePointerAreaPaint = useCallback(
+    (node: object, color: string, ctx: CanvasRenderingContext2D) => {
+      const n = node as GraphNode & { x: number; y: number };
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 8, 0, 2 * Math.PI);
+      ctx.fill();
+    },
+    []
+  );
+
+  // Explicit click area for each link — 8px wide invisible stroke so thin
+  // edges are reliably clickable.
+  const linkPointerAreaPaint = useCallback(
+    (link: object, color: string, ctx: CanvasRenderingContext2D) => {
+      const l = link as GraphLink;
+      const src = typeof l.source === "object" ? (l.source as GraphNode) : null;
+      const tgt = typeof l.target === "object" ? (l.target as GraphNode) : null;
+      if (src?.x == null || src?.y == null || tgt?.x == null || tgt?.y == null) return;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.moveTo(src.x as number, src.y as number);
+      ctx.lineTo(tgt.x as number, tgt.y as number);
+      ctx.stroke();
+    },
+    []
+  );
+
   const linkColor = useCallback(
     (link: object) => {
       const l = link as GraphLink;
@@ -276,70 +347,93 @@ export default function GraphCanvasInner({
           typeof l.source === "object" ? (l.source as GraphNode).id : l.source;
         const tgt =
           typeof l.target === "object" ? (l.target as GraphNode).id : l.target;
-        if (src === clickedNodeId || tgt === clickedNodeId) return 1.5;
+        if (src === clickedNodeId || tgt === clickedNodeId) return 2;
       }
 
-      return 1;
+      return 1.5;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [highlights, clickedNodeId]
   );
 
   return (
-    <div ref={containerRef} className="w-full h-full touch-none relative">
-      <ForceGraph2D
-        ref={graphRef}
-        graphData={graphData}
-        nodeId="id"
-        nodeCanvasObject={nodeCanvasObject}
-        nodeCanvasObjectMode={() => "replace"}
-        linkColor={linkColor}
-        linkWidth={linkWidth}
-        linkDirectionalArrowLength={3}
-        linkDirectionalArrowRelPos={1}
-        backgroundColor="#09090b"
-        width={containerRef.current?.clientWidth}
-        height={containerRef.current?.clientHeight}
-        onNodeClick={(node) => {
-          const n = node as GraphNode;
-          setClickedNodeId((prev) => (prev === n.id ? null : n.id));
-          setClickedEdgeInfo(null);
-        }}
-        onLinkClick={(link, event) => {
-          const l = link as GraphLink;
-          const src =
-            typeof l.source === "object" ? (l.source as GraphNode).id : l.source;
-          const tgt =
-            typeof l.target === "object" ? (l.target as GraphNode).id : l.target;
-          const allLinks = graphData.links.filter((gl) => {
-            const gs =
-              typeof gl.source === "object"
-                ? (gl.source as GraphNode).id
-                : gl.source;
-            const gt =
-              typeof gl.target === "object"
-                ? (gl.target as GraphNode).id
-                : gl.target;
-            return (gs === src && gt === tgt) || (gs === tgt && gt === src);
-          }) as GraphLink[];
-          setClickedEdgeInfo({
-            links: allLinks,
-            x: event.clientX,
-            y: event.clientY,
-          });
-          setClickedNodeId(null);
-        }}
-        onBackgroundClick={() => {
-          setClickedNodeId(null);
-          setClickedEdgeInfo(null);
-        }}
-      />
+    <div
+      ref={containerRef}
+      className="w-full h-full touch-none relative"
+      onPointerMove={(e) => {
+        pointerRef.current = { x: e.clientX, y: e.clientY };
+      }}
+    >
+      {dimensions.width > 0 && (
+        <ForceGraph2D
+          ref={graphRef}
+          graphData={graphData}
+          nodeId="id"
+          nodeCanvasObject={nodeCanvasObject}
+          nodeCanvasObjectMode={() => "replace"}
+          nodePointerAreaPaint={nodePointerAreaPaint}
+          linkPointerAreaPaint={linkPointerAreaPaint}
+          linkColor={linkColor}
+          linkWidth={linkWidth}
+          linkDirectionalArrowLength={3}
+          linkDirectionalArrowRelPos={1}
+          backgroundColor="#09090b"
+          width={dimensions.width}
+          height={dimensions.height}
+          enableZoomInteraction={false}
+          warmupTicks={100}
+          d3AlphaDecay={0.05}
+          onNodeClick={(node) => {
+            const n = node as GraphNode;
+            setClickedNodeId((prev) => (prev === n.id ? null : n.id));
+            setClickedEdgeInfo(null);
+          }}
+          onLinkClick={(link) => {
+            const l = link as GraphLink;
+            const src =
+              typeof l.source === "object"
+                ? (l.source as GraphNode).id
+                : l.source;
+            const tgt =
+              typeof l.target === "object"
+                ? (l.target as GraphNode).id
+                : l.target;
+            const allLinks = graphData.links.filter((gl) => {
+              const gs =
+                typeof gl.source === "object"
+                  ? (gl.source as GraphNode).id
+                  : gl.source;
+              const gt =
+                typeof gl.target === "object"
+                  ? (gl.target as GraphNode).id
+                  : gl.target;
+              return (gs === src && gt === tgt) || (gs === tgt && gt === src);
+            }) as GraphLink[];
+            // Use tracked pointer position for reliable tooltip placement
+            const px = pointerRef.current.x;
+            const py = pointerRef.current.y;
+            const TOOLTIP_W = 340;
+            const TOOLTIP_H = 200;
+            const x = Math.min(px + 12, window.innerWidth - TOOLTIP_W - 8);
+            const y =
+              py + 12 + TOOLTIP_H > window.innerHeight
+                ? py - TOOLTIP_H - 8
+                : py + 12;
+            setClickedEdgeInfo({ links: allLinks, x, y });
+            setClickedNodeId(null);
+          }}
+          onBackgroundClick={() => {
+            setClickedNodeId(null);
+            setClickedEdgeInfo(null);
+          }}
+        />
+      )}
 
       {/* Edge tooltip */}
       {clickedEdgeInfo && (
         <div
           className="fixed z-50 max-w-xs rounded-lg border border-zinc-600 bg-zinc-900 p-3 shadow-xl text-sm"
-          style={{ left: clickedEdgeInfo.x + 8, top: clickedEdgeInfo.y + 8 }}
+          style={{ left: clickedEdgeInfo.x, top: clickedEdgeInfo.y }}
         >
           <button
             className="absolute top-2 right-2 text-zinc-400 hover:text-zinc-100 text-xs leading-none"
