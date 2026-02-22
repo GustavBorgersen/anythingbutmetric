@@ -439,19 +439,5 @@
     "aliases": [
       "france"
     ]
-  },
-  {
-    "id": "microplastic_concentration",
-    "label": "Microplastic Concentration",
-    "aliases": [
-      "microplastic concentration"
-    ]
-  },
-  {
-    "id": "snowy_day",
-    "label": "Snowy Day",
-    "aliases": [
-      "snowy day"
-    ]
   }
 ]
