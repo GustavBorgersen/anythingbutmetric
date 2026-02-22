@@ -181,7 +181,7 @@ Hard rules — a comparison is only valid when ALL of the following are true:
    sense of how big, heavy, or large the unfamiliar thing is.
 
 Additional rules:
-- If a unit matches something in the known list, return its exact string id.
+- If a unit matches something in the known list by its `id`, `label`, or any entry in its `aliases`, return its exact string `id` — do NOT create a new unit object.
 - If a unit is genuinely new, return a full object:
   {{"id": "suggested_snake_case_id", "label": "Human Label", "emoji": "🔵",
     "aliases": ["plural", "alt name"], "tags": ["category"]}}
