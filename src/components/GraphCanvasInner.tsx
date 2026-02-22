@@ -49,8 +49,9 @@ export default function GraphCanvasInner({ units, edges, highlights }: Props) {
   const hasHighlights = highlightedNodeIds.size > 0;
 
   // Remap edges: from/to → source/target (react-force-graph-2d requirement)
+  const connectedIds = new Set(edges.flatMap((e) => [e.from, e.to]));
   const graphData = {
-    nodes: units.map((u) => ({ ...u })) as GraphNode[],
+    nodes: units.filter((u) => connectedIds.has(u.id)).map((u) => ({ ...u })) as GraphNode[],
     links: edges.map((e) => ({
       id: e.id,
       source: e.from,
