@@ -300,7 +300,8 @@ def resolve_unit(
 
 def process_article(
     article_url: str,
-    fallback_text: str,
+    explicit_text: str,
+    rss_summary: str,
     units: list[dict],
     existing_unit_ids: set[str],
     new_units_map: dict[str, dict],
@@ -312,12 +313,17 @@ def process_article(
     """Fetch, extract, validate and collect edges for a single article URL."""
     log.info("--- %s", article_url)
 
-    if fallback_text:
-        # Supplied text (--text flag or RSS summary) — skip HTTP fetch
-        text = BeautifulSoup(fallback_text, "html.parser").get_text(separator=" ", strip=True)
-        log.info("  fetch: using supplied/RSS text (%d chars)", len(text))
+    if explicit_text:
+        # --text flag: user supplied text directly, skip all HTTP fetching
+        text = BeautifulSoup(explicit_text, "html.parser").get_text(separator=" ", strip=True)
+        log.info("  fetch: using explicit text (%d chars)", len(text))
     else:
+        # Always try to fetch the full article first
         text = fetch_article_text(article_url)
+        if not text and rss_summary:
+            # Last resort: RSS summary (usually just a headline, ~100-200 chars)
+            text = BeautifulSoup(rss_summary, "html.parser").get_text(separator=" ", strip=True)
+            log.info("  fetch: HTTP failed, falling back to RSS summary (%d chars)", len(text))
 
     if not text:
         log.info("  fetch: no text — skipping")
@@ -426,7 +432,7 @@ def main() -> None:
             log.info("  Using supplied text (%d chars)", len(supplied_text))
         else:
             supplied_text = None
-        process_article(args.url, fallback_text=supplied_text or "", **common)
+        process_article(args.url, explicit_text=supplied_text or "", rss_summary="", **common)
     else:
         # 2b. RSS feed mode
         feed_urls = [
@@ -465,8 +471,8 @@ def main() -> None:
                     continue
                 existing_source_urls.add(article_url)
 
-                fallback = entry.get("summary") or entry.get("description") or ""
-                process_article(article_url, fallback_text=fallback, **common)
+                rss_summary = entry.get("summary") or entry.get("description") or ""
+                process_article(article_url, explicit_text="", rss_summary=rss_summary, **common)
 
     # 4. Write results
     n_new_units = len(new_units_map)
