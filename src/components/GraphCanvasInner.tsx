@@ -50,9 +50,6 @@ export default function GraphCanvasInner({
   // Track real pointer position for tooltip placement
   const pointerRef = useRef({ x: 0, y: 0 });
 
-  // --- Debug: track which nodes actually reach the shadow canvas each cycle
-  const dbgPaintedNodes = useRef(new Set<string>());
-  const dbgPaintCalls = useRef(0);
 
   // --- Fix: track container size so ForceGraph2D gets correct canvas dimensions.
   // Without this, width/height are undefined on first render → canvas defaults to
@@ -198,7 +195,7 @@ export default function GraphCanvasInner({
     }, 3000);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphData]);
+  }, [graphData, dimensions]);
 
   // Auto-zoom when highlights or missingLinkGroups change
   useEffect(() => {
@@ -351,18 +348,26 @@ export default function GraphCanvasInner({
   const nodePointerAreaPaint = useCallback(
     (node: object, color: string, ctx: CanvasRenderingContext2D, globalScale: number) => {
       const n = node as GraphNode & { x?: number; y?: number };
-      // Debug: record every node that is passed to the shadow canvas painter
-      dbgPaintCalls.current++;
-      dbgPaintedNodes.current.add(n.id);
       // Guard: skip nodes that the simulation hasn't positioned yet.
-      // Without warmupTicks this should never happen on initial load, but
-      // we keep the guard for safety.
       if (n.x == null || n.y == null || isNaN(n.x) || isNaN(n.y)) return;
       const radius = 8 / globalScale;
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.arc(n.x, n.y, radius, 0, 2 * Math.PI);
       ctx.fill();
+      // Debug: log the ACTUAL canvas-pixel position where this node is painted.
+      // ctx.getTransform() gives us the matrix applied to the shadow context, so
+      // we can compute the exact screen pixel without guessing the center.
+      const t = ctx.getTransform();
+      // transform is setTransform(k,0,0,k,tx,ty) so:
+      //   screenX = t.a * gx + t.e
+      //   screenY = t.d * gy + t.f
+      const sx = t.a * n.x + t.e;
+      const sy = t.d * n.y + t.f;
+      const sr = radius * t.a; // hit-area radius in canvas pixels
+      console.log(
+        `[shadow paint] ${n.id}: graph(${n.x.toFixed(1)},${n.y.toFixed(1)}) → canvas-px(${sx.toFixed(1)},${sy.toFixed(1)}) r=${sr.toFixed(1)} color=${color}`
+      );
     },
     []
   );
