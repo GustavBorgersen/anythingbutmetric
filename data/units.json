@@ -380,5 +380,78 @@
       "iceberg",
       "area"
     ]
+  },
+  {
+    "id": "tyrannoroter_heberti",
+    "label": "Tyrannoroter Heberti",
+    "aliases": [
+      "Tyrannoroter heberti"
+    ]
+  },
+  {
+    "id": "shingleback_skink",
+    "label": "Shingleback Skink",
+    "aliases": [
+      "shingleback skink"
+    ],
+    "tags": [
+      "animal"
+    ]
+  },
+  {
+    "id": "meteor",
+    "label": "Meteor",
+    "aliases": [
+      "meteor"
+    ]
+  },
+  {
+    "id": "pembroke_welsh_corgi",
+    "label": "Pembroke Welsh Corgi",
+    "aliases": [
+      "pembroke welsh corgi"
+    ]
+  },
+  {
+    "id": "meteor_weight",
+    "label": "Meteor Weight",
+    "aliases": [
+      "meteor weight"
+    ]
+  },
+  {
+    "id": "baby_elephant",
+    "label": "Baby Elephant",
+    "aliases": [
+      "baby elephant"
+    ]
+  },
+  {
+    "id": "great_pacific_garbage_patch",
+    "label": "Great Pacific Garbage Patch",
+    "aliases": [
+      "great pacific garbage patch"
+    ]
+  },
+  {
+    "id": "france",
+    "label": "France",
+    "aliases": [
+      "france"
+    ]
+  },
+  {
+    "id": "microplastic_concentration",
+    "label": "Microplastic Concentration",
+    "aliases": [
+      "microplastic concentration"
+    ]
+  },
+  {
+    "id": "snowy_day",
+    "label": "Snowy Day",
+    "aliases": [
+      "snowy day"
+    ]
   }
 ]
