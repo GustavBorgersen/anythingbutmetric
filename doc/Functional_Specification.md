@@ -1,6 +1,6 @@
 # Functional Specification: The Anything But Metric converter
 
-**Version:** 1.0
+**Version:** 1.1
 **Status:** Approved
 
 ---
@@ -23,9 +23,9 @@ The interface is a single page. The entire knowledge graph is visible as an inte
 
 **Input:**
 - Two searchable dropdown fields: **Source Unit** and **Target Unit**.
-- Both dropdowns are populated from the full catalogue of known units.
+- Both dropdowns are populated from the catalogue of known units that have at least one edge. Units with no connections are hidden — they cannot produce a result and would clutter the list.
 - Dropdowns support free-text search and filter results as the user types.
-- A **Source Quantity** field accepts a numeric value (defaults to 1).
+- A **Source Quantity** field accepts a numeric value (defaults to 1). Currently fixed at 1 in the UI; adjustable quantity is a planned enhancement.
 
 **Pathfinding concept:**
 - The system searches the network of known comparisons to find the shortest sequence of steps connecting the Source Unit to the Target Unit.
@@ -71,8 +71,12 @@ The interface is a single page. The entire knowledge graph is visible as an inte
 - The conversion controls (unit dropdowns and quantity field) are positioned above the graph in a compact bar.
 - The result panel appears below the controls when a conversion is active, sitting above the graph rather than replacing it. The graph remains visible and interactive at all times.
 
+**Data mode toggle:**
+- A "Demo / Live" pill toggle in the controls bar switches between the hand-crafted seed dataset and the live scraped dataset. Both unit selectors and the graph update immediately. Defaults to Live.
+- Demo mode shows the curated seed units and edges — useful for exploring the graph structure when the live dataset is sparse or undergoing maintenance.
+
 **Default state (no selection):**
-- The full network is visible — all nodes and edges, freely explorable.
+- The network for the active mode is visible — all connected nodes and edges, freely explorable. Units with no edges are hidden.
 - The graph is zoomable and pannable. Users can browse the universe of units before making any selection.
 - Each node represents one unit. Each edge represents a sourced comparison.
 - Clicking a node in the default state highlights all of its direct connections.
@@ -147,7 +151,8 @@ The interface is a single page. The entire knowledge graph is visible as an inte
 
 ## 4. UI Rules
 
-- **Searchable dropdowns:** Both unit selectors support free-text filtering. Results update as the user types. No scrolling through an unsorted list.
+- **Searchable dropdowns:** Both unit selectors support free-text filtering. Results update as the user types. No scrolling through an unsorted list. Only units with at least one edge are shown.
+- **Demo/Live toggle:** Switches the active dataset. Resets unit selections on toggle (ids may not exist in both datasets). Graph and dropdowns update to reflect the active dataset immediately.
 - **Quantity input:** Accepts whole numbers and decimals. Negative values and zero are rejected with an inline validation message.
 - **Multiple routes:** When alternate paths exist through the graph, each is shown as its own result card with its own label and Chain of Evidence. Cards are ordered shortest path first.
 - **Conflicting sources:** Surfaced inline within the relevant step, not collapsed into a range. The disagreement is presented with a light editorial tone — the product acknowledges the chaos rather than smoothing it over.

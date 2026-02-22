@@ -1,6 +1,6 @@
 # Project Roadmap: The Anything But Metric converter
 
-**Version:** 1.0
+**Version:** 1.1
 **Status:** Active
 
 ---
@@ -43,32 +43,45 @@ Four phases, each independently deployable. Each phase ends with something live 
 
 ---
 
-## Phase 2 — Scraper
+## Phase 2 — Scraper ✓ Nearly Complete
 
 **Goal:** Automate data growth. New journalistic comparisons are extracted daily without manual intervention.
 
-**Deliverable:** A GitHub Actions workflow that runs every 24 hours, reads RSS feeds, extracts new unit comparisons via Gemini Flash, and opens a pull request with additions to `edges.json`.
+**Deliverable:** A GitHub Actions workflow that runs every 24 hours, reads RSS feeds, extracts new unit comparisons via LLM, and opens a pull request with additions to `edges.json` and `units.json`. Merging the PR is the human review step.
 
 **Prerequisite:** Phase 1 complete (need the JSON schema locked before the scraper targets it).
 
 ### Tasks
 
-- [ ] Create `scraper/feeds.txt` with initial list of RSS feed URLs (BBC, CNN, The Register, NYT, etc.)
-- [ ] Write `scraper/scraper.py`:
-  - Fetch and parse RSS feeds
+- [x] Create `scraper/feeds.txt` with initial list of RSS feed URLs (BBC, Guardian, Reuters, New Scientist, The Register, NYT)
+- [x] Write `scraper/scraper.py`:
+  - Fetch and parse RSS feeds (feedparser); also accepts direct article URLs in `feeds.txt`
   - Filter items not yet seen (compare against existing `edges.json` source URLs)
-  - For each new item, call Gemini Flash with a structured extraction prompt
-  - Parse the response into the `edges.json` schema
-  - Append new edges (with `verified: false`) to a staging output
-- [ ] Write `scraper/requirements.txt` with pinned dependencies
-- [ ] Implement deduplication logic — do not add an edge if an identical `(from, to, factor, source_url)` already exists
-- [ ] Write extraction prompt for Gemini Flash — must return structured JSON matching the edge schema
-- [ ] Create `.github/workflows/scraper.yml`:
+  - For each new item, fetch full article text via trafilatura (fallback: Jina Reader)
+  - Call Groq (Llama) as primary LLM, fall back to Gemini Flash if Groq quota is exhausted
+  - Parse the LLM response into the `edges.json` / `units.json` schema
+  - Append new edges (`verified: false`) and new units to accumulators
+- [x] Write `scraper/requirements.txt` with pinned dependencies
+- [x] Implement deduplication logic — skip edges with identical `(from, to, factor, source_url)`; skip articles whose URL already appears in `edges.json`
+- [x] Write extraction prompt — returns structured JSON; hard rules on what counts as a valid comparison; instructs LLM to return existing unit `id` for known units (matched by id, label, or alias) and a full unit object for genuinely new ones
+- [x] Resolve unit by id, label, or alias — `terms_to_id` lookup prevents creating duplicate units when the LLM returns a label or alias instead of the exact id
+- [x] Handle LLM returning plain string id for unknown units — synthesise a minimal new unit rather than dropping the comparison
+- [x] Dedup new units within a single run — when multiple comparisons in one article reference the same new unit, reuse the already-queued id instead of creating `_2` variants
+- [x] Create `.github/workflows/scraper.yml`:
   - Cron trigger: daily at 06:00 UTC
-  - Steps: checkout repo, install Python deps, run scraper, open PR if new edges found
-- [ ] Add `GOOGLE_AI_API_KEY` as a GitHub Actions secret
-- [ ] Test workflow manually via `workflow_dispatch` trigger before enabling cron
-- [ ] Review first 10 automatically extracted edges for quality; adjust prompt if needed
+  - `workflow_dispatch` with `clear_scraped` boolean input (resets `edges.json` to `[]` and restores `units.json` from seed — useful for test resets)
+  - Steps: checkout repo, install Python deps, (optionally clear data), run scraper, open PR if new edges found
+- [x] Add `GOOGLE_AI_API_KEY` and `GROQ_API_KEY` as GitHub Actions secrets
+- [x] Separate seed data from live data:
+  - `data/seed-units.json` + `data/seed-edges.json` — frozen hand-crafted files, never written by automation
+  - `data/units.json` + `data/edges.json` — live files, grown by scraper PRs
+- [x] Demo/Live mode toggle in UI — "Demo" shows seed data; "Live" shows scraped data; unit selectors and graph both update; defaults to Live
+- [x] Filter graph nodes and unit selectors to only show units that have at least one edge
+- [x] Test workflow end-to-end via `workflow_dispatch`; first PR reviewed and merged successfully
+
+### Remaining
+
+- [ ] Continue prompt refinement as more scraped edges are reviewed — edge cases in what the LLM accepts as a "valid comparison" will surface over the first few production runs
 
 ---
 
