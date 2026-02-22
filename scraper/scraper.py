@@ -373,8 +373,11 @@ def resolve_unit(
     if isinstance(unit_ref, str):
         if unit_ref in existing_ids or unit_ref in new_units_map:
             return unit_ref, None
-        log.warning("Unknown unit id %r — skipping comparison", unit_ref)
-        return None, None
+        # LLM returned an unknown string id — synthesise a new unit rather than
+        # dropping the whole comparison (the LLM should have returned an object,
+        # but sometimes it returns a plausible-looking snake_case string instead)
+        log.info("Unknown unit id %r — creating as new unit", unit_ref)
+        unit_ref = {"id": unit_ref, "label": unit_ref.replace("_", " ").title()}
 
     if isinstance(unit_ref, dict):
         suggested_id = unit_ref.get("id") or slugify(unit_ref.get("label", "unknown"))
