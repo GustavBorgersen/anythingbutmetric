@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "e001",
+    "from": "iceberg",
+    "to": "wales",
+    "factor": 4.0,
+    "source_url": "https://www.bbc.com/news/science-environment-40321674",
+    "source_quote": "The giant block is estimated to cover an area of roughly 6,000 sq km; that's about a quarter the size of Wales.",
+    "date_scraped": "2026-02-22",
+    "verified": false
+  }
+]

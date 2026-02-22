@@ -378,5 +378,12 @@
       "iceberg",
       "area"
     ]
+  },
+  {
+    "id": "iceberg",
+    "label": "Iceberg",
+    "aliases": [
+      "iceberg"
+    ]
   }
 ]
