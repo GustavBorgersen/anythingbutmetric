@@ -46,8 +46,10 @@ FEEDS_FILE = Path(__file__).parent / "feeds.txt"
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-FETCH_TIMEOUT = 15          # seconds for raw HTML requests (trafilatura fallback)
+FETCH_TIMEOUT = 15          # seconds for raw HTML requests
 JINA_TIMEOUT = 30           # seconds for Jina Reader (headless browser, needs more time)
+GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_RPM = 25               # free tier allows 30 RPM; stay a little under
 GEMINI_MODEL = "gemini-2.5-flash"
 GEMINI_RPM = 5              # free-tier requests per minute; enforced with sleep
 
@@ -167,36 +169,97 @@ Rules:
 """
 
 
-_last_gemini_call: float = 0.0   # module-level timestamp for rate limiting
-_quota_exhausted: bool = False   # set True when daily quota is hit; stops all further calls
+_last_groq_call: float = 0.0
+_last_gemini_call: float = 0.0
+_groq_quota_exhausted: bool = False
+_gemini_quota_exhausted: bool = False
+
+
+def call_groq(article_text: str, units: list[dict]) -> list[dict] | None:
+    """Call Groq (Llama) and return comparisons, or None on any failure.
+
+    Returns None (not []) on failure so call_llm() knows to try Gemini.
+    Returns [] when the model genuinely found no comparisons.
+    """
+    global _last_groq_call, _groq_quota_exhausted
+    from groq import Groq, RateLimitError
+
+    if _groq_quota_exhausted:
+        return None
+
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return None  # no key configured; fall through to Gemini silently
+
+    min_interval = 60.0 / GROQ_RPM
+    elapsed = time.monotonic() - _last_groq_call
+    if elapsed < min_interval:
+        wait = min_interval - elapsed
+        log.info("  llm: Groq rate-limiting, sleeping %.1fs", wait)
+        time.sleep(wait)
+    _last_groq_call = time.monotonic()
+
+    truncated = article_text[:8000]
+    prompt = EXTRACTION_PROMPT_TEMPLATE.format(
+        units_block=build_units_prompt_block(units),
+        article_text=truncated,
+    )
+
+    try:
+        client = Groq(api_key=api_key)
+        response = client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"},
+            temperature=0,
+        )
+        raw = response.choices[0].message.content.strip()
+        parsed = json.loads(raw)
+        # Model returns either a top-level array or wraps it in an object
+        if isinstance(parsed, list):
+            return parsed
+        if isinstance(parsed, dict):
+            for key in ("comparisons", "results", "data", "items"):
+                if isinstance(parsed.get(key), list):
+                    return parsed[key]
+        log.warning("  llm: Groq unexpected JSON shape: %r", raw[:200])
+        return None
+    except RateLimitError:
+        log.warning("  llm: Groq quota exhausted — falling back to Gemini")
+        _groq_quota_exhausted = True
+        return None
+    except json.JSONDecodeError as exc:
+        log.warning("  llm: Groq JSON parse error: %s", exc)
+        return None
+    except Exception as exc:
+        log.warning("  llm: Groq error: %s", exc)
+        return None
 
 
 def call_gemini(article_text: str, units: list[dict]) -> list[dict]:
     """Call Gemini Flash and return parsed comparison objects."""
-    global _last_gemini_call, _quota_exhausted
+    global _last_gemini_call, _gemini_quota_exhausted
     import google.generativeai as genai
 
-    if _quota_exhausted:
+    if _gemini_quota_exhausted:
         return []
 
     api_key = os.environ.get("GOOGLE_AI_API_KEY")
     if not api_key:
-        log.error("GOOGLE_AI_API_KEY not set — skipping Gemini call")
+        log.warning("  llm: GOOGLE_AI_API_KEY not set")
         return []
 
-    # Enforce free-tier RPM limit
     min_interval = 60.0 / GEMINI_RPM
     elapsed = time.monotonic() - _last_gemini_call
     if elapsed < min_interval:
         wait = min_interval - elapsed
-        log.info("  Rate limiting: sleeping %.1fs", wait)
+        log.info("  llm: Gemini rate-limiting, sleeping %.1fs", wait)
         time.sleep(wait)
 
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(GEMINI_MODEL)
     _last_gemini_call = time.monotonic()
 
-    # Truncate article to avoid token limits (~8k chars ≈ 2k tokens)
     truncated = article_text[:8000]
     prompt = EXTRACTION_PROMPT_TEMPLATE.format(
         units_block=build_units_prompt_block(units),
@@ -211,27 +274,41 @@ def call_gemini(article_text: str, units: list[dict]) -> list[dict]:
         raw = response.text.strip()
         parsed = json.loads(raw)
         if not isinstance(parsed, list):
-            log.warning("Gemini returned non-list: %r", raw[:200])
+            log.warning("  llm: Gemini non-list response: %r", raw[:200])
             return []
         return parsed
     except json.JSONDecodeError as exc:
-        log.warning("Gemini JSON parse error: %s", exc)
+        log.warning("  llm: Gemini JSON parse error: %s", exc)
         return []
     except Exception as exc:
         err = str(exc)
-        # Parse retry_delay from the 429 response body
         m = re.search(r"retry_delay\s*\{\s*seconds:\s*(\d+)", err)
         retry_secs = int(m.group(1)) if m else None
-        # Daily quota exhausted — no point retrying anything this run
         if "PerDay" in err:
-            log.warning("  Daily quota exhausted — stopping Gemini calls for this run")
-            _quota_exhausted = True
+            log.warning("  llm: Gemini daily quota exhausted")
+            _gemini_quota_exhausted = True
         elif retry_secs:
-            log.warning("  Rate-limited; sleeping %ds as requested then skipping article", retry_secs)
+            log.warning("  llm: Gemini rate-limited, sleeping %ds", retry_secs)
             time.sleep(retry_secs)
         else:
-            log.warning("Gemini API error: %s", exc)
+            log.warning("  llm: Gemini error: %s", exc)
         return []
+
+
+def call_llm(article_text: str, units: list[dict]) -> list[dict]:
+    """Try Groq first, fall back to Gemini if Groq is unavailable."""
+    result = call_groq(article_text, units)
+    if result is not None:
+        return result  # Groq succeeded (even if empty — that's a valid answer)
+    # Groq returned None: quota hit or error — try Gemini
+    if not _gemini_quota_exhausted:
+        log.info("  llm: trying Gemini fallback")
+        return call_gemini(article_text, units)
+    return []
+
+
+def _all_llms_exhausted() -> bool:
+    return _groq_quota_exhausted and _gemini_quota_exhausted
 
 
 # ---------------------------------------------------------------------------
@@ -329,16 +406,16 @@ def process_article(
         log.info("  fetch: no text — skipping")
         return
 
-    log.info("  gemini: calling...")
+    log.info("  llm: calling...")
     all_units = units + list(new_units_map.values())
-    comparisons = call_gemini(text, all_units)
+    comparisons = call_llm(text, all_units)
 
     if not comparisons:
-        if not _quota_exhausted:
-            log.info("  gemini: no comparisons found")
+        if not _all_llms_exhausted():
+            log.info("  llm: no comparisons found")
         return
 
-    log.info("  gemini: %d comparison(s) found", len(comparisons))
+    log.info("  llm: %d comparison(s) found", len(comparisons))
 
     for comp in comparisons:
         if not validate_comparison(comp, existing_unit_ids):
@@ -445,7 +522,7 @@ def main() -> None:
         log.info("Processing %d feed URLs", len(feed_urls))
 
         for feed_url in feed_urls:
-            if _quota_exhausted:
+            if _all_llms_exhausted():
                 break
 
             log.info("Fetching feed: %s", feed_url)
@@ -461,7 +538,7 @@ def main() -> None:
             log.info("  %d entries", len(entries))
 
             for entry in entries:
-                if _quota_exhausted:
+                if _all_llms_exhausted():
                     break
 
                 article_url = entry.get("link", "")
@@ -479,8 +556,11 @@ def main() -> None:
     n_new_edges = len(new_edges)
 
     log.info("=" * 60)
-    if _quota_exhausted:
-        log.warning("Daily Gemini quota was exhausted — not all articles were processed")
+    if _groq_quota_exhausted:
+        log.warning("Groq daily quota was exhausted%s",
+                    " — fell back to Gemini" if not _gemini_quota_exhausted else "")
+    if _gemini_quota_exhausted:
+        log.warning("Gemini daily quota was exhausted")
     log.info("New edges: %d  |  New units: %d", n_new_edges, n_new_units)
 
     if n_new_units > 0 or n_new_edges > 0:
