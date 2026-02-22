@@ -364,15 +364,21 @@ def resolve_unit(
     unit_ref,
     existing_ids: set[str],
     new_units_map: dict[str, dict],
+    terms_to_id: dict[str, str],
 ) -> tuple[str | None, dict | None]:
     """
     Return (unit_id, new_unit_or_None).
-    If unit_ref is a string → existing id (validate it).
-    If unit_ref is a dict → new unit; deduplicate id if needed.
+    If unit_ref is a string → look up by id, label, or alias; create new unit if no match.
+    If unit_ref is a dict → check label/aliases against existing units first, then create new.
     """
     if isinstance(unit_ref, str):
         if unit_ref in existing_ids or unit_ref in new_units_map:
             return unit_ref, None
+        # Check against all ids/labels/aliases (case-insensitive)
+        canonical = terms_to_id.get(unit_ref.lower())
+        if canonical:
+            log.info("Unknown unit id %r — matched existing unit %r via terms lookup", unit_ref, canonical)
+            return canonical, None
         # LLM returned an unknown string id — synthesise a new unit rather than
         # dropping the whole comparison (the LLM should have returned an object,
         # but sometimes it returns a plausible-looking snake_case string instead)
@@ -381,6 +387,18 @@ def resolve_unit(
         unit_ref = {"id": unit_ref, "label": human.title(), "aliases": [human]}
 
     if isinstance(unit_ref, dict):
+        # Before creating a new unit, check if label or any alias matches an existing unit
+        check_terms = set()
+        if unit_ref.get("label"):
+            check_terms.add(unit_ref["label"].lower())
+        for alias in unit_ref.get("aliases", []):
+            check_terms.add(alias.lower())
+        for term in check_terms:
+            canonical = terms_to_id.get(term)
+            if canonical:
+                log.info("New unit %r — matched existing unit %r via label/alias", unit_ref.get("id"), canonical)
+                return canonical, None
+
         suggested_id = unit_ref.get("id") or slugify(unit_ref.get("label", "unknown"))
         # Ensure the id is valid snake_case
         suggested_id = slugify(suggested_id)
@@ -416,6 +434,7 @@ def process_article(
     rss_summary: str,
     units: list[dict],
     existing_unit_ids: set[str],
+    terms_to_id: dict[str, str],
     new_units_map: dict[str, dict],
     new_edges: list[dict],
     dedup_edge_keys: set[tuple],
@@ -457,8 +476,8 @@ def process_article(
             log.debug("  Invalid comparison: %r", comp)
             continue
 
-        from_id, _ = resolve_unit(comp["from"], existing_unit_ids, new_units_map)
-        to_id, _ = resolve_unit(comp["to"], existing_unit_ids, new_units_map)
+        from_id, _ = resolve_unit(comp["from"], existing_unit_ids, new_units_map, terms_to_id)
+        to_id, _ = resolve_unit(comp["to"], existing_unit_ids, new_units_map, terms_to_id)
 
         if from_id is None or to_id is None:
             continue
@@ -510,6 +529,15 @@ def main() -> None:
     existing_unit_ids: set[str] = {u["id"] for u in units}
     existing_source_urls: set[str] = {e["source_url"] for e in edges}
 
+    # Build a lookup: every lowercased id/label/alias → canonical unit id
+    # Used to match LLM output that uses a label or alias instead of the exact id
+    terms_to_id: dict[str, str] = {}
+    for u in units:
+        terms_to_id[u["id"].lower()] = u["id"]
+        terms_to_id[u["label"].lower()] = u["id"]
+        for alias in u.get("aliases", []):
+            terms_to_id[alias.lower()] = u["id"]
+
     # Find max numeric edge ID (IDs look like "e004")
     max_edge_num_ref = [0]
     for e in edges:
@@ -529,6 +557,7 @@ def main() -> None:
     common = dict(
         units=units,
         existing_unit_ids=existing_unit_ids,
+        terms_to_id=terms_to_id,
         new_units_map=new_units_map,
         new_edges=new_edges,
         dedup_edge_keys=dedup_edge_keys,
