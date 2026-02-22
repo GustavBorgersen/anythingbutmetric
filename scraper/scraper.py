@@ -247,9 +247,17 @@ def call_groq(article_text: str, units: list[dict]) -> list[dict] | None:
                     return parsed[key]
         log.warning("  llm: Groq unexpected JSON shape: %r", raw[:200])
         return None
-    except RateLimitError:
-        log.warning("  llm: Groq quota exhausted — falling back to Gemini")
-        _groq_quota_exhausted = True
+    except RateLimitError as exc:
+        err = str(exc).lower()
+        if "per_day" in err or "daily" in err:
+            log.warning("  llm: Groq daily quota exhausted — disabling for this run")
+            _groq_quota_exhausted = True
+        else:
+            # Temporary TPM/RPM burst limit — sleep 60s, keep Groq alive for later articles
+            m = re.search(r"retry.after[^\d]*(\d+)", err, re.IGNORECASE)
+            retry_secs = int(m.group(1)) if m else 60
+            log.warning("  llm: Groq rate-limited (temporary), sleeping %ds", retry_secs)
+            time.sleep(retry_secs)
         return None
     except json.JSONDecodeError as exc:
         log.warning("  llm: Groq JSON parse error: %s", exc)
