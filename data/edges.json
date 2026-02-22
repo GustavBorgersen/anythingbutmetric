@@ -8,5 +8,75 @@
     "source_quote": "The giant block is estimated to cover an area of roughly 6,000 sq km; that's about a quarter the size of Wales.",
     "date_scraped": "2026-02-22",
     "verified": false
+  },
+  {
+    "id": "e002",
+    "from": "tyrannoroter_heberti",
+    "to": "football_pitch",
+    "factor": 1.0,
+    "source_url": "https://edition.cnn.com/2026/02/11/science/tyrannoroter-heberti-fossil-discovery",
+    "source_quote": "The researchers were able to determine that Tyrannoroter heberti was 'a little big, chunky, cute, football-sized, reptile-like thing,' similar to a shingleback skink, which is a type of lizard, Mann said.",
+    "date_scraped": "2026-02-22",
+    "verified": false
+  },
+  {
+    "id": "e003",
+    "from": "tyrannoroter_heberti",
+    "to": "shingleback_skink",
+    "factor": 1.0,
+    "source_url": "https://edition.cnn.com/2026/02/11/science/tyrannoroter-heberti-fossil-discovery",
+    "source_quote": "The researchers were able to determine that Tyrannoroter heberti was 'a little big, chunky, cute, football-sized, reptile-like thing,' similar to a shingleback skink, which is a type of lizard, Mann said.",
+    "date_scraped": "2026-02-22",
+    "verified": false
+  },
+  {
+    "id": "e004",
+    "from": "meteor",
+    "to": "pembroke_welsh_corgi",
+    "factor": 1.0,
+    "source_url": "https://www.jpost.com/science/article-732223",
+    "source_quote": "A meteor around the size of a Pembroke Welsh Corgi and weighing around the total weight of four baby elephants struck the Earth near McAllen, Texas last Wednesday, NASA confirmed this week.",
+    "date_scraped": "2026-02-22",
+    "verified": false
+  },
+  {
+    "id": "e005",
+    "from": "meteor_weight",
+    "to": "baby_elephant",
+    "factor": 4.0,
+    "source_url": "https://www.jpost.com/science/article-732223",
+    "source_quote": "This means that despite its diameter only being around the length of average Pembroke Welsh Corgi, the meteor still weighed as much as four baby elephants.",
+    "date_scraped": "2026-02-22",
+    "verified": false
+  },
+  {
+    "id": "e006",
+    "from": "great_pacific_garbage_patch",
+    "to": "france",
+    "factor": 3.0,
+    "source_url": "https://edition.cnn.com/2019/12/11/world/swim-great-pacific-garbage-patch-c2e-intl-hnk",
+    "source_quote": "the garbage spans an area between North America and Japan of roughly 1.6 million square kilometers – three times the size of France, and more than double the size of Texas.",
+    "date_scraped": "2026-02-22",
+    "verified": false
+  },
+  {
+    "id": "e007",
+    "from": "great_pacific_garbage_patch",
+    "to": "texas",
+    "factor": 2.0,
+    "source_url": "https://edition.cnn.com/2019/12/11/world/swim-great-pacific-garbage-patch-c2e-intl-hnk",
+    "source_quote": "the garbage spans an area between North America and Japan of roughly 1.6 million square kilometers – three times the size of France, and more than double the size of Texas.",
+    "date_scraped": "2026-02-22",
+    "verified": false
+  },
+  {
+    "id": "e008",
+    "from": "microplastic_concentration",
+    "to": "snowy_day",
+    "factor": 1.0,
+    "source_url": "https://edition.cnn.com/2019/12/11/world/swim-great-pacific-garbage-patch-c2e-intl-hnk",
+    "source_quote": "“it’s like looking up at the skies on a snowy day – but in reverse,” he tells CNN.",
+    "date_scraped": "2026-02-22",
+    "verified": false
   }
 ]
