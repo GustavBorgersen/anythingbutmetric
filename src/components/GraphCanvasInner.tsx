@@ -169,6 +169,10 @@ export default function GraphCanvasInner({
   // Auto-zoom when highlights or missingLinkGroups change
   useEffect(() => {
     if (!graphRef.current) return;
+    // 1 s delay on initial load lets the force simulation settle (d3AlphaDecay
+    // 0.05 → ~60 ticks to cool) before we zoom to fit.  Highlight/missing-link
+    // triggered zooms use a shorter window since layout is already stable.
+    const delay = highlightedNodeIds.size > 0 || missingLinkGroups ? 300 : 1000;
     const timer = setTimeout(() => {
       if (!graphRef.current) return;
       if (highlightedNodeIds.size > 0) {
@@ -186,7 +190,7 @@ export default function GraphCanvasInner({
       } else {
         graphRef.current.zoomToFit(400, 40);
       }
-    }, 300);
+    }, delay);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlights, missingLinkGroups]);
@@ -316,11 +320,10 @@ export default function GraphCanvasInner({
       // Debug: record every node that is passed to the shadow canvas painter
       dbgPaintCalls.current++;
       dbgPaintedNodes.current.add(n.id);
-      // Guard: skip nodes that the simulation hasn't positioned yet
-      if (n.x == null || n.y == null || isNaN(n.x) || isNaN(n.y)) {
-        console.warn("[picking] node without position, skipped:", n.id);
-        return;
-      }
+      // Guard: skip nodes that the simulation hasn't positioned yet.
+      // Without warmupTicks this should never happen on initial load, but
+      // we keep the guard for safety.
+      if (n.x == null || n.y == null || isNaN(n.x) || isNaN(n.y)) return;
       const radius = 8 / globalScale;
       ctx.fillStyle = color;
       ctx.beginPath();
@@ -424,7 +427,6 @@ export default function GraphCanvasInner({
           height={dimensions.height}
           enableZoomInteraction={false}
           autoPauseRedraw={false}
-          warmupTicks={100}
           d3AlphaDecay={0.05}
           onNodeClick={(node) => {
             const n = node as GraphNode;
