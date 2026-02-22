@@ -380,5 +380,72 @@
       "iceberg",
       "area"
     ]
+  },
+  {
+    "id": "tyrannoroter_heberti",
+    "label": "Tyrannoroter Heberti",
+    "aliases": [
+      "Tyrannoroter heberti"
+    ]
+  },
+  {
+    "id": "tyrannoroter_heberti_2",
+    "label": "Tyrannoroter Heberti",
+    "aliases": [
+      "Tyrannoroter heberti"
+    ]
+  },
+  {
+    "id": "shingleback_skink",
+    "label": "Shingleback Skink",
+    "emoji": "🦎",
+    "aliases": [
+      "shingleback lizard"
+    ],
+    "tags": [
+      "reptile"
+    ]
+  },
+  {
+    "id": "meteor",
+    "label": "Meteor",
+    "aliases": [
+      "meteor"
+    ]
+  },
+  {
+    "id": "pembroke_welsh_corgi",
+    "label": "Pembroke Welsh Corgi",
+    "aliases": [
+      "pembroke welsh corgi"
+    ]
+  },
+  {
+    "id": "meteor_impact",
+    "label": "Meteor Impact",
+    "aliases": [
+      "meteor impact"
+    ]
+  },
+  {
+    "id": "tnt",
+    "label": "Tnt",
+    "aliases": [
+      "tnt"
+    ]
+  },
+  {
+    "id": "great_pacific_garbage_patch",
+    "label": "Great Pacific Garbage Patch",
+    "aliases": [
+      "great pacific garbage patch"
+    ]
+  },
+  {
+    "id": "france",
+    "label": "France",
+    "aliases": [
+      "france"
+    ]
   }
 ]
