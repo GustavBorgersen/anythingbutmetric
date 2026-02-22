@@ -50,6 +50,10 @@ export default function GraphCanvasInner({
   // Track real pointer position for tooltip placement
   const pointerRef = useRef({ x: 0, y: 0 });
 
+  // --- Debug: track which nodes actually reach the shadow canvas each cycle
+  const dbgPaintedNodes = useRef(new Set<string>());
+  const dbgPaintCalls = useRef(0);
+
   // --- Fix: track container size so ForceGraph2D gets correct canvas dimensions.
   // Without this, width/height are undefined on first render → canvas defaults to
   // 300×150px → click hit-testing is completely broken on large screens.
@@ -107,20 +111,27 @@ export default function GraphCanvasInner({
   const hasLocalClick = clickedNodeId !== null;
   const hasMissingLink = !!missingLinkGroups && !hasRouteHighlight;
 
-  // Remap edges: from/to → source/target (react-force-graph-2d requirement)
-  const connectedIds = new Set(edges.flatMap((e) => [e.from, e.to]));
-  const graphData = {
-    nodes: units.filter((u) => connectedIds.has(u.id)).map((u) => ({ ...u })) as GraphNode[],
-    links: edges.map((e) => ({
-      id: e.id,
-      source: e.from,
-      target: e.to,
-      factor: e.factor,
-      verified: e.verified,
-      source_url: e.source_url,
-      source_quote: e.source_quote,
-    })) as GraphLink[],
-  };
+  // Memoised so ForceGraph2D gets a stable object reference as long as the
+  // underlying data hasn't changed.  Recreating graphData on every render
+  // (e.g. when clickedNodeId changes) causes the library to re-assign its
+  // internal __indexColor picking registry → stale shadow canvas → broken drag.
+  const graphData = useMemo(() => {
+    const connectedIds = new Set(edges.flatMap((e) => [e.from, e.to]));
+    return {
+      nodes: units
+        .filter((u) => connectedIds.has(u.id))
+        .map((u) => ({ ...u })) as GraphNode[],
+      links: edges.map((e) => ({
+        id: e.id,
+        source: e.from,
+        target: e.to,
+        factor: e.factor,
+        verified: e.verified,
+        source_url: e.source_url,
+        source_quote: e.source_quote,
+      })) as GraphLink[],
+    };
+  }, [units, edges]);
 
   // Neighbour set for clicked node (uses stable edges prop)
   const neighborIds = useMemo(() => {
@@ -132,6 +143,28 @@ export default function GraphCanvasInner({
     }
     return neighbors;
   }, [clickedNodeId, edges]);
+
+  // Debug: every 5 s report how many distinct nodes reached the shadow canvas
+  // vs how many are in graphData.  Open browser DevTools → Console to see this.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const expected = graphData.nodes.length;
+      const painted = dbgPaintedNodes.current.size;
+      const calls = dbgPaintCalls.current;
+      console.log(
+        `[picking] graphData: ${expected} nodes | shadow painted: ${painted} unique nodes, ${calls} calls in last 5s`
+      );
+      if (painted > 0 && painted < expected) {
+        const missing = graphData.nodes
+          .filter((n) => !dbgPaintedNodes.current.has(n.id))
+          .map((n) => n.id);
+        console.warn("[picking] nodes NOT in shadow canvas:", missing);
+      }
+      dbgPaintedNodes.current.clear();
+      dbgPaintCalls.current = 0;
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [graphData]);
 
   // Auto-zoom when highlights or missingLinkGroups change
   useEffect(() => {
@@ -279,7 +312,15 @@ export default function GraphCanvasInner({
   // screen space regardless of zoom level (graph-space radius = 8 / globalScale).
   const nodePointerAreaPaint = useCallback(
     (node: object, color: string, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const n = node as GraphNode & { x: number; y: number };
+      const n = node as GraphNode & { x?: number; y?: number };
+      // Debug: record every node that is passed to the shadow canvas painter
+      dbgPaintCalls.current++;
+      dbgPaintedNodes.current.add(n.id);
+      // Guard: skip nodes that the simulation hasn't positioned yet
+      if (n.x == null || n.y == null || isNaN(n.x) || isNaN(n.y)) {
+        console.warn("[picking] node without position, skipped:", n.id);
+        return;
+      }
       const radius = 8 / globalScale;
       ctx.fillStyle = color;
       ctx.beginPath();
@@ -387,6 +428,7 @@ export default function GraphCanvasInner({
           d3AlphaDecay={0.05}
           onNodeClick={(node) => {
             const n = node as GraphNode;
+            console.log("[picking] node clicked:", n.id);
             setClickedNodeId((prev) => (prev === n.id ? null : n.id));
             setClickedEdgeInfo(null);
           }}
