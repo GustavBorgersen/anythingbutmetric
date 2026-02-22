@@ -144,26 +144,60 @@ export default function GraphCanvasInner({
     return neighbors;
   }, [clickedNodeId, edges]);
 
-  // Debug: every 5 s report how many distinct nodes reached the shadow canvas
-  // vs how many are in graphData.  Open browser DevTools → Console to see this.
+  // Debug: 3 s after mount, log DOM geometry and all node screen positions.
+  // This tells us whether the canvas is correctly sized/placed and where each
+  // node should appear so we can compare against actual click positions.
   useEffect(() => {
-    const interval = setInterval(() => {
-      const expected = graphData.nodes.length;
-      const painted = dbgPaintedNodes.current.size;
-      const calls = dbgPaintCalls.current;
+    const timer = setTimeout(() => {
+      if (!graphRef.current) return;
+      const canvasEl = containerRef.current?.querySelector("canvas");
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      const canvasRect = canvasEl?.getBoundingClientRect();
+
+      console.group("[debug] DOM geometry (3 s after mount)");
+      console.log("container rect:", containerRect);
+      console.log("canvas rect:", canvasRect);
       console.log(
-        `[picking] graphData: ${expected} nodes | shadow painted: ${painted} unique nodes, ${calls} calls in last 5s`
+        "canvas width/height attrs:",
+        canvasEl?.width,
+        canvasEl?.height
       );
-      if (painted > 0 && painted < expected) {
-        const missing = graphData.nodes
-          .filter((n) => !dbgPaintedNodes.current.has(n.id))
-          .map((n) => n.id);
-        console.warn("[picking] nodes NOT in shadow canvas:", missing);
+      console.log("dimensions state passed as props:", dimensions);
+      console.log("devicePixelRatio:", window.devicePixelRatio);
+      if (containerRect && canvasRect) {
+        console.log(
+          "canvas offset from container:",
+          (canvasRect.left - containerRect.left).toFixed(1),
+          (canvasRect.top - containerRect.top).toFixed(1),
+          "| size diff:",
+          (canvasRect.width - containerRect.width).toFixed(1),
+          (canvasRect.height - containerRect.height).toFixed(1)
+        );
       }
-      dbgPaintedNodes.current.clear();
-      dbgPaintCalls.current = 0;
-    }, 5000);
-    return () => clearInterval(interval);
+      console.groupEnd();
+
+      // Log every node's expected screen position (canvas-local CSS pixels)
+      const zoom = graphRef.current.zoom() as number;
+      const center = graphRef.current.centerAt() as { x: number; y: number };
+      console.group("[debug] Node screen positions (canvas-local, zoom=" + zoom.toFixed(3) + ")");
+      graphData.nodes.forEach((n) => {
+        if (n.x == null || n.y == null) {
+          console.warn("  " + n.id + ": NO POSITION");
+          return;
+        }
+        // Node at graph (gx,gy) appears at canvas-local CSS pixel:
+        //   x = width/2 + (gx - centerX) * zoom
+        //   y = height/2 + (gy - centerY) * zoom
+        const sx = dimensions.width / 2 + (n.x - center.x) * zoom;
+        const sy = dimensions.height / 2 + (n.y - center.y) * zoom;
+        console.log(
+          `  ${n.id}: graph(${n.x.toFixed(1)}, ${n.y.toFixed(1)}) → canvas-local(${sx.toFixed(1)}, ${sy.toFixed(1)})`
+        );
+      });
+      console.groupEnd();
+    }, 3000);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphData]);
 
   // Auto-zoom when highlights or missingLinkGroups change
@@ -408,6 +442,17 @@ export default function GraphCanvasInner({
       onPointerMove={(e) => {
         pointerRef.current = { x: e.clientX, y: e.clientY };
       }}
+      onPointerDown={(e) => {
+        // Log every click attempt so we can compare with node screen positions
+        const canvasEl = containerRef.current?.querySelector("canvas");
+        const canvasRect = canvasEl?.getBoundingClientRect();
+        const localX = e.clientX - (canvasRect?.left ?? 0);
+        const localY = e.clientY - (canvasRect?.top ?? 0);
+        console.log(
+          `[click] client(${e.clientX}, ${e.clientY}) → canvas-local(${localX.toFixed(1)}, ${localY.toFixed(1)})` +
+          ` | canvas rect: left=${canvasRect?.left?.toFixed(1)} top=${canvasRect?.top?.toFixed(1)} w=${canvasRect?.width?.toFixed(1)} h=${canvasRect?.height?.toFixed(1)}`
+        );
+      }}
     >
       {dimensions.width > 0 && (
         <ForceGraph2D
@@ -469,6 +514,15 @@ export default function GraphCanvasInner({
             setClickedNodeId(null);
           }}
           onBackgroundClick={() => {
+            // Fires whenever a click doesn't hit any node — log so we can
+            // compare against the node positions logged above
+            const canvasEl = containerRef.current?.querySelector("canvas");
+            const canvasRect = canvasEl?.getBoundingClientRect();
+            const localX = pointerRef.current.x - (canvasRect?.left ?? 0);
+            const localY = pointerRef.current.y - (canvasRect?.top ?? 0);
+            console.log(
+              `[background click] canvas-local(${localX.toFixed(1)}, ${localY.toFixed(1)})`
+            );
             setClickedNodeId(null);
             setClickedEdgeInfo(null);
           }}
