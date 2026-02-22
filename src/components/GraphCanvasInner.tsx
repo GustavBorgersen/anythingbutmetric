@@ -275,29 +275,30 @@ export default function GraphCanvasInner({
     [highlights, clickedNodeId, neighborIds, missingLinkGroups]
   );
 
-  // Explicit click area for each node — larger than the drawn radius so it's
-  // easy to tap even on small nodes.
+  // Explicit click area for each node — hit radius is kept at a fixed ~8px in
+  // screen space regardless of zoom level (graph-space radius = 8 / globalScale).
   const nodePointerAreaPaint = useCallback(
-    (node: object, color: string, ctx: CanvasRenderingContext2D) => {
+    (node: object, color: string, ctx: CanvasRenderingContext2D, globalScale: number) => {
       const n = node as GraphNode & { x: number; y: number };
+      const radius = 8 / globalScale;
       ctx.fillStyle = color;
       ctx.beginPath();
-      ctx.arc(n.x, n.y, 8, 0, 2 * Math.PI);
+      ctx.arc(n.x, n.y, radius, 0, 2 * Math.PI);
       ctx.fill();
     },
     []
   );
 
-  // Explicit click area for each link — 8px wide invisible stroke so thin
-  // edges are reliably clickable.
+  // Explicit click area for each link — kept at ~8px screen-space width so
+  // thin edges remain reliably clickable at any zoom level.
   const linkPointerAreaPaint = useCallback(
-    (link: object, color: string, ctx: CanvasRenderingContext2D) => {
+    (link: object, color: string, ctx: CanvasRenderingContext2D, globalScale: number) => {
       const l = link as GraphLink;
       const src = typeof l.source === "object" ? (l.source as GraphNode) : null;
       const tgt = typeof l.target === "object" ? (l.target as GraphNode) : null;
       if (src?.x == null || src?.y == null || tgt?.x == null || tgt?.y == null) return;
       ctx.strokeStyle = color;
-      ctx.lineWidth = 8;
+      ctx.lineWidth = 8 / globalScale;
       ctx.beginPath();
       ctx.moveTo(src.x as number, src.y as number);
       ctx.lineTo(tgt.x as number, tgt.y as number);
@@ -381,6 +382,7 @@ export default function GraphCanvasInner({
           width={dimensions.width}
           height={dimensions.height}
           enableZoomInteraction={false}
+          autoPauseRedraw={false}
           warmupTicks={100}
           d3AlphaDecay={0.05}
           onNodeClick={(node) => {
