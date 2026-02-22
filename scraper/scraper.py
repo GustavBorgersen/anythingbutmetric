@@ -564,6 +564,17 @@ def main() -> None:
                 continue
 
             entries = feed.get("entries", [])
+
+            if not entries:
+                # No RSS entries — treat the line as a direct article URL
+                log.info("  no RSS entries — processing as direct article URL")
+                if feed_url not in existing_source_urls:
+                    existing_source_urls.add(feed_url)
+                    process_article(feed_url, explicit_text="", rss_summary="", **common)
+                else:
+                    log.info("  already seen — skipping")
+                continue
+
             if args.max_entries:
                 entries = entries[:args.max_entries]
             log.info("  %d entries", len(entries))
