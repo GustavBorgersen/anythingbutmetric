@@ -23,6 +23,8 @@ interface GraphNode extends Unit {
   y?: number;
   vx?: number;
   vy?: number;
+  fx?: number;
+  fy?: number;
 }
 
 interface GraphLink {
@@ -64,8 +66,16 @@ export default function GraphCanvasInner({
   // Used by our geometric hit-detection so we never call getImageData(), which
   // Brave's fingerprint-farbling randomises and breaks shadow-canvas picking.
   const nodeCSSPositions = useRef<Map<string, { x: number; y: number }>>(new Map());
+  // Raw canvas transform stored each frame — lets us invert CSS→graph coords
+  // for node dragging without relying on any library coordinate API.
+  const canvasTransformRef = useRef<{ a: number; d: number; e: number; f: number } | null>(null);
   // Track pointer-down position to distinguish a tap/click from a drag.
   const pointerDownRef = useRef<{ x: number; y: number } | null>(null);
+  // Currently dragged node (null when not dragging).
+  const draggingNodeRef = useRef<{ node: GraphNode } | null>(null);
+  // Stable ref to current graphData for use inside native event listeners.
+  // Initialised empty; synced to graphData each render (see below).
+  const graphDataRef = useRef<{ nodes: GraphNode[]; links: GraphLink[] }>({ nodes: [], links: [] });
 
 
   // --- Fix: track container size so ForceGraph2D gets correct canvas dimensions.
@@ -151,6 +161,8 @@ export default function GraphCanvasInner({
       })) as GraphLink[],
     };
   }, [units, edges]);
+  // Keep ref in sync so native event listeners always see fresh graph data.
+  graphDataRef.current = graphData;
 
   // Neighbour set for clicked node (uses stable edges prop)
   const neighborIds = useMemo(() => {
@@ -289,9 +301,10 @@ export default function GraphCanvasInner({
         labelColour = "#9ca3af";
       }
 
-      // Record CSS-pixel position for geometric hit detection (avoids getImageData)
+      // Record CSS-pixel position and raw transform for geometric picking + drag.
       const t = ctx.getTransform();
       const dpr = window.devicePixelRatio || 1;
+      canvasTransformRef.current = { a: t.a, d: t.d, e: t.e, f: t.f };
       nodeCSSPositions.current.set(n.id, {
         x: (t.a * n.x + t.e) / dpr,
         y: (t.d * n.y + t.f) / dpr,
@@ -318,51 +331,107 @@ export default function GraphCanvasInner({
     [highlights, clickedNodeId, neighborIds, missingLinkGroups]
   );
 
-  // Geometric hit detection — fires on every pointer-up that looks like a tap
-  // (pointer didn't travel more than 5 CSS px).  We compare the click position
-  // against the CSS-pixel node positions stored each frame in nodeCSSPositions,
-  // then fall back to point-to-segment distance for links.  This completely
-  // bypasses shadow-canvas getImageData(), which Brave farbles into noise.
-  const handlePointerUp = useCallback(
-    (e: React.PointerEvent) => {
-      const down = pointerDownRef.current;
-      if (!down) return;
-      if (Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
+  // All pointer interaction — registered as native listeners so we can use
+  // capture phase on pointerdown.  Capture phase fires BEFORE d3-zoom's canvas
+  // listener, letting us call stopPropagation() when we're over a node so
+  // d3-zoom never starts a conflicting pan while we drag the node.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
 
-      const canvasEl = containerRef.current?.querySelector("canvas");
-      const rect = canvasEl?.getBoundingClientRect();
-      const clickX = e.clientX - (rect?.left ?? 0);
-      const clickY = e.clientY - (rect?.top ?? 0);
-
-      // --- Node hit (12 px radius in CSS space) ---
-      const NODE_HIT = 12;
-      let hitNodeId: string | null = null;
-      let minNodeDist = NODE_HIT;
+    // ---- helpers (close over stable refs only) ----
+    function nodeAt(clientX: number, clientY: number): GraphNode | null {
+      const rect = el!.querySelector("canvas")?.getBoundingClientRect();
+      const cx = clientX - (rect?.left ?? 0);
+      const cy = clientY - (rect?.top ?? 0);
+      let best: GraphNode | null = null;
+      let bestD = 12; // 12 CSS-px hit radius
       for (const [id, pos] of nodeCSSPositions.current) {
-        const d = Math.hypot(clickX - pos.x, clickY - pos.y);
-        if (d < minNodeDist) { minNodeDist = d; hitNodeId = id; }
+        const d = Math.hypot(cx - pos.x, cy - pos.y);
+        if (d < bestD) {
+          bestD = d;
+          best = (graphDataRef.current.nodes.find((n) => n.id === id) ?? null) as GraphNode | null;
+        }
       }
-      if (hitNodeId) {
-        setClickedNodeId((prev) => (prev === hitNodeId ? null : hitNodeId));
-        setClickedEdgeInfo(null);
-        return;
-      }
+      return best;
+    }
 
-      // --- Link hit (8 px from line in CSS space) ---
-      const LINK_HIT = 8;
-      let hitLink: GraphLink | null = null;
-      let minLinkDist = LINK_HIT;
-      for (const link of graphData.links) {
+    function linkAt(clientX: number, clientY: number): GraphLink | null {
+      const rect = el!.querySelector("canvas")?.getBoundingClientRect();
+      const cx = clientX - (rect?.left ?? 0);
+      const cy = clientY - (rect?.top ?? 0);
+      let best: GraphLink | null = null;
+      let bestD = 8; // 8 CSS-px hit radius from line
+      for (const link of graphDataRef.current.links) {
         const srcId =
           typeof link.source === "object" ? (link.source as GraphNode).id : link.source;
         const tgtId =
           typeof link.target === "object" ? (link.target as GraphNode).id : link.target;
-        const srcPos = nodeCSSPositions.current.get(srcId);
-        const tgtPos = nodeCSSPositions.current.get(tgtId);
-        if (!srcPos || !tgtPos) continue;
-        const d = distToSegment(clickX, clickY, srcPos.x, srcPos.y, tgtPos.x, tgtPos.y);
-        if (d < minLinkDist) { minLinkDist = d; hitLink = link; }
+        const sp = nodeCSSPositions.current.get(srcId);
+        const tp = nodeCSSPositions.current.get(tgtId);
+        if (!sp || !tp) continue;
+        const d = distToSegment(cx, cy, sp.x, sp.y, tp.x, tp.y);
+        if (d < bestD) { bestD = d; best = link as GraphLink; }
       }
+      return best;
+    }
+
+    // ---- pointer down (capture) ----
+    function onPointerDown(e: PointerEvent) {
+      pointerDownRef.current = { x: e.clientX, y: e.clientY };
+      const node = nodeAt(e.clientX, e.clientY);
+      if (node && node.x != null && node.y != null) {
+        node.fx = node.x;
+        node.fy = node.y;
+        draggingNodeRef.current = { node };
+        el!.setPointerCapture(e.pointerId);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (graphRef.current as any)?.d3ReheatSimulation?.();
+        // Stop d3-zoom from starting a pan at the same time
+        e.stopPropagation();
+      }
+    }
+
+    // ---- pointer move ----
+    function onPointerMove(e: PointerEvent) {
+      if (!draggingNodeRef.current) return;
+      const { node } = draggingNodeRef.current;
+      const t = canvasTransformRef.current;
+      if (!t || t.a === 0) return;
+      const rect = el!.querySelector("canvas")?.getBoundingClientRect();
+      const cssX = e.clientX - (rect?.left ?? 0);
+      const cssY = e.clientY - (rect?.top ?? 0);
+      const dpr = window.devicePixelRatio || 1;
+      // Invert the canvas transform: graph = (canvasPx - translate) / scale
+      node.fx = (cssX * dpr - t.e) / t.a;
+      node.fy = (cssY * dpr - t.f) / t.d;
+    }
+
+    // ---- pointer up ----
+    function onPointerUp(e: PointerEvent) {
+      const down = pointerDownRef.current;
+
+      // End node drag
+      if (draggingNodeRef.current) {
+        const { node } = draggingNodeRef.current;
+        node.fx = undefined;
+        node.fy = undefined;
+        draggingNodeRef.current = null;
+        // Treat as click only if the pointer barely moved
+        if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
+      }
+
+      // Click / tap handling
+      if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
+
+      const hitNode = nodeAt(e.clientX, e.clientY);
+      if (hitNode) {
+        setClickedNodeId((prev) => (prev === hitNode.id ? null : hitNode.id));
+        setClickedEdgeInfo(null);
+        return;
+      }
+
+      const hitLink = linkAt(e.clientX, e.clientY);
       if (hitLink) {
         const src =
           typeof hitLink.source === "object"
@@ -372,7 +441,7 @@ export default function GraphCanvasInner({
           typeof hitLink.target === "object"
             ? (hitLink.target as GraphNode).id
             : hitLink.target;
-        const allLinks = graphData.links.filter((gl) => {
+        const allLinks = graphDataRef.current.links.filter((gl) => {
           const gs =
             typeof gl.source === "object" ? (gl.source as GraphNode).id : gl.source;
           const gt =
@@ -391,12 +460,21 @@ export default function GraphCanvasInner({
         return;
       }
 
-      // --- Background ---
       setClickedNodeId(null);
       setClickedEdgeInfo(null);
-    },
-    [graphData.links],
-  );
+    }
+
+    // capture:true → fires before d3-zoom's canvas listener
+    el.addEventListener("pointerdown", onPointerDown, { capture: true });
+    el.addEventListener("pointermove", onPointerMove);
+    el.addEventListener("pointerup", onPointerUp);
+    return () => {
+      el.removeEventListener("pointerdown", onPointerDown, { capture: true });
+      el.removeEventListener("pointermove", onPointerMove);
+      el.removeEventListener("pointerup", onPointerUp);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // stable: all mutable state accessed via refs; setters are stable
 
   const linkColor = useCallback(
     (link: object) => {
@@ -452,8 +530,6 @@ export default function GraphCanvasInner({
     <div
       ref={containerRef}
       className="w-full h-full touch-none relative"
-      onPointerDown={(e) => { pointerDownRef.current = { x: e.clientX, y: e.clientY }; }}
-      onPointerUp={handlePointerUp}
     >
       {dimensions.width > 0 && (
         <ForceGraph2D
@@ -462,6 +538,7 @@ export default function GraphCanvasInner({
           nodeId="id"
           nodeCanvasObject={nodeCanvasObject}
           nodeCanvasObjectMode={() => "replace"}
+          enableNodeDrag={false}
           linkColor={linkColor}
           linkWidth={linkWidth}
           linkDirectionalArrowLength={3}
