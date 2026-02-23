@@ -5,17 +5,27 @@ import ForceGraph2D from "react-force-graph-2d";
 import { ROUTE_COLOURS } from "@/lib/constants";
 import type { Unit, Edge, HighlightState } from "@/lib/types";
 
-// Perpendicular distance from point (px,py) to segment (ax,ay)→(bx,by)
-function distToSegment(
-  px: number, py: number,
-  ax: number, ay: number,
-  bx: number, by: number,
-): number {
-  const dx = bx - ax, dy = by - ay;
-  const lenSq = dx * dx + dy * dy;
-  if (lenSq === 0) return Math.hypot(px - ax, py - ay);
-  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lenSq));
-  return Math.hypot(px - ax - t * dx, py - ay - t * dy);
+// Detect Brave Shields (or any fingerprint-farbling extension) by checking
+// whether canvas getImageData() returns the exact pixel values we drew.
+// Without farbling all 16 pixels match; with ±1 Brave noise ~0–1 match by chance.
+function detectCanvasFarbling(): boolean {
+  try {
+    const c = document.createElement("canvas");
+    c.width = 16; c.height = 1;
+    const ctx = c.getContext("2d");
+    if (!ctx) return false;
+    ctx.fillStyle = "rgb(100, 149, 237)"; // known exact values
+    ctx.fillRect(0, 0, 16, 1);
+    const d = ctx.getImageData(0, 0, 16, 1).data;
+    let matches = 0;
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i] === 100 && d[i + 1] === 149 && d[i + 2] === 237 && d[i + 3] === 255)
+        matches++;
+    }
+    return matches < 8;
+  } catch {
+    return false;
+  }
 }
 
 interface GraphNode extends Unit {
@@ -62,22 +72,12 @@ export default function GraphCanvasInner({
   const [clickedNodeId, setClickedNodeId] = useState<string | null>(null);
   const [clickedEdgeInfo, setClickedEdgeInfo] = useState<EdgeTooltip | null>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  // CSS-pixel positions of each node (updated every frame by nodeCanvasObject).
-  // Used by our geometric hit-detection so we never call getImageData(), which
-  // Brave's fingerprint-farbling randomises and breaks shadow-canvas picking.
-  const nodeCSSPositions = useRef<Map<string, { x: number; y: number }>>(new Map());
-  // Raw canvas transform stored each frame — lets us invert CSS→graph coords
-  // for node dragging without relying on any library coordinate API.
-  const canvasTransformRef = useRef<{ a: number; d: number; e: number; f: number } | null>(null);
-  // Track pointer-down position to distinguish a tap/click from a drag.
-  const pointerDownRef = useRef<{ x: number; y: number } | null>(null);
-  // Currently dragged node (null when not dragging).
-  // reheated: true once we've called d3ReheatSimulation for this drag gesture.
-  const draggingNodeRef = useRef<{ node: GraphNode; reheated: boolean } | null>(null);
-  // Stable ref to current graphData for use inside native event listeners.
-  // Initialised empty; synced to graphData each render (see below).
-  const graphDataRef = useRef<{ nodes: GraphNode[]; links: GraphLink[] }>({ nodes: [], links: [] });
+  const [shieldWarning, setShieldWarning] = useState(false);
 
+  // Detect canvas farbling once on mount
+  useEffect(() => {
+    if (detectCanvasFarbling()) setShieldWarning(true);
+  }, []);
 
   // --- Fix: track container size so ForceGraph2D gets correct canvas dimensions.
   // Without this, width/height are undefined on first render → canvas defaults to
@@ -93,29 +93,11 @@ export default function GraphCanvasInner({
     return () => ro.disconnect();
   }, []);
 
-  // --- Fix: smooth wheel zoom without breaking d3-zoom's picking internals.
-  // We intercept wheel events in the CAPTURE phase (before d3-zoom's canvas
-  // listener sees them) and stop propagation so d3-zoom's own wheel handler
-  // never fires.  We then call graphRef.current.zoom() ourselves with a
-  // normalised delta.  Crucially, enableZoomInteraction stays true so d3-zoom
-  // keeps all its other event listeners (needed for shadow-canvas picking on PC).
+  // --- Prevent page scroll on wheel; d3-zoom handles the actual zoom itself.
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      e.stopPropagation(); // stop d3-zoom's canvas listener from also firing
-      if (!graphRef.current) return;
-      // Normalise deltaMode differences then cap magnitude to avoid large single steps
-      let dy = e.deltaY;
-      if (e.deltaMode === 1) dy *= 16; // lines → pixels
-      if (e.deltaMode === 2) dy *= 400; // pages → pixels
-      const capped = Math.sign(dy) * Math.min(Math.abs(dy), 50);
-      const factor = Math.exp(-capped * 0.002);
-      const cur = graphRef.current.zoom() as number;
-      graphRef.current.zoom(Math.max(0.1, Math.min(10, cur * factor)), 0);
-    };
-    // capture: true fires our handler before the canvas (child) gets the event
+    const onWheel = (e: WheelEvent) => e.preventDefault();
     el.addEventListener("wheel", onWheel, { passive: false, capture: true });
     return () => el.removeEventListener("wheel", onWheel, { capture: true });
   }, []);
@@ -142,9 +124,7 @@ export default function GraphCanvasInner({
   const hasMissingLink = !!missingLinkGroups && !hasRouteHighlight;
 
   // Memoised so ForceGraph2D gets a stable object reference as long as the
-  // underlying data hasn't changed.  Recreating graphData on every render
-  // (e.g. when clickedNodeId changes) causes the library to re-assign its
-  // internal __indexColor picking registry → stale shadow canvas → broken drag.
+  // underlying data hasn't changed.
   const graphData = useMemo(() => {
     const connectedIds = new Set(edges.flatMap((e) => [e.from, e.to]));
     return {
@@ -162,8 +142,6 @@ export default function GraphCanvasInner({
       })) as GraphLink[],
     };
   }, [units, edges]);
-  // Keep ref in sync so native event listeners always see fresh graph data.
-  graphDataRef.current = graphData;
 
   // Neighbour set for clicked node (uses stable edges prop)
   const neighborIds = useMemo(() => {
@@ -302,15 +280,6 @@ export default function GraphCanvasInner({
         labelColour = "#9ca3af";
       }
 
-      // Record CSS-pixel position and raw transform for geometric picking + drag.
-      const t = ctx.getTransform();
-      const dpr = window.devicePixelRatio || 1;
-      canvasTransformRef.current = { a: t.a, d: t.d, e: t.e, f: t.f };
-      nodeCSSPositions.current.set(n.id, {
-        x: (t.a * n.x + t.e) / dpr,
-        y: (t.d * n.y + t.f) / dpr,
-      });
-
       ctx.save();
       ctx.globalAlpha = alpha;
 
@@ -331,198 +300,6 @@ export default function GraphCanvasInner({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [highlights, clickedNodeId, neighborIds, missingLinkGroups]
   );
-
-  // All pointer interaction — registered as native listeners so we can use
-  // capture phase on pointerdown.  Capture phase fires BEFORE d3-zoom's canvas
-  // listener, letting us call stopPropagation() when we're over a node so
-  // d3-zoom never starts a conflicting pan while we drag the node.
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    // ---- helpers (close over stable refs only) ----
-    function nodeAt(clientX: number, clientY: number): GraphNode | null {
-      const rect = el!.querySelector("canvas")?.getBoundingClientRect();
-      const cx = clientX - (rect?.left ?? 0);
-      const cy = clientY - (rect?.top ?? 0);
-      let best: GraphNode | null = null;
-      let bestD = 12; // 12 CSS-px hit radius
-      for (const [id, pos] of nodeCSSPositions.current) {
-        const d = Math.hypot(cx - pos.x, cy - pos.y);
-        if (d < bestD) {
-          bestD = d;
-          best = (graphDataRef.current.nodes.find((n) => n.id === id) ?? null) as GraphNode | null;
-        }
-      }
-      return best;
-    }
-
-    function linkAt(clientX: number, clientY: number): GraphLink | null {
-      const rect = el!.querySelector("canvas")?.getBoundingClientRect();
-      const cx = clientX - (rect?.left ?? 0);
-      const cy = clientY - (rect?.top ?? 0);
-      let best: GraphLink | null = null;
-      let bestD = 8; // 8 CSS-px hit radius from line
-      for (const link of graphDataRef.current.links) {
-        const srcId =
-          typeof link.source === "object" ? (link.source as GraphNode).id : link.source;
-        const tgtId =
-          typeof link.target === "object" ? (link.target as GraphNode).id : link.target;
-        const sp = nodeCSSPositions.current.get(srcId);
-        const tp = nodeCSSPositions.current.get(tgtId);
-        if (!sp || !tp) continue;
-        const d = distToSegment(cx, cy, sp.x, sp.y, tp.x, tp.y);
-        if (d < bestD) { bestD = d; best = link as GraphLink; }
-      }
-      return best;
-    }
-
-    // ---- pointer down (capture) ----
-    function onPointerDown(e: PointerEvent) {
-      pointerDownRef.current = { x: e.clientX, y: e.clientY };
-      const node = nodeAt(e.clientX, e.clientY);
-      if (node) {
-        draggingNodeRef.current = { node, reheated: false };
-        el!.setPointerCapture(e.pointerId);
-        // pointerdown fires before mousedown; by the time the paired mousedown
-        // fires draggingNodeRef is already set, so onMouseDown (below) can block
-        // d3-zoom's canvas listener in capture phase.
-        e.stopImmediatePropagation();
-      }
-    }
-
-    // ---- mousedown capture: block d3-zoom's pan while we own a node drag ----
-    // d3-zoom attaches 'mousedown.zoom' to the canvas in bubble phase.
-    // Because our pointerdown fires first (before mousedown) and sets
-    // draggingNodeRef, we can call stopImmediatePropagation here (capture phase)
-    // to prevent d3-zoom from ever seeing the mousedown — which also prevents
-    // it from registering its window-level mousemove.zoom / mouseup.zoom
-    // handlers that otherwise fight our drag and cause simultaneous pan.
-    function onMouseDown(e: MouseEvent) {
-      if (draggingNodeRef.current) {
-        e.stopImmediatePropagation();
-      }
-    }
-
-    // ---- pointer move ----
-    function onPointerMove(e: PointerEvent) {
-      if (!draggingNodeRef.current) return;
-      const drag = draggingNodeRef.current;
-      const t = canvasTransformRef.current;
-      if (!t || t.a === 0) return;
-
-      const down = pointerDownRef.current;
-      const moved = down ? Math.hypot(e.clientX - down.x, e.clientY - down.y) : 6;
-
-      // Don't do anything until this is a confirmed drag (> 5 px).
-      // This avoids jitter / phantom zoom on plain taps.
-      if (!drag.reheated) {
-        if (moved <= 5) return;
-        // Pin node at its current position so it won't drift once we start
-        // moving it.  We deliberately avoid calling any simulation API here:
-        // d3AlphaTarget(0.3) doesn't restart d3-force if it has already cooled,
-        // and d3ReheatSimulation() causes a full-energy burst on drag start.
-        if (drag.node.x != null) drag.node.fx = drag.node.x;
-        if (drag.node.y != null) drag.node.fy = drag.node.y;
-        drag.reheated = true;
-      }
-
-      const rect = el!.querySelector("canvas")?.getBoundingClientRect();
-      const cssX = e.clientX - (rect?.left ?? 0);
-      const cssY = e.clientY - (rect?.top ?? 0);
-      const dpr = window.devicePixelRatio || 1;
-      // Invert the canvas transform: graph = (canvasPx - translate) / scale
-      const gx = (cssX * dpr - t.e) / t.a;
-      const gy = (cssY * dpr - t.f) / t.d;
-      // Set both fx/fy (physics pin) AND x/y (direct canvas position).
-      // x/y is the key fix: d3-force only applies fx/fy during its own tick,
-      // so if the simulation has cooled and stopped, setting fx/fy alone has
-      // no visible effect.  Writing x/y directly makes the node follow the
-      // pointer every frame via force-graph's autoPauseRedraw=false RAF loop.
-      drag.node.fx = gx;
-      drag.node.fy = gy;
-      drag.node.x = gx;
-      drag.node.y = gy;
-    }
-
-    // ---- pointer up ----
-    function onPointerUp(e: PointerEvent) {
-      const down = pointerDownRef.current;
-
-      // End node drag
-      if (draggingNodeRef.current) {
-        const { node, reheated } = draggingNodeRef.current;
-        node.fx = undefined;
-        node.fy = undefined;
-        draggingNodeRef.current = null;
-        if (reheated) {
-          // Reheat AFTER the node is dropped so the layout can settle around
-          // the new position.  Doing this on drag-END (not start) means the
-          // burst looks like a natural re-settle rather than a disruptive jerk.
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (graphRef.current as any)?.d3ReheatSimulation?.();
-        }
-        // Treat as click only if the pointer barely moved
-        if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
-      }
-
-      // Click / tap handling
-      if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
-
-      const hitNode = nodeAt(e.clientX, e.clientY);
-      if (hitNode) {
-        setClickedNodeId((prev) => (prev === hitNode.id ? null : hitNode.id));
-        setClickedEdgeInfo(null);
-        return;
-      }
-
-      const hitLink = linkAt(e.clientX, e.clientY);
-      if (hitLink) {
-        const src =
-          typeof hitLink.source === "object"
-            ? (hitLink.source as GraphNode).id
-            : hitLink.source;
-        const tgt =
-          typeof hitLink.target === "object"
-            ? (hitLink.target as GraphNode).id
-            : hitLink.target;
-        const allLinks = graphDataRef.current.links.filter((gl) => {
-          const gs =
-            typeof gl.source === "object" ? (gl.source as GraphNode).id : gl.source;
-          const gt =
-            typeof gl.target === "object" ? (gl.target as GraphNode).id : gl.target;
-          return (gs === src && gt === tgt) || (gs === tgt && gt === src);
-        }) as GraphLink[];
-        const TOOLTIP_W = 340;
-        const TOOLTIP_H = 200;
-        const x = Math.min(e.clientX + 12, window.innerWidth - TOOLTIP_W - 8);
-        const y =
-          e.clientY + 12 + TOOLTIP_H > window.innerHeight
-            ? e.clientY - TOOLTIP_H - 8
-            : e.clientY + 12;
-        setClickedEdgeInfo({ links: allLinks, x, y });
-        setClickedNodeId(null);
-        return;
-      }
-
-      setClickedNodeId(null);
-      setClickedEdgeInfo(null);
-    }
-
-    // pointerdown capture fires before mousedown, so draggingNodeRef is set by
-    // the time onMouseDown runs. Both use capture:true to beat d3-zoom.
-    el.addEventListener("pointerdown", onPointerDown, { capture: true });
-    el.addEventListener("mousedown", onMouseDown, { capture: true });
-    el.addEventListener("pointermove", onPointerMove);
-    el.addEventListener("pointerup", onPointerUp);
-    return () => {
-      el.removeEventListener("pointerdown", onPointerDown, { capture: true });
-      el.removeEventListener("mousedown", onMouseDown, { capture: true });
-      el.removeEventListener("pointermove", onPointerMove);
-      el.removeEventListener("pointerup", onPointerUp);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // stable: all mutable state accessed via refs; setters are stable
 
   const linkColor = useCallback(
     (link: object) => {
@@ -586,7 +363,6 @@ export default function GraphCanvasInner({
           nodeId="id"
           nodeCanvasObject={nodeCanvasObject}
           nodeCanvasObjectMode={() => "replace"}
-          enableNodeDrag={false}
           linkColor={linkColor}
           linkWidth={linkWidth}
           linkDirectionalArrowLength={3}
@@ -596,7 +372,44 @@ export default function GraphCanvasInner({
           height={dimensions.height}
           autoPauseRedraw={false}
           d3AlphaDecay={0.05}
+          onNodeClick={(node) => {
+            setClickedNodeId((prev) => prev === (node as GraphNode).id ? null : (node as GraphNode).id);
+            setClickedEdgeInfo(null);
+          }}
+          onBackgroundClick={() => { setClickedNodeId(null); setClickedEdgeInfo(null); }}
+          onLinkClick={(link, event) => {
+            const l = link as GraphLink;
+            const src = typeof l.source === "object" ? (l.source as GraphNode).id : l.source;
+            const tgt = typeof l.target === "object" ? (l.target as GraphNode).id : l.target;
+            const allLinks = graphData.links.filter((gl) => {
+              const gs = typeof gl.source === "object" ? (gl.source as GraphNode).id : gl.source;
+              const gt = typeof gl.target === "object" ? (gl.target as GraphNode).id : gl.target;
+              return (gs === src && gt === tgt) || (gs === tgt && gt === src);
+            }) as GraphLink[];
+            const TOOLTIP_W = 340, TOOLTIP_H = 200;
+            const x = Math.min(event.clientX + 12, window.innerWidth - TOOLTIP_W - 8);
+            const y = event.clientY + 12 + TOOLTIP_H > window.innerHeight
+              ? event.clientY - TOOLTIP_H - 8 : event.clientY + 12;
+            setClickedEdgeInfo({ links: allLinks, x, y });
+            setClickedNodeId(null);
+          }}
         />
+      )}
+
+      {/* Brave Shields / canvas-farbling warning */}
+      {shieldWarning && (
+        <div className="absolute top-3 right-3 z-20 max-w-xs rounded-lg border border-amber-700 bg-amber-950/90 p-3 text-xs text-amber-200 shadow-xl">
+          <button
+            className="absolute top-2 right-2 text-amber-400 hover:text-amber-100 leading-none"
+            onClick={() => setShieldWarning(false)}
+          >✕</button>
+          <div className="font-semibold text-amber-400 mb-1">Browser shield active</div>
+          <p>
+            A fingerprint-protection shield (e.g. Brave Shields) is randomising canvas
+            pixel data, which breaks node and edge interaction on the graph.
+            Disable the shield for this site to restore full interactivity.
+          </p>
+        </div>
       )}
 
       {/* Edge tooltip */}
