@@ -72,7 +72,8 @@ export default function GraphCanvasInner({
   // Track pointer-down position to distinguish a tap/click from a drag.
   const pointerDownRef = useRef<{ x: number; y: number } | null>(null);
   // Currently dragged node (null when not dragging).
-  const draggingNodeRef = useRef<{ node: GraphNode } | null>(null);
+  // reheated: true once we've called d3ReheatSimulation for this drag gesture.
+  const draggingNodeRef = useRef<{ node: GraphNode; reheated: boolean } | null>(null);
   // Stable ref to current graphData for use inside native event listeners.
   // Initialised empty; synced to graphData each render (see below).
   const graphDataRef = useRef<{ nodes: GraphNode[]; links: GraphLink[] }>({ nodes: [], links: [] });
@@ -383,28 +384,39 @@ export default function GraphCanvasInner({
       if (node && node.x != null && node.y != null) {
         node.fx = node.x;
         node.fy = node.y;
-        draggingNodeRef.current = { node };
+        draggingNodeRef.current = { node, reheated: false };
         el!.setPointerCapture(e.pointerId);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (graphRef.current as any)?.d3ReheatSimulation?.();
-        // Stop d3-zoom from starting a pan at the same time
-        e.stopPropagation();
+        // stopImmediatePropagation (not just stopPropagation) prevents d3-zoom
+        // from starting a pan — even if it is registered on the same element.
+        e.stopImmediatePropagation();
       }
     }
 
     // ---- pointer move ----
     function onPointerMove(e: PointerEvent) {
       if (!draggingNodeRef.current) return;
-      const { node } = draggingNodeRef.current;
+      const drag = draggingNodeRef.current;
       const t = canvasTransformRef.current;
       if (!t || t.a === 0) return;
+
+      // Reheat the simulation only once we know this is a real drag (> 5 px),
+      // not a tap. This prevents jitter on plain node clicks.
+      if (!drag.reheated) {
+        const down = pointerDownRef.current;
+        if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (graphRef.current as any)?.d3ReheatSimulation?.();
+          drag.reheated = true;
+        }
+      }
+
       const rect = el!.querySelector("canvas")?.getBoundingClientRect();
       const cssX = e.clientX - (rect?.left ?? 0);
       const cssY = e.clientY - (rect?.top ?? 0);
       const dpr = window.devicePixelRatio || 1;
       // Invert the canvas transform: graph = (canvasPx - translate) / scale
-      node.fx = (cssX * dpr - t.e) / t.a;
-      node.fy = (cssY * dpr - t.f) / t.d;
+      drag.node.fx = (cssX * dpr - t.e) / t.a;
+      drag.node.fy = (cssY * dpr - t.f) / t.d;
     }
 
     // ---- pointer up ----
