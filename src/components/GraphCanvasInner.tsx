@@ -414,23 +414,16 @@ export default function GraphCanvasInner({
       const down = pointerDownRef.current;
       const moved = down ? Math.hypot(e.clientX - down.x, e.clientY - down.y) : 6;
 
-      // Don't touch the force simulation until this is a confirmed drag (> 5 px).
+      // Don't do anything until this is a confirmed drag (> 5 px).
       // This avoids jitter / phantom zoom on plain taps.
       if (!drag.reheated) {
         if (moved <= 5) return;
-        // First confirmed drag tick: pin node at current sim position, then
-        // gently activate the simulation.  d3ReheatSimulation() resets alpha to
-        // 1.0 (full energy) which causes all nodes to burst — instead mirror the
-        // pattern force-graph's own drag handler uses: alphaTarget(0.3) keeps
-        // the sim ticking at ~30% intensity so neighbours respond naturally
-        // without the violent initial jerk.  resetCountdown() restarts the
-        // internal timer if the simulation had already cooled and stopped.
+        // Pin node at its current position so it won't drift once we start
+        // moving it.  We deliberately avoid calling any simulation API here:
+        // d3AlphaTarget(0.3) doesn't restart d3-force if it has already cooled,
+        // and d3ReheatSimulation() causes a full-energy burst on drag start.
         if (drag.node.x != null) drag.node.fx = drag.node.x;
         if (drag.node.y != null) drag.node.fy = drag.node.y;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const g = graphRef.current as any;
-        g?.d3AlphaTarget?.(0.3);
-        g?.resetCountdown?.();
         drag.reheated = true;
       }
 
@@ -439,8 +432,17 @@ export default function GraphCanvasInner({
       const cssY = e.clientY - (rect?.top ?? 0);
       const dpr = window.devicePixelRatio || 1;
       // Invert the canvas transform: graph = (canvasPx - translate) / scale
-      drag.node.fx = (cssX * dpr - t.e) / t.a;
-      drag.node.fy = (cssY * dpr - t.f) / t.d;
+      const gx = (cssX * dpr - t.e) / t.a;
+      const gy = (cssY * dpr - t.f) / t.d;
+      // Set both fx/fy (physics pin) AND x/y (direct canvas position).
+      // x/y is the key fix: d3-force only applies fx/fy during its own tick,
+      // so if the simulation has cooled and stopped, setting fx/fy alone has
+      // no visible effect.  Writing x/y directly makes the node follow the
+      // pointer every frame via force-graph's autoPauseRedraw=false RAF loop.
+      drag.node.fx = gx;
+      drag.node.fy = gy;
+      drag.node.x = gx;
+      drag.node.y = gy;
     }
 
     // ---- pointer up ----
@@ -454,12 +456,11 @@ export default function GraphCanvasInner({
         node.fy = undefined;
         draggingNodeRef.current = null;
         if (reheated) {
-          // Release alphaTarget so the simulation cools naturally — mirror of
-          // force-graph's own drag-end handler.
+          // Reheat AFTER the node is dropped so the layout can settle around
+          // the new position.  Doing this on drag-END (not start) means the
+          // burst looks like a natural re-settle rather than a disruptive jerk.
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const g = graphRef.current as any;
-          g?.d3AlphaTarget?.(0);
-          g?.resetCountdown?.();
+          (graphRef.current as any)?.d3ReheatSimulation?.();
         }
         // Treat as click only if the pointer barely moved
         if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
