@@ -68,5 +68,525 @@
     "source_quote": "the garbage spans an area between North America and Japan of roughly 1.6 million square kilometers – three times the size of France, and more than double the size of Texas.",
     "date_scraped": "2026-02-22",
     "verified": false
+  },
+  {
+    "id": "e008",
+    "from": "lithium_in_the_atmosphere",
+    "to": "meteor_weight",
+    "factor": 375.0,
+    "source_url": "https://www.bbc.com/news/articles/cpd8z4eqlxno?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The atmosphere naturally gets about 50-80g daily from small meteors, Wing explains. \"So, a single Falcon 9 rocket has about 30kg, so this is quite a lot more,\" he says.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e009",
+    "from": "number_of_water_samples_tested_for_pfas",
+    "to": "wales",
+    "factor": 1.5,
+    "source_url": "https://www.bbc.com/news/articles/cz9vz249keno?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The number of water samples tested for PFAS will be increased by 50% across Scotland and Wales,",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e010",
+    "from": "new_island_habitat_area",
+    "to": "football_pitch",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/cvg5zw5l42xo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The island will add 0.55 hectares (1.4 acres) of new habitat - almost the size of a football pitch - within the Blackwater Estuary once the work is complete.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e011",
+    "from": "solar_panels_on_rooftops",
+    "to": "rooftop",
+    "factor": 10000000.0,
+    "source_url": "https://www.bbc.com/news/articles/ckgj7me00p0o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "We could put solar panels on 10 million rooftops or heat pumps in one million homes.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e012",
+    "from": "heat_pumps",
+    "to": "homes",
+    "factor": 1000000.0,
+    "source_url": "https://www.bbc.com/news/articles/ckgj7me00p0o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "We could put solar panels on 10 million rooftops or heat pumps in one million homes.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e013",
+    "from": "saturn_v_rocket",
+    "to": "wales",
+    "factor": 3.0,
+    "source_url": "https://www.bbc.com/news/articles/cl7y8zq5xpno?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The Saturn V rocket that shot Lovell, Borman and William Anders out of our atmosphere at 25,000mph (40,233km/h) was huge - three times larger than anything seen on the Gemini programme.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e014",
+    "from": "saturn_v_rocket",
+    "to": "gemini_rocket",
+    "factor": 3.0,
+    "source_url": "https://www.bbc.com/news/articles/cl7y8zq5xpno?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The Saturn V rocket that shot Lovell, Borman and William Anders out of our atmosphere at 25,000mph (40,233km/h) was huge - three times larger than anything seen on the Gemini programme.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e015",
+    "from": "rocket",
+    "to": "three_foot_tube",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/cl7y8zq5xpno?at_medium=RSS&at_campaign=rss",
+    "source_quote": "One Saturday, a 16-year-old hauled a heavy, three-foot tube into the middle of a large field in Wisconsin.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e016",
+    "from": "rocket_height",
+    "to": "eighty_feet",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/cl7y8zq5xpno?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The rocket rose 80 feet into the air and exploded.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e017",
+    "from": "nuclear_reactor",
+    "to": "onshore_wind_turbine",
+    "factor": 0.033,
+    "source_url": "https://www.bbc.com/news/articles/cev2dylxv74o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "A typical on-shore wind turbine generates 2-3 megawatts.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e018",
+    "from": "nuclear_reactor_power",
+    "to": "onshore_wind_turbine_power",
+    "factor": 0.05,
+    "source_url": "https://www.bbc.com/news/articles/cev2dylxv74o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "This is relatively small. A typical on-shore wind turbine generates 2-3 megawatts.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e019",
+    "from": "one_lunar_day",
+    "to": "four_weeks_on_earth",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/cev2dylxv74o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "One lunar day is equivalent to four weeks on Earth, made up of two weeks of continual sunshine and two weeks of darkness.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e020",
+    "from": "winning_the_lottery",
+    "to": "being_impacted_by_this_piece_of_space_debris",
+    "factor": 1.4285714285714286,
+    "source_url": "https://www.bbc.com/news/articles/cy9vz28nyedo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "It's much more likely that you win the lottery than that you get impacted by this piece of space debris,",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e021",
+    "from": "nasas_valkyrie_robot",
+    "to": "star_wars_stormtrooper",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/cy7keddnj31o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Nasa's Valkyrie robot was built by the Johnson Space Center to compete in a 2013 robotics challenge trial. Weighing 300lb and standing at 6ft2in, it looks not unlike a Star Wars Stormtrooper, but it is one of an increasing number of human-like machines with superhuman abilities.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e022",
+    "from": "rovers",
+    "to": "01mph",
+    "factor": 0.1,
+    "source_url": "https://www.bbc.com/news/articles/cy7keddnj31o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Many robots are slow and methodical – for example on Mars, the rovers (remote-controlled motor vehicles) trundle along at barely 0.1mph.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e023",
+    "from": "venezuela_oil_exports",
+    "to": "saudi_arabia_oil_exports",
+    "factor": 0.022,
+    "source_url": "https://www.bbc.com/news/articles/c4gjx1j1nkjo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Compare that to second-placed Saudi Arabia, which has 267 billion barrels of reserves, but had exports worth $181bn in the same time period.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e024",
+    "from": "venezuela_oil_reserves_before_reclassification",
+    "to": "venezuela_oil_reserves_after_reclassification",
+    "factor": 3.75,
+    "source_url": "https://www.bbc.com/news/articles/c4gjx1j1nkjo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Previously, there were thought to be just 80 billion barrels of extractable oil, but by 2011, its reported figure had nearly quadrupled.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e025",
+    "from": "space_launch_system",
+    "to": "eiffel_tower",
+    "factor": 1.4,
+    "source_url": "https://www.bbc.com/news/articles/cly148lvyevo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The 98m-tall Space Launch System was carried vertically from the Vehicle Assembly Building on the 4-mile (6.5km) journey to the pad.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e026",
+    "from": "semiconductors",
+    "to": "semiconductors",
+    "factor": 4000.0,
+    "source_url": "https://www.bbc.com/news/articles/c62vx0pgyrgo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The work that we're doing now is allowing us to create semiconductors up to 4,000 times purer in space than we can currently make here today,",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e027",
+    "from": "factory",
+    "to": "microwave",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/c62vx0pgyrgo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Space Forge have sent a microwave-sized factory into orbit, and have demonstrated that its furnace can be switched on and reach temperatures of around 1,000C.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e028",
+    "from": "wind_turbines",
+    "to": "eiffel_tower",
+    "factor": 0.51,
+    "source_url": "https://www.bbc.com/news/articles/cdedjnw8e85o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The two farms are 13 miles off the north-east coast of Scotland and include some of the biggest wind turbines in the UK, at 257m high.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e029",
+    "from": "savings",
+    "to": "homes",
+    "factor": 100.0,
+    "source_url": "https://www.bbc.com/news/articles/cdedjnw8e85o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Research commissioned by the company estimates the savings could top £55 billion by 2050 - which it claims could knock £50 to £100 a year off the average bill.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e030",
+    "from": "wales",
+    "to": "wales",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/cx2407zy9zxo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "the disaster that killed 116 children and 28 adults and left a lasting scar in Wales",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e031",
+    "from": "distance",
+    "to": "sandringham_estate",
+    "factor": 20.0,
+    "source_url": "https://www.bbc.com/news/articles/cj0dme87l84o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The base is around 20 miles (32 km) from the Sandringham Estate.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e032",
+    "from": "arrokoth",
+    "to": "snowman",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/science/2026/feb/19/arrokoth-snowman-shape-simulations-kuiper-belt",
+    "source_quote": "now researchers say they have fresh insights into how the ultra-red, 4bn-year-old body known as Arrokoth came to have its distinctive snowman-like shape.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e033",
+    "from": "arrokoth",
+    "to": "peanut",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/science/2026/feb/19/arrokoth-snowman-shape-simulations-kuiper-belt",
+    "source_quote": "Not all of these planetesimals are rounded: indeed, astronomers estimate 10-25% of those found in the Kuiper belt, including Arrokoth, have two lobes, meaning they look a bit like a peanut or a snowman.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e034",
+    "from": "pebbles",
+    "to": "millimetresized_particles",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/science/2026/feb/19/arrokoth-snowman-shape-simulations-kuiper-belt",
+    "source_quote": "This is a low-resolution model of the true situation as it is thought real pebble clouds would have contained about 1024 millimetre-sized particles.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "radius_of_particles",
+    "to": "kilometres",
+    "factor": 2.0,
+    "source_url": "https://www.theguardian.com/science/2026/feb/19/arrokoth-snowman-shape-simulations-kuiper-belt",
+    "source_quote": "Writing in the Monthly Notices of the Royal Astronomical Society, Barnes and colleagues report how they ran 54 simulations involving an initial pebble cloud containing 105 particles, each with a radius of about 2km (1.25 miles).",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "lead_level_at_a_primary_school",
+    "to": "us_health_risk_level",
+    "factor": 1760.0,
+    "source_url": "https://www.theguardian.com/us-news/2026/feb/01/mexico-moves-to-combat-pollution-following-guardian-investigations",
+    "source_quote": "One primary school had 1,760 times the levels of lead that would be considered a human health risk in the US.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e037",
+    "from": "fine_particulate_air_pollution_in_monterrey",
+    "to": "fine_particulate_air_pollution_in_los_angeles",
+    "factor": 2.0,
+    "source_url": "https://www.theguardian.com/us-news/2025/dec/02/monterrey-mexico-air-quality-industrial-pollution",
+    "source_quote": "On a daily basis, residents here live with about twice the levels of fine particulate air pollution as those in Los Angeles, which has long been the most polluted major metro in the US.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e038",
+    "from": "lead_emissions_by_a_single_european_steel_company",
+    "to": "lead_emissions_by_all_companies_in_the_new_yorknew_jersey_metropolitan_area",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/us-news/2025/dec/02/monterrey-mexico-air-quality-industrial-pollution",
+    "source_quote": "In one example, the analysis found that a single European steel company reported emitting more lead – which can cause brain damage in children – into the air in a year than all the companies combined in the New York/New Jersey metropolitan area, the most populous metro in the US.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e039",
+    "from": "lead_emissions_by_ternium",
+    "to": "lead_emissions_by_all_companies_in_the_new_yorknew_jersey_metropolitan_area",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/us-news/2025/dec/02/monterrey-mexico-air-quality-industrial-pollution",
+    "source_quote": "Ternium, a steel company headquartered in Luxemburg that supplies metals crucial to the North American auto industry, reported releasing over 1,000lbs (458kg) of lead into the air in 2023 from a factory in a crowded Monterrey neighborhood. That is more than all companies combined in the New York/New Jersey metropolitan area, the United States’ most populous metro.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e040",
+    "from": "lead_dust_in_the_window_sills_of_an_elementary_school",
+    "to": "us_action_level_for_lead_dust",
+    "factor": 1760.0,
+    "source_url": "https://www.theguardian.com/us-news/2025/may/03/mexico-zinc-nacional-factory-hazardous-waste-relocation",
+    "source_quote": "Soil sampling conducted by a university toxicologist in collaboration with the investigation showed high levels of lead, cadmium and arsenic in homes, schools and yards in the neighborhood – including one elementary school that had 1,760 times the US action level for lead dust in its window sills.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e041",
+    "from": "additional_agricultural_land",
+    "to": "california",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/environment/2026/jan/20/rfk-jr-trump-meat-diet-guidelines-land",
+    "source_quote": "Even a 25% increase in the amount of protein consumed in this way in the US would require about 100m acres of additional agricultural land each year, an area about the size of California, and add hundreds of millions of tons of extra pollution to an already overheating planet, according to an estimate by the World Resources Institute (WRI), a non-profit research body.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e042",
+    "from": "beef_land_requirement",
+    "to": "common_plant_proteins_land_requirement",
+    "factor": 20.0,
+    "source_url": "https://www.theguardian.com/environment/2026/jan/20/rfk-jr-trump-meat-diet-guidelines-land",
+    "source_quote": "Red meat, in particular, has an outsized impact upon the planet – beef requires 20 times more land and emits 20 times more greenhouse gas emissions per gram of protein than common plant proteins, such as beans.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e043",
+    "from": "beef_greenhouse_gas_emissions",
+    "to": "common_plant_proteins_greenhouse_gas_emissions",
+    "factor": 20.0,
+    "source_url": "https://www.theguardian.com/environment/2026/jan/20/rfk-jr-trump-meat-diet-guidelines-land",
+    "source_quote": "Red meat, in particular, has an outsized impact upon the planet – beef requires 20 times more land and emits 20 times more greenhouse gas emissions per gram of protein than common plant proteins, such as beans.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e044",
+    "from": "meat_consumption_projection",
+    "to": "meat_consumption_in_2000",
+    "factor": 2.0,
+    "source_url": "https://www.theguardian.com/environment/2026/jan/20/rfk-jr-trump-meat-diet-guidelines-land",
+    "source_quote": "Worldwide consumption of pork, beef, poultry and meat is projected to reach over 500m tonnes by 2050 – double what it was in 2000.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e045",
+    "from": "protected_zone",
+    "to": "wales",
+    "factor": 0.115,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/23/dark-bee-species-belgian-beekeepers-honeybees-aoe",
+    "source_quote": "Beekeepers across 30,000 hectares (74,000 acres) covering Chimay and Momignies are only allowed to keep dark bees.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e046",
+    "from": "honey_production",
+    "to": "tonne",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/23/dark-bee-species-belgian-beekeepers-honeybees-aoe",
+    "source_quote": "Last year, Noé produced a tonne of honey, with each 250g pot selling for €4.50 (£3.90).",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e047",
+    "from": "white_stork_nest_cost",
+    "to": "euros",
+    "factor": 500.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/11/lights-belgian-park-lamps-light-polluted-night-time-environment-wildlife",
+    "source_quote": "Each metal stork nest costs €500",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e048",
+    "from": "rubbish_collected_from_street_parties_and_parades",
+    "to": "tonne",
+    "factor": 1600.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/19/brazil-glitter-ban-rio-carnival-beaches-microplastic-pollution-health",
+    "source_quote": "Last year, Rio’s waste service collected more than 1,600 tonnes of rubbish from street parties and parades.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e049",
+    "from": "bio_glitter_pot",
+    "to": "glitter_sachet",
+    "factor": 7.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/19/brazil-glitter-ban-rio-carnival-beaches-microplastic-pollution-health",
+    "source_quote": "Small 2.5g pots of bio-glitter sell online for about seven times that.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e050",
+    "from": "salmon_farm_production",
+    "to": "tonne",
+    "factor": 38000.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/17/scotland-shetland-fishing-salmon-fish-farms-environment-ssf",
+    "source_quote": "They produced 38,000 tonnes of salmon, worth £174m, in 2024 – about a fifth of Scotland’s output.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e051",
+    "from": "ssfs_new_farm_production",
+    "to": "tonne",
+    "factor": 6000.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/17/scotland-shetland-fishing-salmon-fish-farms-environment-ssf",
+    "source_quote": "The company, which is jointly owned by the giant Norwegian seafood companies SalMar and Lerøy, will build 12 pens, each 160 metres in circumference, which will together hold up to 6,000 tonnes of salmon.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e052",
+    "from": "salmon_deaths",
+    "to": "number",
+    "factor": 250000.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/17/scotland-shetland-fishing-salmon-fish-farms-environment-ssf",
+    "source_quote": "In October, more than 250,000 salmon died unexpectedly in Shetland’s farms alone, which one company blamed on plankton blooms and jellyfish in warm weather.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e053",
+    "from": "salmon_farm_production_in_2018",
+    "to": "tonne",
+    "factor": 156025.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/17/scotland-shetland-fishing-salmon-fish-farms-environment-ssf",
+    "source_quote": "Since then, Scottish farmed salmon production has soared by 23%, from 156, 025 tonnes in 2018 to 192,000 tonnes in 2024.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e054",
+    "from": "salmon_farm_production_in_2024",
+    "to": "tonne",
+    "factor": 192000.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/17/scotland-shetland-fishing-salmon-fish-farms-environment-ssf",
+    "source_quote": "Since then, Scottish farmed salmon production has soared by 23%, from 156, 025 tonnes in 2018 to 192,000 tonnes in 2024.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e055",
+    "from": "pens_circumference",
+    "to": "metre",
+    "factor": 160.0,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/17/scotland-shetland-fishing-salmon-fish-farms-environment-ssf",
+    "source_quote": "The company, which is jointly owned by the giant Norwegian seafood companies SalMar and Lerøy, will build 12 pens, each 160 metres in circumference, which will together hold up to 6,000 tonnes of salmon.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e056",
+    "from": "whale_sanctuary_project",
+    "to": "wales",
+    "factor": 0.25,
+    "source_url": "https://www.theguardian.com/environment/2026/feb/12/orcas-france-aquarium-marineland-antibes-killer-whales-wikie-keijo-animal-welfare",
+    "source_quote": "The 40-hectare (100-acre) outdoor site aims to recreate a seaside environment as close as possible to the natural habitat of whales and dolphins.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e057",
+    "from": "data_stored",
+    "to": "iphone",
+    "factor": 37.0,
+    "source_url": "https://www.newscientist.com/article/2516075-data-centres-could-store-information-in-glass-for-thousands-of-years/?utm_campaign=RSS%7CNSNS&utm_source=NSNS&utm_medium=RSS&utm_content=home",
+    "source_quote": "The researchers managed to store 4.8 terabytes of data in a square piece of glass 120 millimetres wide and 2 millimetres thick – equivalent to roughly 37 iPhones’ worth of storage in about a third of the volume of one.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e058",
+    "from": "io",
+    "to": "earths_moon",
+    "factor": 1.0,
+    "source_url": "https://www.newscientist.com/article/2514419-synchronised-volcanic-eruptions-on-io-hint-at-a-spongy-interior/?utm_campaign=RSS%7CNSNS&utm_source=NSNS&utm_medium=RSS&utm_content=home",
+    "source_quote": "Despite Io’s small size – it is only slightly larger than Earth’s moon – the extreme nature of these eruptions makes them similar to volcanic events on Earth.",
+    "date_scraped": "2026-02-23",
+    "verified": false
+  },
+  {
+    "id": "e059",
+    "from": "erupted_lava_area",
+    "to": "wales",
+    "factor": 8.125,
+    "source_url": "https://www.newscientist.com/article/2514419-synchronised-volcanic-eruptions-on-io-hint-at-a-spongy-interior/?utm_campaign=RSS%7CNSNS&utm_source=NSNS&utm_medium=RSS&utm_content=home",
+    "source_quote": "The erupted lava spanned an area of about 65,000 square kilometres.",
+    "date_scraped": "2026-02-23",
+    "verified": false
   }
 ]
