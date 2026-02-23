@@ -48,7 +48,7 @@ FEEDS_FILE = Path(__file__).parent / "feeds.txt"
 # ---------------------------------------------------------------------------
 FETCH_TIMEOUT = 15          # seconds for raw HTML requests
 JINA_TIMEOUT = 30           # seconds for Jina Reader (headless browser, needs more time)
-GROQ_MODEL = "meta-llama/llama-4-maverick-17b-128e-instruct"
+GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_RPM = 25               # free tier allows 30 RPM; stay a little under
 GEMINI_MODEL = "gemini-2.5-flash"
 GEMINI_RPM = 5              # free-tier requests per minute; enforced with sleep
@@ -140,18 +140,26 @@ A journalistic unit comparison uses something UNFAMILIAR to help the reader pict
 comparing it to something FAMILIAR and PHYSICAL. The reader should finish the sentence with a \
 clearer mental image of the size, weight, area, or volume being described.
 
-GOOD examples — these are comparisons:
+GOOD examples — these are valid comparisons:
   "The iceberg is a quarter the size of Wales."
   "Scientists discovered a deposit 3 times the size of Wales."
   "The whale weighs as much as 30 double-decker buses."
   "The Great Barrier Reef is the size of 70 million football pitches."
 
 BAD examples — these are NOT comparisons; return [] for articles that only contain these:
-  "The temperature rose by 2.5°C."          ← raw statistic; no reference unit
-  "The mission lasted 9 months."             ← duration; not compared to anything physical
-  "1 in 4 properties face flood risk."       ← ratio/proportion; no physical unit
-  "The deposit contains £1 billion of ore."  ← monetary value; not a size comparison
-  "The asteroid is 500 million years old."   ← age; not compared to a relatable unit
+  "The temperature rose by 2.5°C."              ← raw statistic; no reference object
+  "The mission lasted 9 months."                ← duration, not a size comparison
+  "The rocket rose 80 feet into the air."       ← raw measurement with no reference object
+  "The turbine generates 2-3 megawatts."        ← power output, not physical scale
+  "One lunar day equals four weeks on Earth."   ← time period, not physical
+  "It's more likely than winning the lottery."  ← probability, not physical scale
+  "The factory is microwave-sized."             ← appearance/shape, not a numeric scale comparison
+  "Semiconductors 4,000 times purer."           ← quality/purity, not physical size
+  "Produced 38,000 tonnes of salmon."           ← raw quantity with its own unit; no reference object
+  "The base is 20 miles from the Estate."       ← distance measurement, no familiar reference
+  "Each nest costs €500."                       ← monetary value
+  "1 in 4 properties face flood risk."          ← ratio/proportion; no physical unit
+  "The asteroid is 500 million years old."      ← age; not compared to a relatable unit
 
 Known units (use their exact `id` when you recognise them):
 {units_block}
@@ -171,14 +179,32 @@ Return a JSON array of comparison objects found in the article. Each object must
 
 Hard rules — a comparison is only valid when ALL of the following are true:
 1. `from` and `to` are DIFFERENT things — never the same unit compared to itself.
-2. Both `from` and `to` are physical, tangible, visualisable things (not time periods,
-   currencies, percentages, or abstract concepts like "property", "mission", or "temperature").
-3. The source_quote contains explicit comparative language — at least one of:
-   "as big as", "the size of", "times the size", "equivalent to", "as long as",
-   "as heavy as", "as tall as", "as wide as", "as much as", "the weight of",
-   "the length of", "the height of", "the area of", "the volume of".
+2. Both `from` and `to` are physical, tangible, visualisable things. The following
+   are NEVER valid — reject any comparison involving:
+   - Time periods (days, weeks, years, centuries)
+   - Speed or power (mph, megawatts, horsepower)
+   - Monetary values or costs (£, $, €, billion, budget)
+   - Probabilities or ratios (likelihood, percentage, "1 in X")
+   - Abstract quantities (number of samples, number of properties, production totals)
+   - Purity, efficiency, or quality multipliers ("X times purer/faster/stronger")
+   - Things that are units of measurement themselves ("tonne", "metre", "kilometre")
+3. The source_quote contains explicit size/weight/area/volume comparative language.
+   The ONLY accepted forms are:
+   - "[X] times the size/area/weight/height/length/volume of [Y]"
+   - "[X] is as big/heavy/tall/wide/long as [Y]"
+   - "[X] equivalent to [Y]" (where both X and Y are physical objects)
+   - "[X] the size of [Y]" / "the size of [X]"
+   - "times larger than" / "times bigger than" (only for physical size)
+   Phrases like "times more", "times faster", "times purer", "as much as" (for
+   probability or quantity), "times the output/production" do NOT qualify.
 4. The comparison helps a reader visualise scale — the familiar unit gives an intuitive
    sense of how big, heavy, or large the unfamiliar thing is.
+5. Both `from` and `to` must be physical objects that could plausibly appear in
+   MULTIPLE different news articles. Do NOT create a new unit for something that only
+   makes sense in this article (e.g. "salmon farm production in 2018",
+   "Venezuela's oil reserves before reclassification", "lead level at a primary school").
+   A valid new unit is a physical object with a stable, recognisable size:
+   e.g. a double-decker bus, the Eiffel Tower, Wales, a football pitch.
 
 Additional rules:
 - If a unit matches something in the known list by its `id`, `label`, or any entry in its `aliases`, return its exact string `id` — do NOT create a new unit object.
@@ -187,9 +213,28 @@ Additional rules:
     "aliases": ["plural", "alt name"], "tags": ["category"]}}
 - `factor` must be a positive float (e.g. if 1 from = 200 to, factor = 200.0).
 - `source_quote` must be a verbatim sentence copied from the article text above.
-- Return [] when in doubt — it is far better to miss a real comparison than to invent a fake one.
+- Return [] when in doubt. MOST articles (around 80%) contain no valid comparison.
+  That is the correct and expected output. Do not try to find something just because
+  the article mentions numbers.
 - Do not invent comparisons not stated in the article.
 """
+
+
+MAX_EDGES_PER_ARTICLE = 3
+
+COMPARISON_KEYWORDS = [
+    "times the size", "times the area", "times the weight", "times the height",
+    "times the length", "times the volume", "times larger than", "times bigger than",
+    "the size of", "the area of", "the weight of", "the height of",
+    "as big as", "as heavy as", "as tall as", "as wide as", "as long as",
+    "weighs as much as",
+    "equivalent to",
+]
+
+
+def has_comparison_phrase(quote: str) -> bool:
+    q = quote.lower()
+    return any(kw in q for kw in COMPARISON_KEYWORDS)
 
 
 _last_groq_call: float = 0.0
@@ -222,7 +267,7 @@ def call_groq(article_text: str, units: list[dict]) -> list[dict] | None:
         time.sleep(wait)
     _last_groq_call = time.monotonic()
 
-    truncated = article_text[:8000]
+    truncated = article_text[:4000]
     prompt = EXTRACTION_PROMPT_TEMPLATE.format(
         units_block=build_units_prompt_block(units),
         article_text=truncated,
@@ -291,7 +336,7 @@ def call_gemini(article_text: str, units: list[dict]) -> list[dict]:
     model = genai.GenerativeModel(GEMINI_MODEL)
     _last_gemini_call = time.monotonic()
 
-    truncated = article_text[:8000]
+    truncated = article_text[:4000]
     prompt = EXTRACTION_PROMPT_TEMPLATE.format(
         units_block=build_units_prompt_block(units),
         article_text=truncated,
@@ -347,7 +392,7 @@ def _all_llms_exhausted() -> bool:
 # ---------------------------------------------------------------------------
 
 def validate_comparison(comp: dict, existing_ids: set[str]) -> bool:
-    """Return True if comp looks structurally valid."""
+    """Return True if comp looks structurally valid and passes hard keyword filter."""
     if not isinstance(comp, dict):
         return False
     if "from" not in comp or "to" not in comp:
@@ -355,7 +400,11 @@ def validate_comparison(comp: dict, existing_ids: set[str]) -> bool:
     factor = comp.get("factor")
     if not isinstance(factor, (int, float)) or factor <= 0:
         return False
-    if not comp.get("source_quote"):
+    quote = comp.get("source_quote", "")
+    if not quote:
+        return False
+    if not has_comparison_phrase(quote):
+        log.debug("  Rejecting comparison — no recognised comparison phrase in quote: %r", quote[:120])
         return False
     return True
 
@@ -473,7 +522,12 @@ def process_article(
 
     log.info("  llm: %d comparison(s) found", len(comparisons))
 
+    edges_this_article = 0
     for comp in comparisons:
+        if edges_this_article >= MAX_EDGES_PER_ARTICLE:
+            log.debug("  Per-article cap reached (%d), stopping", MAX_EDGES_PER_ARTICLE)
+            break
+
         if not validate_comparison(comp, existing_unit_ids):
             log.debug("  Invalid comparison: %r", comp)
             continue
@@ -482,6 +536,16 @@ def process_article(
         to_id, _ = resolve_unit(comp["to"], existing_unit_ids, new_units_map, terms_to_id)
 
         if from_id is None or to_id is None:
+            continue
+
+        if from_id == to_id:
+            log.debug("  Skipping self-referential edge: %s → %s", from_id, to_id)
+            continue
+
+        from_is_new = from_id in new_units_map
+        to_is_new = to_id in new_units_map
+        if from_is_new and to_is_new:
+            log.debug("  Skipping edge where both sides are new units: %s → %s", from_id, to_id)
             continue
 
         factor = float(comp["factor"])
@@ -504,6 +568,7 @@ def process_article(
             "date_scraped": today,
             "verified": False,
         })
+        edges_this_article += 1
 
 
 # ---------------------------------------------------------------------------
