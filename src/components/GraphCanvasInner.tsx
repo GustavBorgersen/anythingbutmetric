@@ -418,11 +418,19 @@ export default function GraphCanvasInner({
       // This avoids jitter / phantom zoom on plain taps.
       if (!drag.reheated) {
         if (moved <= 5) return;
-        // First confirmed drag tick: pin node at current sim position, then reheat.
+        // First confirmed drag tick: pin node at current sim position, then
+        // gently activate the simulation.  d3ReheatSimulation() resets alpha to
+        // 1.0 (full energy) which causes all nodes to burst — instead mirror the
+        // pattern force-graph's own drag handler uses: alphaTarget(0.3) keeps
+        // the sim ticking at ~30% intensity so neighbours respond naturally
+        // without the violent initial jerk.  resetCountdown() restarts the
+        // internal timer if the simulation had already cooled and stopped.
         if (drag.node.x != null) drag.node.fx = drag.node.x;
         if (drag.node.y != null) drag.node.fy = drag.node.y;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (graphRef.current as any)?.d3ReheatSimulation?.();
+        const g = graphRef.current as any;
+        g?.d3AlphaTarget?.(0.3);
+        g?.resetCountdown?.();
         drag.reheated = true;
       }
 
@@ -441,10 +449,18 @@ export default function GraphCanvasInner({
 
       // End node drag
       if (draggingNodeRef.current) {
-        const { node } = draggingNodeRef.current;
+        const { node, reheated } = draggingNodeRef.current;
         node.fx = undefined;
         node.fy = undefined;
         draggingNodeRef.current = null;
+        if (reheated) {
+          // Release alphaTarget so the simulation cools naturally — mirror of
+          // force-graph's own drag-end handler.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const g = graphRef.current as any;
+          g?.d3AlphaTarget?.(0);
+          g?.resetCountdown?.();
+        }
         // Treat as click only if the pointer barely moved
         if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
       }
