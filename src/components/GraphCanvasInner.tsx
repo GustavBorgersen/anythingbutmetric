@@ -381,13 +381,25 @@ export default function GraphCanvasInner({
     function onPointerDown(e: PointerEvent) {
       pointerDownRef.current = { x: e.clientX, y: e.clientY };
       const node = nodeAt(e.clientX, e.clientY);
-      if (node && node.x != null && node.y != null) {
-        node.fx = node.x;
-        node.fy = node.y;
+      if (node) {
         draggingNodeRef.current = { node, reheated: false };
         el!.setPointerCapture(e.pointerId);
-        // stopImmediatePropagation (not just stopPropagation) prevents d3-zoom
-        // from starting a pan — even if it is registered on the same element.
+        // pointerdown fires before mousedown; by the time the paired mousedown
+        // fires draggingNodeRef is already set, so onMouseDown (below) can block
+        // d3-zoom's canvas listener in capture phase.
+        e.stopImmediatePropagation();
+      }
+    }
+
+    // ---- mousedown capture: block d3-zoom's pan while we own a node drag ----
+    // d3-zoom attaches 'mousedown.zoom' to the canvas in bubble phase.
+    // Because our pointerdown fires first (before mousedown) and sets
+    // draggingNodeRef, we can call stopImmediatePropagation here (capture phase)
+    // to prevent d3-zoom from ever seeing the mousedown — which also prevents
+    // it from registering its window-level mousemove.zoom / mouseup.zoom
+    // handlers that otherwise fight our drag and cause simultaneous pan.
+    function onMouseDown(e: MouseEvent) {
+      if (draggingNodeRef.current) {
         e.stopImmediatePropagation();
       }
     }
@@ -399,15 +411,19 @@ export default function GraphCanvasInner({
       const t = canvasTransformRef.current;
       if (!t || t.a === 0) return;
 
-      // Reheat the simulation only once we know this is a real drag (> 5 px),
-      // not a tap. This prevents jitter on plain node clicks.
+      const down = pointerDownRef.current;
+      const moved = down ? Math.hypot(e.clientX - down.x, e.clientY - down.y) : 6;
+
+      // Don't touch the force simulation until this is a confirmed drag (> 5 px).
+      // This avoids jitter / phantom zoom on plain taps.
       if (!drag.reheated) {
-        const down = pointerDownRef.current;
-        if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (graphRef.current as any)?.d3ReheatSimulation?.();
-          drag.reheated = true;
-        }
+        if (moved <= 5) return;
+        // First confirmed drag tick: pin node at current sim position, then reheat.
+        if (drag.node.x != null) drag.node.fx = drag.node.x;
+        if (drag.node.y != null) drag.node.fy = drag.node.y;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (graphRef.current as any)?.d3ReheatSimulation?.();
+        drag.reheated = true;
       }
 
       const rect = el!.querySelector("canvas")?.getBoundingClientRect();
@@ -476,12 +492,15 @@ export default function GraphCanvasInner({
       setClickedEdgeInfo(null);
     }
 
-    // capture:true → fires before d3-zoom's canvas listener
+    // pointerdown capture fires before mousedown, so draggingNodeRef is set by
+    // the time onMouseDown runs. Both use capture:true to beat d3-zoom.
     el.addEventListener("pointerdown", onPointerDown, { capture: true });
+    el.addEventListener("mousedown", onMouseDown, { capture: true });
     el.addEventListener("pointermove", onPointerMove);
     el.addEventListener("pointerup", onPointerUp);
     return () => {
       el.removeEventListener("pointerdown", onPointerDown, { capture: true });
+      el.removeEventListener("mousedown", onMouseDown, { capture: true });
       el.removeEventListener("pointermove", onPointerMove);
       el.removeEventListener("pointerup", onPointerUp);
     };
