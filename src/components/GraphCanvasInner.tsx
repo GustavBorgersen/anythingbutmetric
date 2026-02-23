@@ -65,14 +65,18 @@ export default function GraphCanvasInner({
     return () => ro.disconnect();
   }, []);
 
-  // --- Fix: smooth wheel zoom.
-  // We disable d3-zoom's built-in wheel handler (enableZoomInteraction={false}) and
-  // implement our own with delta normalisation so trackpad steps are not jumpy.
+  // --- Fix: smooth wheel zoom without breaking d3-zoom's picking internals.
+  // We intercept wheel events in the CAPTURE phase (before d3-zoom's canvas
+  // listener sees them) and stop propagation so d3-zoom's own wheel handler
+  // never fires.  We then call graphRef.current.zoom() ourselves with a
+  // normalised delta.  Crucially, enableZoomInteraction stays true so d3-zoom
+  // keeps all its other event listeners (needed for shadow-canvas picking on PC).
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      e.stopPropagation(); // stop d3-zoom's canvas listener from also firing
       if (!graphRef.current) return;
       // Normalise deltaMode differences then cap magnitude to avoid large single steps
       let dy = e.deltaY;
@@ -83,8 +87,9 @@ export default function GraphCanvasInner({
       const cur = graphRef.current.zoom() as number;
       graphRef.current.zoom(Math.max(0.1, Math.min(10, cur * factor)), 0);
     };
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    // capture: true fires our handler before the canvas (child) gets the event
+    el.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    return () => el.removeEventListener("wheel", onWheel, { capture: true });
   }, []);
 
   // Build highlighted sets for quick lookup
@@ -380,7 +385,6 @@ export default function GraphCanvasInner({
           backgroundColor="#09090b"
           width={dimensions.width}
           height={dimensions.height}
-          enableZoomInteraction={false}
           autoPauseRedraw={false}
           d3AlphaDecay={0.05}
           onNodeClick={(node) => {
