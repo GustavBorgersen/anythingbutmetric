@@ -5,6 +5,19 @@ import ForceGraph2D from "react-force-graph-2d";
 import { ROUTE_COLOURS } from "@/lib/constants";
 import type { Unit, Edge, HighlightState } from "@/lib/types";
 
+// Perpendicular distance from point (px,py) to segment (ax,ay)→(bx,by)
+function distToSegment(
+  px: number, py: number,
+  ax: number, ay: number,
+  bx: number, by: number,
+): number {
+  const dx = bx - ax, dy = by - ay;
+  const lenSq = dx * dx + dy * dy;
+  if (lenSq === 0) return Math.hypot(px - ax, py - ay);
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lenSq));
+  return Math.hypot(px - ax - t * dx, py - ay - t * dy);
+}
+
 interface GraphNode extends Unit {
   x?: number;
   y?: number;
@@ -47,8 +60,12 @@ export default function GraphCanvasInner({
   const [clickedNodeId, setClickedNodeId] = useState<string | null>(null);
   const [clickedEdgeInfo, setClickedEdgeInfo] = useState<EdgeTooltip | null>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  // Track real pointer position for tooltip placement
-  const pointerRef = useRef({ x: 0, y: 0 });
+  // CSS-pixel positions of each node (updated every frame by nodeCanvasObject).
+  // Used by our geometric hit-detection so we never call getImageData(), which
+  // Brave's fingerprint-farbling randomises and breaks shadow-canvas picking.
+  const nodeCSSPositions = useRef<Map<string, { x: number; y: number }>>(new Map());
+  // Track pointer-down position to distinguish a tap/click from a drag.
+  const pointerDownRef = useRef<{ x: number; y: number } | null>(null);
 
 
   // --- Fix: track container size so ForceGraph2D gets correct canvas dimensions.
@@ -272,6 +289,14 @@ export default function GraphCanvasInner({
         labelColour = "#9ca3af";
       }
 
+      // Record CSS-pixel position for geometric hit detection (avoids getImageData)
+      const t = ctx.getTransform();
+      const dpr = window.devicePixelRatio || 1;
+      nodeCSSPositions.current.set(n.id, {
+        x: (t.a * n.x + t.e) / dpr,
+        y: (t.d * n.y + t.f) / dpr,
+      });
+
       ctx.save();
       ctx.globalAlpha = alpha;
 
@@ -293,22 +318,84 @@ export default function GraphCanvasInner({
     [highlights, clickedNodeId, neighborIds, missingLinkGroups]
   );
 
-  // Explicit click area for each link — kept at ~8px screen-space width so
-  // thin edges remain reliably clickable at any zoom level.
-  const linkPointerAreaPaint = useCallback(
-    (link: object, color: string, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const l = link as GraphLink;
-      const src = typeof l.source === "object" ? (l.source as GraphNode) : null;
-      const tgt = typeof l.target === "object" ? (l.target as GraphNode) : null;
-      if (src?.x == null || src?.y == null || tgt?.x == null || tgt?.y == null) return;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 8 / globalScale;
-      ctx.beginPath();
-      ctx.moveTo(src.x as number, src.y as number);
-      ctx.lineTo(tgt.x as number, tgt.y as number);
-      ctx.stroke();
+  // Geometric hit detection — fires on every pointer-up that looks like a tap
+  // (pointer didn't travel more than 5 CSS px).  We compare the click position
+  // against the CSS-pixel node positions stored each frame in nodeCSSPositions,
+  // then fall back to point-to-segment distance for links.  This completely
+  // bypasses shadow-canvas getImageData(), which Brave farbles into noise.
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      const down = pointerDownRef.current;
+      if (!down) return;
+      if (Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
+
+      const canvasEl = containerRef.current?.querySelector("canvas");
+      const rect = canvasEl?.getBoundingClientRect();
+      const clickX = e.clientX - (rect?.left ?? 0);
+      const clickY = e.clientY - (rect?.top ?? 0);
+
+      // --- Node hit (12 px radius in CSS space) ---
+      const NODE_HIT = 12;
+      let hitNodeId: string | null = null;
+      let minNodeDist = NODE_HIT;
+      for (const [id, pos] of nodeCSSPositions.current) {
+        const d = Math.hypot(clickX - pos.x, clickY - pos.y);
+        if (d < minNodeDist) { minNodeDist = d; hitNodeId = id; }
+      }
+      if (hitNodeId) {
+        setClickedNodeId((prev) => (prev === hitNodeId ? null : hitNodeId));
+        setClickedEdgeInfo(null);
+        return;
+      }
+
+      // --- Link hit (8 px from line in CSS space) ---
+      const LINK_HIT = 8;
+      let hitLink: GraphLink | null = null;
+      let minLinkDist = LINK_HIT;
+      for (const link of graphData.links) {
+        const srcId =
+          typeof link.source === "object" ? (link.source as GraphNode).id : link.source;
+        const tgtId =
+          typeof link.target === "object" ? (link.target as GraphNode).id : link.target;
+        const srcPos = nodeCSSPositions.current.get(srcId);
+        const tgtPos = nodeCSSPositions.current.get(tgtId);
+        if (!srcPos || !tgtPos) continue;
+        const d = distToSegment(clickX, clickY, srcPos.x, srcPos.y, tgtPos.x, tgtPos.y);
+        if (d < minLinkDist) { minLinkDist = d; hitLink = link; }
+      }
+      if (hitLink) {
+        const src =
+          typeof hitLink.source === "object"
+            ? (hitLink.source as GraphNode).id
+            : hitLink.source;
+        const tgt =
+          typeof hitLink.target === "object"
+            ? (hitLink.target as GraphNode).id
+            : hitLink.target;
+        const allLinks = graphData.links.filter((gl) => {
+          const gs =
+            typeof gl.source === "object" ? (gl.source as GraphNode).id : gl.source;
+          const gt =
+            typeof gl.target === "object" ? (gl.target as GraphNode).id : gl.target;
+          return (gs === src && gt === tgt) || (gs === tgt && gt === src);
+        }) as GraphLink[];
+        const TOOLTIP_W = 340;
+        const TOOLTIP_H = 200;
+        const x = Math.min(e.clientX + 12, window.innerWidth - TOOLTIP_W - 8);
+        const y =
+          e.clientY + 12 + TOOLTIP_H > window.innerHeight
+            ? e.clientY - TOOLTIP_H - 8
+            : e.clientY + 12;
+        setClickedEdgeInfo({ links: allLinks, x, y });
+        setClickedNodeId(null);
+        return;
+      }
+
+      // --- Background ---
+      setClickedNodeId(null);
+      setClickedEdgeInfo(null);
     },
-    []
+    [graphData.links],
   );
 
   const linkColor = useCallback(
@@ -365,9 +452,8 @@ export default function GraphCanvasInner({
     <div
       ref={containerRef}
       className="w-full h-full touch-none relative"
-      onPointerMove={(e) => {
-        pointerRef.current = { x: e.clientX, y: e.clientY };
-      }}
+      onPointerDown={(e) => { pointerDownRef.current = { x: e.clientX, y: e.clientY }; }}
+      onPointerUp={handlePointerUp}
     >
       {dimensions.width > 0 && (
         <ForceGraph2D
@@ -376,8 +462,6 @@ export default function GraphCanvasInner({
           nodeId="id"
           nodeCanvasObject={nodeCanvasObject}
           nodeCanvasObjectMode={() => "replace"}
-          nodeRelSize={5}
-          linkPointerAreaPaint={linkPointerAreaPaint}
           linkColor={linkColor}
           linkWidth={linkWidth}
           linkDirectionalArrowLength={3}
@@ -387,49 +471,6 @@ export default function GraphCanvasInner({
           height={dimensions.height}
           autoPauseRedraw={false}
           d3AlphaDecay={0.05}
-          onNodeClick={(node) => {
-            const n = node as GraphNode;
-            setClickedNodeId((prev) => (prev === n.id ? null : n.id));
-            setClickedEdgeInfo(null);
-          }}
-          onLinkClick={(link) => {
-            const l = link as GraphLink;
-            const src =
-              typeof l.source === "object"
-                ? (l.source as GraphNode).id
-                : l.source;
-            const tgt =
-              typeof l.target === "object"
-                ? (l.target as GraphNode).id
-                : l.target;
-            const allLinks = graphData.links.filter((gl) => {
-              const gs =
-                typeof gl.source === "object"
-                  ? (gl.source as GraphNode).id
-                  : gl.source;
-              const gt =
-                typeof gl.target === "object"
-                  ? (gl.target as GraphNode).id
-                  : gl.target;
-              return (gs === src && gt === tgt) || (gs === tgt && gt === src);
-            }) as GraphLink[];
-            // Use tracked pointer position for reliable tooltip placement
-            const px = pointerRef.current.x;
-            const py = pointerRef.current.y;
-            const TOOLTIP_W = 340;
-            const TOOLTIP_H = 200;
-            const x = Math.min(px + 12, window.innerWidth - TOOLTIP_W - 8);
-            const y =
-              py + 12 + TOOLTIP_H > window.innerHeight
-                ? py - TOOLTIP_H - 8
-                : py + 12;
-            setClickedEdgeInfo({ links: allLinks, x, y });
-            setClickedNodeId(null);
-          }}
-          onBackgroundClick={() => {
-            setClickedNodeId(null);
-            setClickedEdgeInfo(null);
-          }}
         />
       )}
 
