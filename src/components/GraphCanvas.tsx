@@ -14,6 +14,7 @@ interface Props {
   units: Unit[];
   edges: Edge[];
   highlights: HighlightState[];
+  missingLinkGroups?: [string[], string[]] | null;
 }
 
 export default function GraphCanvas(props: Props) {
