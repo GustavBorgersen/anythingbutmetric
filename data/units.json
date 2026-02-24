@@ -453,5 +453,19 @@
     "aliases": [
       "florida"
     ]
+  },
+  {
+    "id": "us",
+    "label": "Us",
+    "aliases": [
+      "US"
+    ]
+  },
+  {
+    "id": "uk",
+    "label": "Uk",
+    "aliases": [
+      "UK"
+    ]
   }
 ]

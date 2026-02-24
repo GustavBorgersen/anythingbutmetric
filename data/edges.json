@@ -78,5 +78,15 @@
     "source_quote": "an unstable mass of ice the size of Florida",
     "date_scraped": "2026-02-24",
     "verified": false
+  },
+  {
+    "id": "e009",
+    "from": "us",
+    "to": "uk",
+    "factor": 40.0,
+    "source_url": "https://www.globehunters.us/blog/11-us-states-that-are-larger-than-the-uk.htm",
+    "source_quote": "about 40 times smaller than the US",
+    "date_scraped": "2026-02-24",
+    "verified": false
   }
 ]
