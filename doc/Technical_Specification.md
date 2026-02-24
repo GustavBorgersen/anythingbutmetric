@@ -1,6 +1,6 @@
 # Technical Specification: The Anything But Metric converter
 
-**Version:** 1.2
+**Version:** 1.3
 **Status:** Locked
 
 ---
@@ -258,9 +258,10 @@ Multiple edges may exist between the same pair of nodes. These are not averaged 
 
 ### 6.1 Article processing
 
-1. Parse `feeds.txt` — lines that parse as RSS feeds are fetched via feedparser; lines that don't are treated as direct article URLs.
-2. Skip any article whose URL already appears in `edges.json` (dedup by source URL).
-3. Fetch full article text via **trafilatura** (direct HTTP GET). If trafilatura returns less than 200 chars, fall back to **Jina Reader** (headless browser API).
+1. Parse `feeds.txt` — feedparser fetches each line. If it returns entries, it's an RSS feed. If feedparser recognised a valid feed format (`feed.version` non-empty) but found no entries, the line is skipped. If the feed URL returned an HTTP error (4xx/5xx), it is skipped with a warning. If feedparser returned no entries and detected no feed format at all, the line is treated as a direct article URL (the intended use-case for non-RSS URLs in `feeds.txt`).
+2. Skip any entry whose URL already appears in `edges.json` (dedup by source URL).
+3. Skip any entry older than `--max-age-hours` (default: **26 h** — 2 h above the 24 h cron cadence). Age is computed from feedparser's `published_parsed` field, falling back to `updated_parsed`. Entries with no publication date are always processed. Set to `0` to disable the filter (useful when backfilling a newly added feed).
+4. Fetch full article text via **trafilatura** (direct HTTP GET). If trafilatura returns less than 200 chars, fall back to **Jina Reader** (headless browser API).
 4. Truncate to **4,000 characters** (journalistic comparisons appear in ledes and early paragraphs; the back half of articles is typically boilerplate and noise) and call the LLM with the extraction prompt.
 5. For each comparison returned, apply structural validation and hard code-level filters (see §6.5 below).
 6. Call `resolve_unit()` on `from` and `to` for each comparison that passes.
@@ -308,9 +309,30 @@ The prompt is the primary gate; the following code-level checks are a secondary 
 | **Both-sides-new guard** | `process_article()` | Discards edges where both `from` and `to` are units newly created in the current run. **Off by default** — enable with `--filter-both-new` (CLI) or the matching workflow checkbox. Recommended once the unit catalogue is large enough that new-to-new edges are unlikely to connect to the main graph. |
 | **Per-article cap** | `process_article()` | Stops accepting edges after 3 are collected from a single article. |
 
-### 6.6 Test reset (workflow)
+### 6.6 Logging
 
-`workflow_dispatch` accepts a boolean input `clear_scraped`. When true, the workflow resets `data/edges.json` to `[]` and restores `data/units.json` from `data/seed-units.json` before running the scraper, so all article URLs appear new and the full extraction pipeline runs.
+Normal runs log one header line and one result line per feed, then a final totals line:
+
+```
+06:00:01 INFO  Loaded 31 units, 47 edges
+06:00:01 INFO  Processing 15 feeds
+06:00:01 INFO  Feed 1/15: https://feeds.bbci.co.uk/news/science_and_environment/rss.xml
+06:00:09 INFO    20 entries | 3 processed, 12 old, 5 seen | +2 edges, +0 units
+...
+06:05:00 INFO  Done: +7 edges, +2 units
+```
+
+Real errors (quota exhaustion, HTTP errors, LLM JSON parse failures) surface as `WARNING`. Per-article detail (fetch strategy, rate-limit sleeps, LLM call results, unit resolution) is written at `DEBUG` level and hidden by default. Pass `-v` / `--verbose` to restore full debug output. `--url` mode always enables verbose automatically.
+
+### 6.7 Workflow dispatch inputs
+
+`workflow_dispatch` exposes three inputs:
+
+| Input | Type | Default | Effect |
+| :--- | :--- | :--- | :--- |
+| `clear_scraped` | boolean | false | Resets `edges.json` to `[]` and restores `units.json` from seed before running. Use for full test resets. |
+| `filter_both_new` | boolean | false | Passes `--filter-both-new` to the scraper. Recommended once the unit catalogue is large. |
+| `max_age_hours` | number | 26 | Passes `--max-age-hours` to the scraper. Set to `0` to disable age filtering and backfill an entire feed's history. |
 
 ---
 

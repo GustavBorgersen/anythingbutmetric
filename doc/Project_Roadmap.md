@@ -79,6 +79,12 @@ Four phases, each independently deployable. Each phase ends with something live 
 - [x] Filter graph nodes and unit selectors to only show units that have at least one edge
 - [x] Test workflow end-to-end via `workflow_dispatch`; first PR reviewed and merged successfully
 
+### Post-launch improvements (complete)
+
+- [x] Age-based RSS entry filtering (`--max-age-hours`, default 26 h) — skips entries older than the cron cadence to avoid redundant LLM calls on already-seen articles; `max_age_hours` workflow_dispatch input allows backfilling new feeds by setting to `0`
+- [x] Fix feed-URL fallback — scraper now checks `feed.version` and `feed.status` before treating an empty feedparser result as a direct article URL; HTTP errors and genuinely empty feeds are skipped rather than fetched as articles
+- [x] Logging cleanup — per-feed summary lines replace per-article verbose output; `-v/--verbose` flag restores debug detail; `--url` mode auto-enables verbose
+
 ### Remaining
 
 - [ ] Continue prompt refinement as more scraped edges are reviewed — edge cases in what the LLM accepts as a "valid comparison" will surface over the first few production runs
