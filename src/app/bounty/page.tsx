@@ -16,7 +16,7 @@ export default function BountyPage() {
     .map((ids) => ids.map((id) => unitMap.get(id)).filter((u): u is Unit => !!u));
 
   return (
-    <main className="min-h-full bg-zinc-950 text-zinc-100">
+    <main className="bg-zinc-950 text-zinc-100 overflow-hidden">
       <BountyClient islands={bountyIslands} />
     </main>
   );
