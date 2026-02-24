@@ -68,5 +68,15 @@
     "source_quote": "the garbage spans an area between North America and Japan of roughly 1.6 million square kilometers – three times the size of France, and more than double the size of Texas.",
     "date_scraped": "2026-02-22",
     "verified": false
+  },
+  {
+    "id": "e008",
+    "from": "thwaites",
+    "to": "florida",
+    "factor": 1.0,
+    "source_url": "https://www.nytimes.com/2026/02/19/climate/antarctica-science-funding.html",
+    "source_quote": "an unstable mass of ice the size of Florida",
+    "date_scraped": "2026-02-24",
+    "verified": false
   }
 ]

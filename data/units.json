@@ -439,5 +439,19 @@
     "aliases": [
       "france"
     ]
+  },
+  {
+    "id": "thwaites",
+    "label": "Thwaites",
+    "aliases": [
+      "Thwaites"
+    ]
+  },
+  {
+    "id": "florida",
+    "label": "Florida",
+    "aliases": [
+      "florida"
+    ]
   }
 ]
