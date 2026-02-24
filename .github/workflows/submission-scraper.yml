@@ -36,8 +36,10 @@ jobs:
         run: |
           output=$(python scraper/scraper.py \
             --url "${{ github.event.inputs.article_url }}" \
-            --dump-text-to /tmp/article_text.txt)
+            --dump-text-to /tmp/article_text.txt \
+            2>/tmp/scraper_log.txt)
           echo "$output"
+          cat /tmp/scraper_log.txt
           echo "$output" >> $GITHUB_OUTPUT
 
       - name: Open community PR if new edges found
@@ -89,6 +91,8 @@ jobs:
           else
             ARTICLE_TEXT="(Article text could not be fetched)"
           fi
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          SCRAPER_LOG=$(cat /tmp/scraper_log.txt 2>/dev/null || echo "(log not available)")
           { echo "## Scraper miss report"
             echo ""
             echo "A community member submitted an article the scraper extracted no comparisons from."
@@ -96,6 +100,14 @@ jobs:
             echo "or an article that genuinely has no valid comparisons."
             echo ""
             echo "**Submitted URL:** $URL"
+            echo ""
+            echo "**Actions run (full log):** $RUN_URL"
+            echo ""
+            echo "**Scraper log:**"
+            echo ""
+            echo '```'
+            echo "$SCRAPER_LOG"
+            echo '```'
             echo ""
             echo "**Fetched article text (complete; LLM was given the first 3 000 chars):**"
             echo ""
