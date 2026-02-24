@@ -9,6 +9,10 @@ on:
         description: 'Wipe live data before running (fresh test — resets edges.json to [])'
         type: boolean
         default: false
+      filter_both_new:
+        description: 'Reject edges where both sides are new units (enable once catalogue is large)'
+        type: boolean
+        default: false
 
 jobs:
   scrape:
@@ -41,7 +45,11 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GOOGLE_AI_API_KEY: ${{ secrets.GOOGLE_AI_API_KEY }}
         run: |
-          output=$(python scraper/scraper.py)
+          FLAGS=""
+          if [ "${{ github.event.inputs.filter_both_new }}" = "true" ]; then
+            FLAGS="$FLAGS --filter-both-new"
+          fi
+          output=$(python scraper/scraper.py $FLAGS)
           echo "$output"
           echo "$output" >> $GITHUB_OUTPUT
 

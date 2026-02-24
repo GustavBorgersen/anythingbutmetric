@@ -275,8 +275,8 @@ Multiple edges may exist between the same pair of nodes. These are not averaged 
 3. **New unit object** — check label and aliases against `terms_to_id` first (may match an existing unit). If no match and id already in `new_units_map` (same unit referenced twice in one article), return that id. Otherwise create a new unit, deduplicating the id against existing unit ids only.
 
 After `resolve_unit()`, two additional guards run before the edge is accepted:
-- **Self-referential guard** — edges where `from_id == to_id` are discarded.
-- **Both-sides-new guard** — edges where both `from` and `to` are units created during this run are discarded. Two brand-new units compared only to each other are almost always article-specific fabrications that will never connect to the rest of the graph.
+- **Self-referential guard** — edges where `from_id == to_id` are always discarded.
+- **Both-sides-new guard** — edges where both `from` and `to` are units created during this run are discarded when the `--filter-both-new` flag is set (off by default). Recommended once the unit catalogue is large; in the early stages the catalogue is small enough that new-to-new edges can be legitimate.
 
 ### 6.3 PR and review
 
@@ -305,7 +305,7 @@ The prompt is the primary gate; the following code-level checks are a secondary 
 | :--- | :--- | :--- |
 | **Keyword pre-filter** | `validate_comparison()` | `source_quote` must contain at least one of 16 hard comparison phrases (e.g. "the size of", "times the size", "as heavy as"). Rejects quotes with no recognisable comparative language. |
 | **Self-referential guard** | `process_article()` | Discards edges where `from_id == to_id`. |
-| **Both-sides-new guard** | `process_article()` | Discards edges where both `from` and `to` are units newly created in the current run. |
+| **Both-sides-new guard** | `process_article()` | Discards edges where both `from` and `to` are units newly created in the current run. **Off by default** — enable with `--filter-both-new` (CLI) or the matching workflow checkbox. Recommended once the unit catalogue is large enough that new-to-new edges are unlikely to connect to the main graph. |
 | **Per-article cap** | `process_article()` | Stops accepting edges after 3 are collected from a single article. |
 
 ### 6.6 Test reset (workflow)

@@ -491,6 +491,7 @@ def process_article(
     dedup_edge_keys: set[tuple],
     max_edge_num_ref: list[int],
     today: str,
+    filter_both_new: bool = False,
 ) -> None:
     """Fetch, extract, validate and collect edges for a single article URL."""
     log.info("--- %s", article_url)
@@ -542,11 +543,12 @@ def process_article(
             log.debug("  Skipping self-referential edge: %s → %s", from_id, to_id)
             continue
 
-        from_is_new = from_id in new_units_map
-        to_is_new = to_id in new_units_map
-        if from_is_new and to_is_new:
-            log.debug("  Skipping edge where both sides are new units: %s → %s", from_id, to_id)
-            continue
+        if filter_both_new:
+            from_is_new = from_id in new_units_map
+            to_is_new = to_id in new_units_map
+            if from_is_new and to_is_new:
+                log.debug("  Skipping edge where both sides are new units: %s → %s", from_id, to_id)
+                continue
 
         factor = float(comp["factor"])
         edge_key = (from_id, to_id, factor, article_url)
@@ -586,6 +588,9 @@ def main() -> None:
                         help="Limit number of feeds processed (useful for testing)")
     parser.add_argument("--max-entries", type=int, default=None,
                         help="Limit entries processed per feed (useful for testing)")
+    parser.add_argument("--filter-both-new", action="store_true", default=False,
+                        help="Reject edges where both from and to are new units created this run. "
+                             "Useful once the unit catalogue is large; off by default.")
     args = parser.parse_args()
 
     # 1. Load existing data
@@ -630,6 +635,7 @@ def main() -> None:
         dedup_edge_keys=dedup_edge_keys,
         max_edge_num_ref=max_edge_num_ref,
         today=today,
+        filter_both_new=args.filter_both_new,
     )
 
     if args.url:
