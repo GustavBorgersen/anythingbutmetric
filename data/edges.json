@@ -68,5 +68,15 @@
     "source_quote": "the garbage spans an area between North America and Japan of roughly 1.6 million square kilometers – three times the size of France, and more than double the size of Texas.",
     "date_scraped": "2026-02-22",
     "verified": false
+  },
+  {
+    "id": "e008",
+    "from": "football_pitch",
+    "to": "new_island",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/cvg5zw5l42xo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The island will add 0.55 hectares (1.4 acres) of new habitat - almost the size of a football pitch - within the Blackwater Estuary once the work is complete.",
+    "date_scraped": "2026-02-23",
+    "verified": false
   }
 ]

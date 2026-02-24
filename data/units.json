@@ -439,5 +439,17 @@
     "aliases": [
       "france"
     ]
+  },
+  {
+    "id": "new_island",
+    "label": "New Island",
+    "emoji": "🌴",
+    "aliases": [
+      "island",
+      "new land mass"
+    ],
+    "tags": [
+      "landform"
+    ]
   }
 ]
