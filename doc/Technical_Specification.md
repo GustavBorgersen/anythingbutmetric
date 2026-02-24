@@ -1,6 +1,6 @@
 # Technical Specification: The Anything But Metric converter
 
-**Version:** 1.1
+**Version:** 1.2
 **Status:** Locked
 
 ---
@@ -14,7 +14,7 @@
 | **Data store** | Flat JSON files in repo | Eliminates database infrastructure for v1; git history doubles as an audit log. |
 | **Graph library** | react-force-graph-2d | Purpose-built for force-directed graphs in React; handles large node counts with canvas rendering. |
 | **Scraper runtime** | Python 3.x | Mature HTTP + parsing ecosystem; GitHub Actions native support. |
-| **Primary extraction LLM** | Groq (Llama 4 Maverick) | Fast inference, generous free-tier RPM; used first on every article. |
+| **Primary extraction LLM** | Groq (Llama 3.3 70B Versatile) | Fast inference, generous free-tier RPM; used first on every article. Stronger instruction following and JSON schema adherence than smaller models. |
 | **Fallback extraction LLM** | Gemini Flash (Google AI API) | Falls back to Gemini when Groq quota is exhausted; native JSON output mode. |
 | **Article fetcher** | trafilatura + Jina Reader | trafilatura handles direct HTTP; Jina Reader (headless browser API) covers JS-rendered pages. |
 | **CI/CD** | GitHub Actions | Free for public repos; native cron scheduling for daily scraper runs. |
@@ -261,9 +261,10 @@ Multiple edges may exist between the same pair of nodes. These are not averaged 
 1. Parse `feeds.txt` — lines that parse as RSS feeds are fetched via feedparser; lines that don't are treated as direct article URLs.
 2. Skip any article whose URL already appears in `edges.json` (dedup by source URL).
 3. Fetch full article text via **trafilatura** (direct HTTP GET). If trafilatura returns less than 200 chars, fall back to **Jina Reader** (headless browser API).
-4. Truncate to 8,000 characters and call the LLM with the extraction prompt.
-5. For each comparison returned, call `resolve_unit()` on `from` and `to`.
-6. Build edge objects; dedup by `(from, to, factor, source_url)`; append to accumulator.
+4. Truncate to **4,000 characters** (journalistic comparisons appear in ledes and early paragraphs; the back half of articles is typically boilerplate and noise) and call the LLM with the extraction prompt.
+5. For each comparison returned, apply structural validation and hard code-level filters (see §6.5 below).
+6. Call `resolve_unit()` on `from` and `to` for each comparison that passes.
+7. Build edge objects; dedup by `(from, to, factor, source_url)`; append to accumulator (capped at **3 edges per article** — more than 3 valid comparisons from one article almost always signals the model is fishing).
 
 ### 6.2 Unit resolution
 
@@ -272,6 +273,10 @@ Multiple edges may exist between the same pair of nodes. These are not averaged 
 1. **Known string id** — exact match in `existing_unit_ids` → return as-is.
 2. **Unknown string id** — check `terms_to_id` (lowercased id/label/alias lookup of all existing units). If matched, return the canonical id. Otherwise synthesise a minimal new unit `{id, label, aliases: [human-readable form]}`.
 3. **New unit object** — check label and aliases against `terms_to_id` first (may match an existing unit). If no match and id already in `new_units_map` (same unit referenced twice in one article), return that id. Otherwise create a new unit, deduplicating the id against existing unit ids only.
+
+After `resolve_unit()`, two additional guards run before the edge is accepted:
+- **Self-referential guard** — edges where `from_id == to_id` are discarded.
+- **Both-sides-new guard** — edges where both `from` and `to` are units created during this run are discarded. Two brand-new units compared only to each other are almost always article-specific fabrications that will never connect to the rest of the graph.
 
 ### 6.3 PR and review
 
@@ -282,7 +287,28 @@ When `NEW_EDGES > 0`, the workflow:
 
 Merging the PR is the human review step. The `verified: false` flag on scraper edges is metadata — it does not gate pathfinding.
 
-### 6.4 Test reset
+### 6.4 Extraction prompt design
+
+The extraction prompt is the primary quality gate. Key design choices:
+
+- **GOOD / BAD example pairs** — 4 canonical good examples (iceberg/Wales, whale/buses, etc.) plus 13 explicit bad examples drawn from real failure modes, each labelled with the reason for rejection (raw measurement, duration, power output, probability, monetary value, purity multiplier, etc.).
+- **Rule 2 (physical objects)** — explicitly lists whole categories of invalid `from`/`to`: time periods, speed/power, monetary values, probabilities, abstract quantities, purity/efficiency multipliers, and things that are themselves units of measurement ("tonne", "metre").
+- **Rule 3 (comparative phrases)** — only four exact forms are accepted. Ambiguous forms like "times more", "times purer", and bare "as much as" are explicitly rejected.
+- **Rule 5 (reusable units)** — both sides must be physical objects that could plausibly appear in multiple different articles. Article-specific one-offs (e.g. "salmon farm production in 2018") must be rejected even if they pass the other rules.
+- **Calibrated doubt** — the prompt explicitly states that ~80% of articles contain no valid comparison and that returning `[]` is the correct and expected output.
+
+### 6.5 Code-level quality filters
+
+The prompt is the primary gate; the following code-level checks are a secondary enforcement layer that is independent of the LLM:
+
+| Filter | Location | What it catches |
+| :--- | :--- | :--- |
+| **Keyword pre-filter** | `validate_comparison()` | `source_quote` must contain at least one of 16 hard comparison phrases (e.g. "the size of", "times the size", "as heavy as"). Rejects quotes with no recognisable comparative language. |
+| **Self-referential guard** | `process_article()` | Discards edges where `from_id == to_id`. |
+| **Both-sides-new guard** | `process_article()` | Discards edges where both `from` and `to` are units newly created in the current run. |
+| **Per-article cap** | `process_article()` | Stops accepting edges after 3 are collected from a single article. |
+
+### 6.6 Test reset (workflow)
 
 `workflow_dispatch` accepts a boolean input `clear_scraped`. When true, the workflow resets `data/edges.json` to `[]` and restores `data/units.json` from `data/seed-units.json` before running the scraper, so all article URLs appear new and the full extraction pipeline runs.
 
