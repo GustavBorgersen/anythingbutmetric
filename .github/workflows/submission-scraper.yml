@@ -46,24 +46,27 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           URL="${{ github.event.inputs.article_url }}"
+          NEW_EDGES="${{ steps.run_scraper.outputs.NEW_EDGES }}"
           HASH=$(echo -n "$URL" | sha1sum | cut -c1-8)
           BRANCH="submission/$(date +%Y-%m-%d)-${HASH}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -B "$BRANCH"
           git add data/edges.json data/units.json
-          git commit -m "community submission: add ${{ steps.run_scraper.outputs.NEW_EDGES }} new edges from submitted article"
+          git commit -m "community submission: add ${NEW_EDGES} new edges from submitted article"
           git push -f origin "$BRANCH"
+          { echo "## Community submission"
+            echo ""
+            echo "Submitted article URL: $URL"
+            echo ""
+            echo "Automatically extracted ${NEW_EDGES} new edge(s)."
+            echo "All edges have \`verified: false\`. Review both JSON files before merging."
+            echo ""
+            echo "> This PR was created from a community article submission, not the daily scraper."
+          } > /tmp/pr_body.md
           gh pr create \
-            --title "Community submission: ${{ steps.run_scraper.outputs.NEW_EDGES }} new edges ($(date +%Y-%m-%d))" \
-            --body "## Community submission
-
-Submitted article URL: $URL
-
-Automatically extracted ${{ steps.run_scraper.outputs.NEW_EDGES }} new edge(s).
-All edges have \`verified: false\`. Review both JSON files before merging.
-
-> This PR was created from a community article submission, not the daily scraper." \
+            --title "Community submission: ${NEW_EDGES} new edges ($(date +%Y-%m-%d))" \
+            --body-file /tmp/pr_body.md \
             --base main \
             --head "$BRANCH" \
             --label "community-submission" || \
@@ -79,30 +82,30 @@ All edges have \`verified: false\`. Review both JSON files before merging.
             FIRST=$(head -c 3000 /tmp/article_text.txt)
             REST=$(tail -c +3001 /tmp/article_text.txt)
             if [ -n "$REST" ]; then
-              ARTICLE_TEXT="${FIRST}
-━━━ LLM CUTOFF (3 000 chars) ━━━
-${REST}"
+              ARTICLE_TEXT=$(printf '%s\n━━━ LLM CUTOFF (3 000 chars) ━━━\n%s' "$FIRST" "$REST")
             else
               ARTICLE_TEXT="$FIRST"
             fi
           else
             ARTICLE_TEXT="(Article text could not be fetched)"
           fi
+          { echo "## Scraper miss report"
+            echo ""
+            echo "A community member submitted an article the scraper extracted no comparisons from."
+            echo "This may mean a gap in the extraction prompt, an overly aggressive quality filter,"
+            echo "or an article that genuinely has no valid comparisons."
+            echo ""
+            echo "**Submitted URL:** $URL"
+            echo ""
+            echo "**Fetched article text (complete; LLM was given the first 3 000 chars):**"
+            echo ""
+            echo '```'
+            echo "$ARTICLE_TEXT"
+            echo '```'
+            echo ""
+            echo "Please investigate whether the scraper or prompt needs improvement."
+          } > /tmp/issue_body.md
           gh issue create \
             --title "Scraper miss: submitted article found no comparisons ($(date +%Y-%m-%d))" \
-            --body "## Scraper miss report
-
-A community member submitted an article the scraper extracted no comparisons from.
-This may mean a gap in the extraction prompt, an overly aggressive quality filter,
-or an article that genuinely has no valid comparisons.
-
-**Submitted URL:** $URL
-
-**Fetched article text (complete; LLM was given the first 3 000 chars):**
-
-\`\`\`
-$ARTICLE_TEXT
-\`\`\`
-
-Please investigate whether the scraper or prompt needs improvement." \
+            --body-file /tmp/issue_body.md \
             --label "scraper-miss"
