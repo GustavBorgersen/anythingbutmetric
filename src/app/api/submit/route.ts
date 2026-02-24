@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const GITHUB_OWNER = process.env.GITHUB_REPO_OWNER!;
-const GITHUB_REPO  = process.env.GITHUB_REPO_NAME!;
-const GITHUB_PAT   = process.env.GITHUB_PAT!;
-const WORKFLOW_ID  = "submission-scraper.yml";
+const GITHUB_OWNER    = process.env.GITHUB_REPO_OWNER!;
+const GITHUB_REPO     = process.env.GITHUB_REPO_NAME!;
+const GITHUB_PAT      = process.env.GITHUB_PAT!;
+const WORKFLOW_REF    = process.env.GITHUB_WORKFLOW_REF ?? "main";
+const WORKFLOW_ID     = "submission-scraper.yml";
 
 export async function POST(req: NextRequest) {
   let body: { url?: string; notRobot?: boolean; _trap?: string };
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
         "X-GitHub-Api-Version": "2022-11-28",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ref: "main", inputs: { article_url: parsed.href } }),
+      body: JSON.stringify({ ref: WORKFLOW_REF, inputs: { article_url: parsed.href } }),
     });
   } catch (err) {
     console.error("GitHub dispatch error:", err);
