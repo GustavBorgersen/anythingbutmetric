@@ -76,7 +76,15 @@ All edges have \`verified: false\`. Review both JSON files before merging.
         run: |
           URL="${{ github.event.inputs.article_url }}"
           if [ -f /tmp/article_text.txt ]; then
-            ARTICLE_TEXT=$(head -c 3000 /tmp/article_text.txt)
+            FIRST=$(head -c 3000 /tmp/article_text.txt)
+            REST=$(tail -c +3001 /tmp/article_text.txt)
+            if [ -n "$REST" ]; then
+              ARTICLE_TEXT="${FIRST}
+━━━ LLM CUTOFF (3 000 chars) ━━━
+${REST}"
+            else
+              ARTICLE_TEXT="$FIRST"
+            fi
           else
             ARTICLE_TEXT="(Article text could not be fetched)"
           fi
@@ -90,7 +98,7 @@ or an article that genuinely has no valid comparisons.
 
 **Submitted URL:** $URL
 
-**Fetched article text (first 3 000 chars):**
+**Fetched article text (complete; LLM was given the first 3 000 chars):**
 
 \`\`\`
 $ARTICLE_TEXT
