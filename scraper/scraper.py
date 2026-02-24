@@ -693,7 +693,19 @@ def main() -> None:
             entries = feed.get("entries", [])
 
             if not entries:
-                # No RSS entries — treat the line as a direct article URL
+                # feedparser got no entries — three sub-cases:
+                #  (a) HTTP error fetching the feed → skip entirely
+                #  (b) feedparser recognised a valid feed format but it's empty → skip
+                #  (c) feedparser got a 200 but no feed format → assume a direct article URL
+                #      in feeds.txt (the original intent of this fallback)
+                feed_status = feed.get("status", 0)
+                if feed_status >= 400:
+                    log.warning("  feed HTTP %d — skipping", feed_status)
+                    continue
+                if feed.get("version"):
+                    log.info("  empty feed — skipping")
+                    continue
+                # No recognised feed format: treat as a direct article URL
                 log.info("  no RSS entries — processing as direct article URL")
                 if feed_url not in existing_source_urls:
                     existing_source_urls.add(feed_url)
