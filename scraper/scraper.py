@@ -94,13 +94,13 @@ def fetch_article_text(url: str) -> str | None:
         if resp.ok:
             result = trafilatura.extract(resp.content)
             if result and len(result) > 200:
-                log.info("  fetch: trafilatura OK (%d chars)", len(result))
+                log.debug("  fetch: trafilatura OK (%d chars)", len(result))
                 return result
-            log.info("  fetch: trafilatura got no content — trying Jina")
+            log.debug("  fetch: trafilatura got no content — trying Jina")
         else:
-            log.info("  fetch: trafilatura HTTP %s — trying Jina", resp.status_code)
+            log.debug("  fetch: trafilatura HTTP %s — trying Jina", resp.status_code)
     except Exception as exc:
-        log.warning("  fetch: trafilatura error (%s) — trying Jina", exc)
+        log.debug("  fetch: trafilatura error (%s) — trying Jina", exc)
 
     # 2. Jina Reader — external API, headless browser for JS-rendered pages
     try:
@@ -115,13 +115,13 @@ def fetch_article_text(url: str) -> str | None:
         if resp.ok:
             text = resp.text.strip()
             if len(text) > 200:
-                log.info("  fetch: Jina OK (%d chars)", len(text))
+                log.debug("  fetch: Jina OK (%d chars)", len(text))
                 return text
-            log.warning("  fetch: Jina too little text (%d chars)", len(text))
+            log.debug("  fetch: Jina too little text (%d chars)", len(text))
         else:
-            log.warning("  fetch: Jina HTTP %s", resp.status_code)
+            log.debug("  fetch: Jina HTTP %s", resp.status_code)
     except Exception as exc:
-        log.warning("  fetch: Jina error (%s)", exc)
+        log.debug("  fetch: Jina error (%s)", exc)
 
     return None
 
@@ -280,7 +280,7 @@ def call_groq(article_text: str, units: list[dict]) -> list[dict] | None:
     elapsed = time.monotonic() - _last_groq_call
     if elapsed < min_interval:
         wait = min_interval - elapsed
-        log.info("  llm: Groq rate-limiting, sleeping %.1fs", wait)
+        log.debug("  llm: Groq rate-limiting, sleeping %.1fs", wait)
         time.sleep(wait)
     _last_groq_call = time.monotonic()
 
@@ -318,7 +318,7 @@ def call_groq(article_text: str, units: list[dict]) -> list[dict] | None:
             # Temporary TPM/RPM burst limit — sleep 60s, keep Groq alive for later articles
             m = re.search(r"retry.after[^\d]*(\d+)", err, re.IGNORECASE)
             retry_secs = int(m.group(1)) if m else 60
-            log.warning("  llm: Groq rate-limited (temporary), sleeping %ds", retry_secs)
+            log.debug("  llm: Groq rate-limited (temporary), sleeping %ds", retry_secs)
             time.sleep(retry_secs)
         return None
     except json.JSONDecodeError as exc:
@@ -346,7 +346,7 @@ def call_gemini(article_text: str, units: list[dict]) -> list[dict]:
     elapsed = time.monotonic() - _last_gemini_call
     if elapsed < min_interval:
         wait = min_interval - elapsed
-        log.info("  llm: Gemini rate-limiting, sleeping %.1fs", wait)
+        log.debug("  llm: Gemini rate-limiting, sleeping %.1fs", wait)
         time.sleep(wait)
 
     genai.configure(api_key=api_key)
@@ -381,7 +381,7 @@ def call_gemini(article_text: str, units: list[dict]) -> list[dict]:
             log.warning("  llm: Gemini daily quota exhausted")
             _gemini_quota_exhausted = True
         elif retry_secs:
-            log.warning("  llm: Gemini rate-limited, sleeping %ds", retry_secs)
+            log.debug("  llm: Gemini rate-limited, sleeping %ds", retry_secs)
             time.sleep(retry_secs)
         else:
             log.warning("  llm: Gemini error: %s", exc)
@@ -395,7 +395,7 @@ def call_llm(article_text: str, units: list[dict]) -> list[dict]:
         return result  # Groq succeeded (even if empty — that's a valid answer)
     # Groq returned None: quota hit or error — try Gemini
     if not _gemini_quota_exhausted:
-        log.info("  llm: trying Gemini fallback")
+        log.debug("  llm: trying Gemini fallback")
         return call_gemini(article_text, units)
     return []
 
@@ -443,12 +443,12 @@ def resolve_unit(
         # Check against all ids/labels/aliases (case-insensitive)
         canonical = terms_to_id.get(unit_ref.lower())
         if canonical:
-            log.info("Unknown unit id %r — matched existing unit %r via terms lookup", unit_ref, canonical)
+            log.debug("Unknown unit id %r — matched existing unit %r via terms lookup", unit_ref, canonical)
             return canonical, None
         # LLM returned an unknown string id — synthesise a new unit rather than
         # dropping the whole comparison (the LLM should have returned an object,
         # but sometimes it returns a plausible-looking snake_case string instead)
-        log.info("Unknown unit id %r — creating as new unit", unit_ref)
+        log.debug("Unknown unit id %r — creating as new unit", unit_ref)
         human = unit_ref.replace("_", " ")
         unit_ref = {"id": unit_ref, "label": human.title(), "aliases": [human]}
 
@@ -462,7 +462,7 @@ def resolve_unit(
         for term in check_terms:
             canonical = terms_to_id.get(term)
             if canonical:
-                log.info("New unit %r — matched existing unit %r via label/alias", unit_ref.get("id"), canonical)
+                log.debug("New unit %r — matched existing unit %r via label/alias", unit_ref.get("id"), canonical)
                 return canonical, None
 
         suggested_id = unit_ref.get("id") or slugify(unit_ref.get("label", "unknown"))
@@ -511,34 +511,33 @@ def process_article(
     filter_both_new: bool = False,
 ) -> None:
     """Fetch, extract, validate and collect edges for a single article URL."""
-    log.info("--- %s", article_url)
+    log.debug("--- %s", article_url)
 
     if explicit_text:
         # --text flag: user supplied text directly, skip all HTTP fetching
         text = BeautifulSoup(explicit_text, "html.parser").get_text(separator=" ", strip=True)
-        log.info("  fetch: using explicit text (%d chars)", len(text))
+        log.debug("  fetch: using explicit text (%d chars)", len(text))
     else:
         # Always try to fetch the full article first
         text = fetch_article_text(article_url)
         if not text and rss_summary:
             # Last resort: RSS summary (usually just a headline, ~100-200 chars)
             text = BeautifulSoup(rss_summary, "html.parser").get_text(separator=" ", strip=True)
-            log.info("  fetch: HTTP failed, falling back to RSS summary (%d chars)", len(text))
+            log.debug("  fetch: HTTP failed, falling back to RSS summary (%d chars)", len(text))
 
     if not text:
-        log.info("  fetch: no text — skipping")
+        log.debug("  fetch: no text — skipping")
         return
 
-    log.info("  llm: calling...")
+    log.debug("  llm: calling...")
     all_units = units + list(new_units_map.values())
     comparisons = call_llm(text, all_units)
 
     if not comparisons:
-        if not _all_llms_exhausted():
-            log.info("  llm: no comparisons found")
+        log.debug("  llm: no comparisons found")
         return
 
-    log.info("  llm: %d comparison(s) found", len(comparisons))
+    log.debug("  llm: %d comparison(s) found", len(comparisons))
 
     edges_this_article = 0
     for comp in comparisons:
@@ -612,12 +611,18 @@ def main() -> None:
                         help="Skip RSS entries older than this many hours (0 = no filter, "
                              "useful when adding a new feed to backfill history). "
                              f"Default: {DEFAULT_MAX_AGE_HOURS}")
+    parser.add_argument("-v", "--verbose", action="store_true", default=False,
+                        help="Show detailed per-article fetch/LLM logs (debug output)")
     args = parser.parse_args()
 
+    # --url mode is interactive; always show full detail there
+    if args.verbose or args.url:
+        logging.getLogger().setLevel(logging.DEBUG)
+
     # 1. Load existing data
-    log.info("Loading units and edges…")
     units: list[dict] = load_json(UNITS_FILE)
     edges: list[dict] = load_json(EDGES_FILE)
+    log.info("Loaded %d units, %d edges", len(units), len(edges))
 
     existing_unit_ids: set[str] = {u["id"] for u in units}
     existing_source_urls: set[str] = {e["source_url"] for e in edges}
@@ -664,10 +669,12 @@ def main() -> None:
         log.info("Single-URL mode: %s", args.url)
         if args.text:
             supplied_text = sys.stdin.read() if args.text == "-" else args.text
-            log.info("  Using supplied text (%d chars)", len(supplied_text))
         else:
             supplied_text = None
+        edges_before = len(new_edges)
+        units_before = len(new_units_map)
         process_article(args.url, explicit_text=supplied_text or "", rss_summary="", **common)
+        log.info("Result: +%d edges, +%d units", len(new_edges) - edges_before, len(new_units_map) - units_before)
     else:
         # 2b. RSS feed mode
         feed_urls = [
@@ -677,17 +684,17 @@ def main() -> None:
         ]
         if args.max_feeds:
             feed_urls = feed_urls[:args.max_feeds]
-        log.info("Processing %d feed URLs", len(feed_urls))
+        log.info("Processing %d feeds", len(feed_urls))
 
-        for feed_url in feed_urls:
+        for feed_idx, feed_url in enumerate(feed_urls, 1):
             if _all_llms_exhausted():
                 break
 
-            log.info("Fetching feed: %s", feed_url)
+            log.info("Feed %d/%d: %s", feed_idx, len(feed_urls), feed_url)
             try:
                 feed = feedparser.parse(feed_url)
             except Exception as exc:
-                log.warning("feedparser error on %s: %s", feed_url, exc)
+                log.warning("  feedparser error: %s", exc)
                 continue
 
             entries = feed.get("entries", [])
@@ -700,25 +707,33 @@ def main() -> None:
                 #      in feeds.txt (the original intent of this fallback)
                 feed_status = feed.get("status", 0)
                 if feed_status >= 400:
-                    log.warning("  feed HTTP %d — skipping", feed_status)
+                    log.warning("  HTTP %d — skipping", feed_status)
                     continue
                 if feed.get("version"):
-                    log.info("  empty feed — skipping")
+                    log.info("  empty feed")
                     continue
                 # No recognised feed format: treat as a direct article URL
-                log.info("  no RSS entries — processing as direct article URL")
+                log.debug("  no feed format detected — trying as direct article URL")
                 if feed_url not in existing_source_urls:
                     existing_source_urls.add(feed_url)
+                    edges_before = len(new_edges)
+                    units_before = len(new_units_map)
                     process_article(feed_url, explicit_text="", rss_summary="", **common)
+                    log.info("  direct article → +%d edges, +%d units",
+                             len(new_edges) - edges_before, len(new_units_map) - units_before)
                 else:
-                    log.info("  already seen — skipping")
+                    log.info("  already seen")
                 continue
 
             if args.max_entries:
                 entries = entries[:args.max_entries]
-            log.info("  %d entries", len(entries))
 
+            edges_before = len(new_edges)
+            units_before = len(new_units_map)
             skipped_old = 0
+            skipped_dedup = 0
+            processed = 0
+
             for entry in entries:
                 if _all_llms_exhausted():
                     break
@@ -727,6 +742,7 @@ def main() -> None:
                 if not article_url:
                     continue
                 if article_url in existing_source_urls:
+                    skipped_dedup += 1
                     continue
 
                 # skip entries older than the age threshold
@@ -736,33 +752,37 @@ def main() -> None:
                     continue
 
                 existing_source_urls.add(article_url)
-
+                processed += 1
                 rss_summary = entry.get("summary") or entry.get("description") or ""
                 process_article(article_url, explicit_text="", rss_summary=rss_summary, **common)
 
+            edges_added = len(new_edges) - edges_before
+            units_added = len(new_units_map) - units_before
+            skip_parts = []
             if skipped_old:
-                log.info("  %d old entries skipped (> %dh)", skipped_old, args.max_age_hours)
+                skip_parts.append(f"{skipped_old} old")
+            if skipped_dedup:
+                skip_parts.append(f"{skipped_dedup} seen")
+            skip_str = (", " + ", ".join(skip_parts)) if skip_parts else ""
+            log.info("  %d entries | %d processed%s | +%d edges, +%d units",
+                     len(entries), processed, skip_str, edges_added, units_added)
 
     # 4. Write results
     n_new_units = len(new_units_map)
     n_new_edges = len(new_edges)
 
-    log.info("=" * 60)
     if _groq_quota_exhausted:
-        log.warning("Groq daily quota was exhausted%s",
+        log.warning("Groq daily quota exhausted%s",
                     " — fell back to Gemini" if not _gemini_quota_exhausted else "")
     if _gemini_quota_exhausted:
-        log.warning("Gemini daily quota was exhausted")
-    log.info("New edges: %d  |  New units: %d", n_new_edges, n_new_units)
+        log.warning("Gemini daily quota exhausted")
+    log.info("Done: +%d edges, +%d units", n_new_edges, n_new_units)
 
     if n_new_units > 0 or n_new_edges > 0:
         if n_new_units > 0:
-            log.info("Writing %d new unit(s) to %s", n_new_units, UNITS_FILE)
             units.extend(new_units_map.values())
             save_json(UNITS_FILE, units)
-
         if n_new_edges > 0:
-            log.info("Writing %d new edge(s) to %s", n_new_edges, EDGES_FILE)
             edges.extend(new_edges)
             save_json(EDGES_FILE, edges)
 
