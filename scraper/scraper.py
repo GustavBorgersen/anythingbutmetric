@@ -226,7 +226,7 @@ MAX_EDGES_PER_ARTICLE = 3
 
 COMPARISON_KEYWORDS = [
     "times the size", "times the area", "times the weight", "times the height",
-    "times the length", "times the volume", "times larger than", "times bigger than",
+    "times the length", "times the volume", "times larger than", "times bigger than", "times smaller than",
     "the size of", "the area of", "the weight of", "the height of",
     "as big as", "as heavy as", "as tall as", "as wide as", "as long as",
     "weighs as much as",
