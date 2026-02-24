@@ -1,6 +1,6 @@
 # Technical Specification: The Anything But Metric converter
 
-**Version:** 1.3
+**Version:** 1.4
 **Status:** Locked
 
 ---
@@ -113,31 +113,33 @@ anythingbutmetric/
 │   ├── app/
 │   │   ├── page.tsx            # Home — reads all 4 JSON files, passes to HomeClient
 │   │   ├── bounty/
-│   │   │   └── page.tsx        # Missing Link Bounty Board (Phase 4)
+│   │   │   └── page.tsx        # Bounty Board — force-dynamic; calls getAllIslands("live")
 │   │   └── api/
 │   │       ├── convert/
 │   │       │   └── route.ts    # POST /api/convert — runs BFS, returns all routes
 │   │       └── submit/
-│   │           └── route.ts    # POST /api/submit — creates GitHub Issue (Phase 4)
+│   │           └── route.ts    # POST /api/submit — validates URL, dispatches submission-scraper.yml
 │   │
 │   ├── lib/
 │   │   ├── types.ts            # Unit, Edge, Step, Route, ConvertRequest, GraphData, HighlightState
 │   │   ├── constants.ts        # ROUTE_COLOURS (5 colours, 0-indexed)
-│   │   ├── graph.ts            # Two caches (_seed, _live); mode-aware loaders; all exports accept mode param
-│   │   ├── pathfinder.ts       # BFS all-shortest-paths; mode param threaded through
-│   │   └── github.ts           # GitHub Issues API client (Phase 4)
+│   │   ├── graph.ts            # Two caches (_seed, _live); mode-aware loaders; getAllIslands()
+│   │   └── pathfinder.ts       # BFS all-shortest-paths; mode param threaded through
 │   │
 │   └── components/
-│       ├── HomeClient.tsx      # Mode state; Demo/Live toggle; active data derivation
+│       ├── HomeClient.tsx      # Mode state; Demo/Live toggle; Bounty link; Missing Link CTA
 │       ├── UnitSelector.tsx    # Searchable dropdown (only units with edges shown)
 │       ├── GraphCanvas.tsx     # Dynamic import wrapper (SSR disabled)
 │       ├── GraphCanvasInner.tsx # react-force-graph-2d canvas; filters isolated nodes
 │       ├── ResultCard.tsx      # Single route result + Chain of Evidence
-│       └── EvidenceChain.tsx   # Breadcrumb trail + citations
+│       ├── EvidenceChain.tsx   # Breadcrumb trail + citations
+│       ├── BountyClient.tsx    # Bounty Board UI — scrollable island list
+│       └── SubmitForm.tsx      # Reusable article submission form (honeypot + checkbox)
 │
 ├── .github/
 │   └── workflows/
-│       └── scraper.yml         # Daily cron + workflow_dispatch with clear_scraped input
+│       ├── scraper.yml                # Daily cron + workflow_dispatch with clear_scraped input
+│       └── submission-scraper.yml     # workflow_dispatch on article_url; opens PR or scraper-miss issue
 │
 ├── doc/
 │   ├── Functional_Specification.md
@@ -189,10 +191,40 @@ Next.js (server-side)
     │     Runs BFS for all shortest paths
     │     Returns all routes + per-step conflict data
     │
+    ├── /api/submit
+    │     Honeypot check → silent 200 on bots
+    │     Checkbox + HTTPS URL validation → 400 on bad input
+    │     Dispatches submission-scraper.yml via GitHub workflow dispatch API
+    │     GITHUB_WORKFLOW_REF controls target branch (default: "main")
+    │
+    ├── /bounty  (force-dynamic server page)
+    │     Calls getAllIslands("live") → string[][]
+    │     Passes disconnected islands (index 1+) to BountyClient
+    │
     └── HomeClient (React, client-side)
           Demo/Live toggle → activeUnits + activeEdges
           Units with no edges filtered from selectors and graph
           UnitSelector × 2 + GraphCanvas + ResultCard + EvidenceChain
+          Missing Link card includes SubmitForm + Bounty Board link
+
+User submits article URL (via /bounty or Missing Link card)
+    │
+    ▼
+POST /api/submit → GitHub workflow dispatch API
+    │
+    ▼
+submission-scraper.yml (GitHub Actions, workflow_dispatch)
+    │  Runs scraper --url in single-URL mode
+    │  Stderr (debug log) → /tmp/scraper_log.txt
+    │  Stdout (NEW_EDGES=N) → GITHUB_OUTPUT
+    │
+    ├── NEW_EDGES > 0 → branch submission/YYYY-MM-DD-{hash}
+    │                   PR labelled community-submission
+    │                   (human reviews and merges)
+    │
+    └── NEW_EDGES = 0 → issue labelled scraper-miss
+                        includes: scraper log, article text with LLM cutoff marked,
+                        link to Actions run
 ```
 
 ---
@@ -304,7 +336,7 @@ The prompt is the primary gate; the following code-level checks are a secondary 
 
 | Filter | Location | What it catches |
 | :--- | :--- | :--- |
-| **Keyword pre-filter** | `validate_comparison()` | `source_quote` must contain at least one of 16 hard comparison phrases (e.g. "the size of", "times the size", "as heavy as"). Rejects quotes with no recognisable comparative language. |
+| **Keyword pre-filter** | `validate_comparison()` | `source_quote` must contain at least one of 17 hard comparison phrases (e.g. "the size of", "times the size", "times smaller than", "as heavy as"). Rejects quotes with no recognisable comparative language. |
 | **Self-referential guard** | `process_article()` | Discards edges where `from_id == to_id`. |
 | **Both-sides-new guard** | `process_article()` | Discards edges where both `from` and `to` are units newly created in the current run. **Off by default** — enable with `--filter-both-new` (CLI) or the matching workflow checkbox. Recommended once the unit catalogue is large enough that new-to-new edges are unlikely to connect to the main graph. |
 | **Per-article cap** | `process_article()` | Stops accepting edges after 3 are collected from a single article. |
@@ -353,11 +385,13 @@ Switching mode resets the selected units (stale ids may not exist in the other d
 
 ## 8. Environment Variables
 
-| Variable | Used by | Description |
-| :--- | :--- | :--- |
-| `GROQ_API_KEY` | `scraper.py` | API key for Groq (Llama) — primary extraction LLM. |
-| `GOOGLE_AI_API_KEY` | `scraper.py` | API key for Gemini Flash — fallback extraction LLM. |
-| `GITHUB_TOKEN` | `src/lib/github.ts` | Personal access token with `repo` scope, for creating Issues (Phase 4). |
-| `GITHUB_REPO` | `src/lib/github.ts` | Target repo in `owner/repo` format (Phase 4). |
+| Variable | Used by | Where to set | Description |
+| :--- | :--- | :--- | :--- |
+| `GROQ_API_KEY` | `scraper.py` | GitHub Actions secret | API key for Groq (Llama) — primary extraction LLM. |
+| `GOOGLE_AI_API_KEY` | `scraper.py` | GitHub Actions secret | API key for Gemini Flash — fallback extraction LLM. |
+| `GITHUB_PAT` | `/api/submit` | Vercel + `.env.local` | Fine-grained PAT with **Actions: read and write** permission. Used to dispatch `submission-scraper.yml`. |
+| `GITHUB_REPO_OWNER` | `/api/submit` | Vercel + `.env.local` | GitHub repository owner (e.g. `GustavBorgersen`). |
+| `GITHUB_REPO_NAME` | `/api/submit` | Vercel + `.env.local` | GitHub repository name (e.g. `anythingbutmetric`). |
+| `GITHUB_WORKFLOW_REF` | `/api/submit` | Vercel (preview only) | Branch ref passed to the workflow dispatch API. Defaults to `"main"` when unset. Set to the feature branch name in Vercel preview deployments to test before merging. |
 
-Store in `.env.local` for local development. Set as GitHub Actions secrets and Vercel environment variables for CI/CD and production.
+Store `GITHUB_PAT`, `GITHUB_REPO_OWNER`, and `GITHUB_REPO_NAME` in `.env.local` for local development. `GROQ_API_KEY` and `GOOGLE_AI_API_KEY` are GitHub Actions secrets only (the scraper never runs locally in production mode).

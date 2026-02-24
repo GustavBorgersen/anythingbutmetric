@@ -1,6 +1,6 @@
 # Functional Specification: The Anything But Metric converter
 
-**Version:** 1.1
+**Version:** 1.2
 **Status:** Approved
 
 ---
@@ -105,20 +105,18 @@ The interface is a single page. The entire knowledge graph is visible as an inte
 - The user is invited to help bridge the gap.
 
 **Bounty Board:**
-- A dedicated page lists all currently unconnected islands — groups of units that have no path to the main network.
-- Each entry on the Bounty Board names the isolated cluster and explains what kind of comparison would connect it.
-- Example: *"No path currently exists between the Taylor Swift cluster and the Suez Canal cluster."*
+- A dedicated page (`/bounty`) lists all currently unconnected islands — groups of units that have no path to the main network, sorted largest-first.
+- Each entry shows the unit chips belonging to that island.
+- A submission form sits at the top of the page, open to any article submission — not only gap-fillers.
 
 **Community submission:**
-- A user who knows of a published comparison can submit it via a simple form.
-- The form requires:
-  - A URL to the source article.
-  - The specific quote or sentence containing the comparison.
-  - The two units being compared.
-  - The numeric factor claimed.
-- Submissions enter a verification queue and are not immediately added to the graph.
-- Queued submissions are reviewed (manually or by an automated verification step) before being accepted.
-- Once accepted, the new edge is added to the graph and the connection appears in the graph canvas.
+- A user who knows of a published article containing a comparison can submit it via a simple form.
+- The form requires only a URL to the source article. The scraper handles extraction automatically.
+- Anti-spam: a CSS-hidden honeypot field (catches bots that autofill every field) plus an "I'm not a robot" checkbox (UX gate). No external CAPTCHA service.
+- On submission, the scraper runs against the article in a GitHub Actions workflow:
+  - If new comparisons are found, a pull request is opened for maintainer review (labelled `community-submission`).
+  - If no comparisons are found, a `scraper-miss` issue is opened with the article text and scraper log attached, flagging a potential prompt improvement opportunity.
+- The submission form is also reachable inline from the Missing Link card on the home page.
 
 ---
 
@@ -139,13 +137,11 @@ The interface is a single page. The entire knowledge graph is visible as an inte
 ### 3.2 Missing Link Submission Flow
 
 1. User attempts a conversion where no path exists.
-2. System displays the Missing Link error, naming the two disconnected islands.
-3. User clicks **Submit a Link** (or navigates to the Bounty Board).
-4. User locates the relevant Bounty Board entry for their units.
-5. User clicks **Submit a Source** on that entry.
-6. User fills in the submission form: URL, quote, units, and factor.
-7. System confirms submission and explains that it will be reviewed before going live.
-8. Once verified and accepted, the connection appears in the graph and the Bounty Board entry is resolved.
+2. System displays the Missing Link card, naming the two disconnected units and highlighting their islands in the graph.
+3. User pastes an article URL into the inline submission form, checks "I'm not a robot", and clicks **Submit article**. Alternatively, user clicks **View Bounty Board** to browse all disconnected islands first.
+4. System confirms the submission immediately. The scraper runs against the article in the background.
+5. If comparisons are found, a pull request is opened for maintainer review. Once merged, the connection appears in the graph.
+6. If no comparisons are found, a `scraper-miss` issue is opened — this signals a potential gap in the extraction prompt rather than user error.
 
 ---
 
@@ -163,5 +159,5 @@ The interface is a single page. The entire knowledge graph is visible as an inte
 - **Clickable citations:** Every source link opens the original article in a new browser tab. The graph and result panel remain undisturbed.
 - **Graph always interactive:** Dimmed nodes and edges in the active state are still clickable. Clicking a dimmed node in active state shows its connections without clearing the current conversion.
 - **Missing Link state:** Clearly differentiated from an error state. The user should understand this is a known gap, not a bug. The two disconnected islands are each highlighted in the graph to show why no path can be drawn.
-- **Bounty Board:** Sorted by how many users have attempted the missing conversion (most-wanted at the top), if that data is available. Otherwise sorted alphabetically.
+- **Bounty Board:** Islands sorted largest-first (most units in the disconnected cluster at the top). Submit form sits at the top of the page above the island list.
 - **Node legibility:** Nodes must be legible at default zoom. Emoji fallback to a text label if no emoji is available for a unit.

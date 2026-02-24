@@ -1,6 +1,6 @@
 # Project Roadmap: The Anything But Metric converter
 
-**Version:** 1.1
+**Version:** 1.4
 **Status:** Active
 
 ---
@@ -84,6 +84,7 @@ Four phases, each independently deployable. Each phase ends with something live 
 - [x] Age-based RSS entry filtering (`--max-age-hours`, default 26 h) — skips entries older than the cron cadence to avoid redundant LLM calls on already-seen articles; `max_age_hours` workflow_dispatch input allows backfilling new feeds by setting to `0`
 - [x] Fix feed-URL fallback — scraper now checks `feed.version` and `feed.status` before treating an empty feedparser result as a direct article URL; HTTP errors and genuinely empty feeds are skipped rather than fetched as articles
 - [x] Logging cleanup — per-feed summary lines replace per-article verbose output; `-v/--verbose` flag restores debug detail; `--url` mode auto-enables verbose
+- [x] Add `"times smaller than"` to comparison keyword list — was wrongly rejecting valid quotes like "about 40 times smaller than the US"
 
 ### Remaining
 
@@ -113,28 +114,44 @@ Four phases, each independently deployable. Each phase ends with something live 
 
 ---
 
-## Phase 4 — Community
+## Phase 4 — Community ✓ Nearly Complete
 
-**Goal:** Let users contribute data. The Bounty Board surfaces missing connections; the submission form feeds a reviewed queue.
+**Goal:** Let users contribute data. The Bounty Board surfaces missing connections; the submission form triggers the scraper against a user-provided article URL and opens a reviewed PR (edges found) or a labelled issue (scraper miss).
 
-**Deliverable:** A live `/bounty` page listing unconnected islands, a submission form on each entry, and a GitHub Issues queue that maintainers can review and merge.
+**Deliverable:** A live `/bounty` page listing unconnected islands, a URL submission form, a `workflow_dispatch` GitHub Actions workflow that runs the scraper on the submitted URL, and automatic PR or issue creation.
 
 **Prerequisite:** Phase 1 complete (need the pathfinder to detect disconnected components); Phase 2 helps (more data = more interesting gaps).
 
 ### Tasks
 
-- [ ] Implement disconnected component detection in `src/lib/graph.ts` — identify all islands not reachable from the largest connected component
-- [ ] Build `POST /api/submit` route:
-  - Validate payload: URL parseable, factor > 0, `from` and `to` exist in units catalogue
-  - On pass: call GitHub Issues API to create a labelled Issue (`submission/pending`)
-  - Return success or validation error to the client
-- [ ] Implement `src/lib/github.ts` — thin wrapper around GitHub Issues API
-- [ ] Add `GITHUB_TOKEN` and `GITHUB_REPO` as environment variables (local + Vercel + Actions)
-- [ ] Build submission form component — fields: source URL, quote, from unit, to unit, factor
-- [ ] Build Bounty Board page (`/bounty`):
-  - List all disconnected islands with their member units
-  - Each island has a **Submit a Source** CTA that opens the submission form pre-filled with relevant unit context
-- [ ] Submission confirmation state — after successful POST, show "Thanks — your submission is in review" message
-- [ ] Create GitHub Issue template for submissions (`.github/ISSUE_TEMPLATE/unit_submission.md`) to standardise the queue format
-- [ ] Document the maintainer review process in a `CONTRIBUTING.md` (accept → add to edges.json → close Issue; reject → comment + close)
-- [ ] Link to Bounty Board from Missing Link error state on the home page
+- [x] Add `getAllIslands(mode)` to `src/lib/graph.ts` — BFS connected-component detection; returns `string[][]` sorted largest-first; units with no edges appended as single-node islands
+- [x] Add `--dump-text-to FILEPATH` flag to `scraper.py` — pre-fetches article text and writes it to a file before processing (avoids double-fetch); used by the submission workflow for scraper-miss issues
+- [x] Create `.github/workflows/submission-scraper.yml`:
+  - `workflow_dispatch` trigger with `article_url` input; not triggered on push
+  - Runs scraper in single-URL mode; stderr (debug log) captured separately from stdout (`NEW_EDGES`)
+  - On new edges: opens branch `submission/YYYY-MM-DD-{url-hash}`, commits data files, opens PR labelled `community-submission`
+  - On miss: opens issue labelled `scraper-miss` with full article text (LLM cutoff marked inline at 3 000 chars), full scraper log, and direct link to the Actions run
+- [x] Build `POST /api/submit` route:
+  - CSS-hidden honeypot field (`_trap`) — silently returns 200 on bots that autofill every field
+  - "I'm not a robot" checkbox required — returns 400 if unchecked
+  - HTTPS-only URL validation
+  - Dispatches `submission-scraper.yml` via GitHub workflow dispatch API
+  - `GITHUB_WORKFLOW_REF` env var controls which branch the workflow runs from (defaults to `"main"`; set to the feature branch for pre-merge testing)
+- [x] Build `SubmitForm` component — URL input, "I'm not a robot" checkbox, CSS-hidden honeypot, loading/success/error states, optional `onSuccess` callback
+- [x] Build Bounty Board page (`/bounty`):
+  - Server page (`force-dynamic`) — calls `getAllIslands("live")`, skips the main connected component (index 0)
+  - `← Back to graph` nav link
+  - Submit form at top (any article welcome, not just gap-fillers)
+  - Scrollable island list below — unit chips per island, no per-card submit buttons
+- [x] Add Bounty nav link to controls bar on home page
+- [x] Expand Missing Link card — adds "View Bounty Board" link and inline `SubmitForm`
+
+### Post-launch improvements (complete)
+
+- [x] YAML block scalar fix — multi-line PR/issue bodies rewritten using `{ echo ...; } > /tmp/body.md` + `--body-file` to avoid YAML parse errors from zero-indented content lines
+- [x] Scraper log in scraper-miss issues — stderr redirected to `/tmp/scraper_log.txt`; full log (LLM responses, rejection reasons) included inline in the issue alongside the Actions run link
+
+### Remaining
+
+- [ ] Create GitHub labels in repo Settings: `community-submission` (#0075ca) and `scraper-miss` (#e4e669)
+- [ ] Continue polish and testing on the feature branch before merging to main
