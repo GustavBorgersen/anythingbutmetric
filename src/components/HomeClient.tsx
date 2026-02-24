@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import UnitSelector from "./UnitSelector";
 import ResultCard from "./ResultCard";
 import GraphCanvas from "./GraphCanvas";
+import SubmitForm from "./SubmitForm";
 import type { Unit, Edge, Route, HighlightState } from "@/lib/types";
 
 interface Props {
@@ -119,14 +120,21 @@ export default function HomeClient({
   const cardList = (
     <>
       {noPath && fromId && toId && (
-        <div className="rounded-xl border border-zinc-700 bg-zinc-800/95 p-4 shadow-2xl text-sm">
-          <div className="text-amber-400 font-semibold mb-1">Missing Link</div>
+        <div className="rounded-xl border border-zinc-700 bg-zinc-800/95 p-4 shadow-2xl text-sm space-y-3">
+          <div className="text-amber-400 font-semibold">Missing Link</div>
           <div className="text-zinc-400">
             No path found between{" "}
             <span className="text-zinc-200">{fromUnit?.label}</span> and{" "}
-            <span className="text-zinc-200">{toUnit?.label}</span> in the
-            current graph.
+            <span className="text-zinc-200">{toUnit?.label}</span>.
           </div>
+          <div className="text-xs text-zinc-500">
+            Know an article that connects them?{" "}
+            <a href="/bounty" className="text-amber-400 hover:text-amber-300 underline">
+              View Bounty Board
+            </a>{" "}
+            or submit one below.
+          </div>
+          <SubmitForm />
         </div>
       )}
 
@@ -191,6 +199,11 @@ export default function HomeClient({
             Live
           </button>
         </div>
+
+        <a href="/bounty"
+           className="shrink-0 text-xs text-zinc-500 hover:text-amber-400 transition-colors">
+          Bounty
+        </a>
 
         {loading && (
           <span className="text-xs text-zinc-500 animate-pulse shrink-0">…</span>

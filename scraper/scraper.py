@@ -613,6 +613,14 @@ def main() -> None:
                              f"Default: {DEFAULT_MAX_AGE_HOURS}")
     parser.add_argument("-v", "--verbose", action="store_true", default=False,
                         help="Show detailed per-article fetch/LLM logs (debug output)")
+    parser.add_argument(
+        "--dump-text-to",
+        default=None,
+        metavar="FILEPATH",
+        help="In --url mode: write the fetched article text to this file before "
+             "processing. Used by the submission workflow to capture article text "
+             "for scraper-miss issue creation.",
+    )
     args = parser.parse_args()
 
     # --url mode is interactive; always show full detail there
@@ -671,10 +679,22 @@ def main() -> None:
             supplied_text = sys.stdin.read() if args.text == "-" else args.text
         else:
             supplied_text = None
+
+        # Fetch text up-front when caller wants a dump (avoids fetching twice)
+        if args.dump_text_to and not supplied_text:
+            fetched = fetch_article_text(args.url)
+            if fetched:
+                Path(args.dump_text_to).write_text(fetched, encoding="utf-8")
+                log.info("Wrote article text (%d chars) to %s", len(fetched), args.dump_text_to)
+            else:
+                log.warning("Could not fetch article text; dump file not written")
+            supplied_text = fetched or ""
+
         edges_before = len(new_edges)
         units_before = len(new_units_map)
         process_article(args.url, explicit_text=supplied_text or "", rss_summary="", **common)
-        log.info("Result: +%d edges, +%d units", len(new_edges) - edges_before, len(new_units_map) - units_before)
+        log.info("Result: +%d edges, +%d units",
+                 len(new_edges) - edges_before, len(new_units_map) - units_before)
     else:
         # 2b. RSS feed mode
         feed_urls = [

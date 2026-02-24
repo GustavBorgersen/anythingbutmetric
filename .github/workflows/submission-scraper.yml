@@ -1,0 +1,100 @@
+name: Community submission scraper
+
+on:
+  workflow_dispatch:
+    inputs:
+      article_url:
+        description: 'Article URL submitted by a community member'
+        required: true
+        type: string
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r scraper/requirements.txt
+
+      - name: Run scraper on submitted URL
+        id: run_scraper
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GOOGLE_AI_API_KEY: ${{ secrets.GOOGLE_AI_API_KEY }}
+        run: |
+          output=$(python scraper/scraper.py \
+            --url "${{ github.event.inputs.article_url }}" \
+            --dump-text-to /tmp/article_text.txt)
+          echo "$output"
+          echo "$output" >> $GITHUB_OUTPUT
+
+      - name: Open community PR if new edges found
+        if: ${{ steps.run_scraper.outputs.NEW_EDGES != '0' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          URL="${{ github.event.inputs.article_url }}"
+          HASH=$(echo -n "$URL" | sha1sum | cut -c1-8)
+          BRANCH="submission/$(date +%Y-%m-%d)-${HASH}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add data/edges.json data/units.json
+          git commit -m "community submission: add ${{ steps.run_scraper.outputs.NEW_EDGES }} new edges from submitted article"
+          git push -f origin "$BRANCH"
+          gh pr create \
+            --title "Community submission: ${{ steps.run_scraper.outputs.NEW_EDGES }} new edges ($(date +%Y-%m-%d))" \
+            --body "## Community submission
+
+Submitted article URL: $URL
+
+Automatically extracted ${{ steps.run_scraper.outputs.NEW_EDGES }} new edge(s).
+All edges have \`verified: false\`. Review both JSON files before merging.
+
+> This PR was created from a community article submission, not the daily scraper." \
+            --base main \
+            --head "$BRANCH" \
+            --label "community-submission" || \
+            echo "PR already exists for $BRANCH — skipping"
+
+      - name: Open scraper-miss issue if no edges found
+        if: ${{ steps.run_scraper.outputs.NEW_EDGES == '0' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          URL="${{ github.event.inputs.article_url }}"
+          if [ -f /tmp/article_text.txt ]; then
+            ARTICLE_TEXT=$(head -c 3000 /tmp/article_text.txt)
+          else
+            ARTICLE_TEXT="(Article text could not be fetched)"
+          fi
+          gh issue create \
+            --title "Scraper miss: submitted article found no comparisons ($(date +%Y-%m-%d))" \
+            --body "## Scraper miss report
+
+A community member submitted an article the scraper extracted no comparisons from.
+This may mean a gap in the extraction prompt, an overly aggressive quality filter,
+or an article that genuinely has no valid comparisons.
+
+**Submitted URL:** $URL
+
+**Fetched article text (first 3 000 chars):**
+
+\`\`\`
+$ARTICLE_TEXT
+\`\`\`
+
+Please investigate whether the scraper or prompt needs improvement." \
+            --label "scraper-miss"

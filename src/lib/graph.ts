@@ -102,3 +102,41 @@ export function getAllEdgesForPair(
       (e.from === aId && e.to === bId) || (e.from === bId && e.to === aId)
   );
 }
+
+/**
+ * Returns all connected components as arrays of unit IDs, sorted largest first.
+ * Island[0] is always the main connected core; [1..] are the bounty targets.
+ * Units with no edges at all are appended as single-node islands at the end.
+ */
+export function getAllIslands(mode: "seed" | "live" = "live"): string[][] {
+  const { units, edges } = getCache(mode);
+  const connectedIds = new Set<string>(edges.flatMap((e) => [e.from, e.to]));
+  const unvisited = new Set<string>(connectedIds);
+  const islands: string[][] = [];
+
+  while (unvisited.size > 0) {
+    const seed = unvisited.values().next().value as string;
+    const island: string[] = [];
+    const queue = [seed];
+    while (queue.length) {
+      const cur = queue.shift()!;
+      if (!unvisited.has(cur)) continue;
+      unvisited.delete(cur);
+      island.push(cur);
+      for (const e of edges) {
+        if (e.from === cur && unvisited.has(e.to)) queue.push(e.to);
+        if (e.to === cur && unvisited.has(e.from)) queue.push(e.from);
+      }
+    }
+    islands.push(island);
+  }
+
+  islands.sort((a, b) => b.length - a.length);
+
+  // Isolated units (in units.json but no edges yet)
+  for (const u of units) {
+    if (!connectedIds.has(u.id)) islands.push([u.id]);
+  }
+
+  return islands;
+}
