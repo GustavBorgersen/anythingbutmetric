@@ -10,6 +10,7 @@ detect whether a PR is needed.
 """
 
 import argparse
+import calendar
 import json
 import logging
 import os
@@ -52,6 +53,7 @@ GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_RPM = 25               # free tier allows 30 RPM; stay a little under
 GEMINI_MODEL = "gemini-2.5-flash"
 GEMINI_RPM = 5              # free-tier requests per minute; enforced with sleep
+DEFAULT_MAX_AGE_HOURS = 26  # skip RSS entries older than this; 0 = no filter
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -235,6 +237,21 @@ COMPARISON_KEYWORDS = [
 def has_comparison_phrase(quote: str) -> bool:
     q = quote.lower()
     return any(kw in q for kw in COMPARISON_KEYWORDS)
+
+
+def entry_is_recent(entry: dict, max_age_hours: int) -> bool:
+    """Return True if the RSS entry is younger than max_age_hours (UTC).
+
+    Falls through to True when max_age_hours == 0 or pubDate is absent,
+    so we never silently drop an article we can't date.
+    """
+    if max_age_hours == 0:
+        return True
+    pub = entry.get("published_parsed") or entry.get("updated_parsed")
+    if pub is None:
+        return True  # no date info — process anyway
+    age_seconds = time.time() - calendar.timegm(pub)
+    return age_seconds <= max_age_hours * 3600
 
 
 _last_groq_call: float = 0.0
@@ -591,6 +608,10 @@ def main() -> None:
     parser.add_argument("--filter-both-new", action="store_true", default=False,
                         help="Reject edges where both from and to are new units created this run. "
                              "Useful once the unit catalogue is large; off by default.")
+    parser.add_argument("--max-age-hours", type=int, default=DEFAULT_MAX_AGE_HOURS,
+                        help="Skip RSS entries older than this many hours (0 = no filter, "
+                             "useful when adding a new feed to backfill history). "
+                             f"Default: {DEFAULT_MAX_AGE_HOURS}")
     args = parser.parse_args()
 
     # 1. Load existing data
@@ -685,6 +706,7 @@ def main() -> None:
                 entries = entries[:args.max_entries]
             log.info("  %d entries", len(entries))
 
+            skipped_old = 0
             for entry in entries:
                 if _all_llms_exhausted():
                     break
@@ -694,10 +716,20 @@ def main() -> None:
                     continue
                 if article_url in existing_source_urls:
                     continue
+
+                # skip entries older than the age threshold
+                if not entry_is_recent(entry, args.max_age_hours):
+                    log.debug("  skipping old entry: %s", article_url)
+                    skipped_old += 1
+                    continue
+
                 existing_source_urls.add(article_url)
 
                 rss_summary = entry.get("summary") or entry.get("description") or ""
                 process_article(article_url, explicit_text="", rss_summary=rss_summary, **common)
+
+            if skipped_old:
+                log.info("  %d old entries skipped (> %dh)", skipped_old, args.max_age_hours)
 
     # 4. Write results
     n_new_units = len(new_units_map)

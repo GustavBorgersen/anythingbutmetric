@@ -13,6 +13,10 @@ on:
         description: 'Reject edges where both sides are new units (enable once catalogue is large)'
         type: boolean
         default: false
+      max_age_hours:
+        description: 'Max article age in hours (0 = no filter; use 0 when adding a new feed to backfill)'
+        type: number
+        default: 26
 
 jobs:
   scrape:
@@ -49,6 +53,7 @@ jobs:
           if [ "${{ github.event.inputs.filter_both_new }}" = "true" ]; then
             FLAGS="$FLAGS --filter-both-new"
           fi
+          FLAGS="$FLAGS --max-age-hours ${{ github.event.inputs.max_age_hours || '26' }}"
           output=$(python scraper/scraper.py $FLAGS)
           echo "$output"
           echo "$output" >> $GITHUB_OUTPUT
