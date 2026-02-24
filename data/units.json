@@ -453,5 +453,12 @@
     "aliases": [
       "florida"
     ]
+  },
+  {
+    "id": "balloon",
+    "label": "Balloon",
+    "aliases": [
+      "balloon"
+    ]
   }
 ]

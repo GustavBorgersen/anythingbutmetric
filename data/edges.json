@@ -78,5 +78,15 @@
     "source_quote": "an unstable mass of ice the size of Florida",
     "date_scraped": "2026-02-24",
     "verified": false
+  },
+  {
+    "id": "e009",
+    "from": "balloon",
+    "to": "double_decker_bus",
+    "factor": 3.0,
+    "source_url": "https://thesource.com/2023/02/03/report-china-has-spy-balloon-the-size-of-three-buses-floating-over-western-u-s/",
+    "source_quote": "The balloon, the size of three buses, was not shot down for fear that it could hurt people on the ground.",
+    "date_scraped": "2026-02-24",
+    "verified": false
   }
 ]
