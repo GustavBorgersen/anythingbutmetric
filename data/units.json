@@ -453,5 +453,32 @@
     "aliases": [
       "florida"
     ]
+  },
+  {
+    "id": "cleared_area",
+    "label": "Cleared Area",
+    "emoji": "🌳",
+    "aliases": [
+      "area of clearing",
+      "deforested area",
+      "woodland area",
+      "savanna area"
+    ],
+    "tags": [
+      "area"
+    ]
+  },
+  {
+    "id": "sydney_cbd",
+    "label": "Sydney's CBD",
+    "emoji": "🏙️",
+    "aliases": [
+      "sydney cbd",
+      "sydney central business district"
+    ],
+    "tags": [
+      "area",
+      "city"
+    ]
   }
 ]

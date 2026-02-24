@@ -78,5 +78,15 @@
     "source_quote": "an unstable mass of ice the size of Florida",
     "date_scraped": "2026-02-24",
     "verified": false
+  },
+  {
+    "id": "e009",
+    "from": "cleared_area",
+    "to": "sydney_cbd",
+    "factor": 10.0,
+    "source_url": "https://www.theguardian.com/australia-news/2026/feb/24/federal-green-light-bulldoze-tropical-savanna-northern-territory-threatened-species",
+    "source_quote": "Top End Pastoral Company’s development would clear 2,723 hectares of woodland – an area 10 times the size of Sydney’s CBD – on Claravale farm and station in the Daly River region for crops, including sorghum and cotton.",
+    "date_scraped": "2026-02-24",
+    "verified": false
   }
 ]
