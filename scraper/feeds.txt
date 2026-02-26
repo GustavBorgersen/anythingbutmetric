@@ -5,10 +5,17 @@ https://feeds.bbci.co.uk/news/science_and_environment/rss.xml
 https://feeds.bbci.co.uk/news/uk/rss.xml
 https://www.theguardian.com/science/rss
 https://www.theguardian.com/environment/rss
-https://feeds.reuters.com/reuters/scienceNews
 https://www.newscientist.com/feed/home/
-https://theregister.com/science/rss
 https://rss.nytimes.com/services/xml/rss/nyt/Science.xml
+https://www.livescience.com/feeds/all
+https://www.space.com/feeds/all
+https://www.sciencedaily.com/rss/all.xml
+https://www.dailymail.co.uk/sciencetech/index.rss
+https://arstechnica.com/science/feed/
+https://www.nature.com/nature.rss
+https://www.independent.co.uk/news/science/rss
+https://www.thesun.co.uk/news/feed/
+https://www.mirror.co.uk/news/uk-news/rss.xml
 
 # ---------------------------------------------------------------------------
 # Test articles — SHOULD find a comparison
