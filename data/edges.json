@@ -78,5 +78,15 @@
     "source_quote": "an unstable mass of ice the size of Florida",
     "date_scraped": "2026-02-24",
     "verified": false
+  },
+  {
+    "id": "e009",
+    "from": "foskeia_pelendonum",
+    "to": "chicken",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/newsround/articles/c20533042y8o",
+    "source_quote": "But now, researchers have identified a new, tiny species - about the size of a chicken - in Burgos in northern Spain.",
+    "date_scraped": "2026-02-27",
+    "verified": false
   }
 ]
