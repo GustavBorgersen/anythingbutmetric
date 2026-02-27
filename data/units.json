@@ -453,5 +453,19 @@
     "aliases": [
       "florida"
     ]
+  },
+  {
+    "id": "foskeia_pelendonum",
+    "label": "Foskeia Pelendonum",
+    "aliases": [
+      "Foskeia pelendonum"
+    ]
+  },
+  {
+    "id": "chicken",
+    "label": "Chicken",
+    "aliases": [
+      "chicken"
+    ]
   }
 ]
