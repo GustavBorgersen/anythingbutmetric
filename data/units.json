@@ -497,5 +497,16 @@
       "dinosaur",
       "species"
     ]
+  },
+  {
+    "id": "giant_phantom_jelly",
+    "label": "Giant Phantom Jelly",
+    "emoji": "🐳",
+    "aliases": [
+      "giant phantom jelly"
+    ],
+    "tags": [
+      "jellyfish"
+    ]
   }
 ]
