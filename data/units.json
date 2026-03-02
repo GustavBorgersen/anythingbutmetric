@@ -485,5 +485,18 @@
     "aliases": [
       "vatican city"
     ]
+  },
+  {
+    "id": "spinosaurus_mirabilis",
+    "label": "Spinosaurus Mirabilis",
+    "emoji": "🦖",
+    "aliases": [
+      "Spinosaurus mirabilis",
+      "new dinosaur species"
+    ],
+    "tags": [
+      "dinosaur",
+      "species"
+    ]
   }
 ]
