@@ -467,5 +467,23 @@
     "aliases": [
       "chicken"
     ]
+  },
+  {
+    "id": "bathelia_candida_coral_reef",
+    "label": "Bathelia Candida Coral Reef",
+    "emoji": "🐳",
+    "aliases": [
+      "bathelia candida reef"
+    ],
+    "tags": [
+      "coral reef"
+    ]
+  },
+  {
+    "id": "vatican_city",
+    "label": "Vatican City",
+    "aliases": [
+      "vatican city"
+    ]
   }
 ]

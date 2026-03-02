@@ -88,5 +88,15 @@
     "source_quote": "But now, researchers have identified a new, tiny species - about the size of a chicken - in Burgos in northern Spain.",
     "date_scraped": "2026-02-27",
     "verified": false
+  },
+  {
+    "id": "e010",
+    "from": "bathelia_candida_coral_reef",
+    "to": "vatican_city",
+    "factor": 1.0,
+    "source_url": "https://www.smithsonianmag.com/smart-news/see-a-rare-bus-sized-giant-phantom-jelly-wade-through-ocean-waters-off-the-coast-of-argentina-180988161/",
+    "source_quote": "They discovered the largest known Bathelia candida coral reef, which, at 0.15 square miles, is almost the size of Vatican City.",
+    "date_scraped": "2026-03-02",
+    "verified": false
   }
 ]
