@@ -98,5 +98,25 @@
     "source_quote": "They discovered the largest known Bathelia candida coral reef, which, at 0.15 square miles, is almost the size of Vatican City.",
     "date_scraped": "2026-03-02",
     "verified": false
+  },
+  {
+    "id": "e011",
+    "from": "double_decker_bus",
+    "to": "spinosaurus_mirabilis",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/newsround/articles/cj9832mvvyxo",
+    "source_quote": "around the length of a bus (12 metres long)",
+    "date_scraped": "2026-03-02",
+    "verified": false
+  },
+  {
+    "id": "e012",
+    "from": "elephant",
+    "to": "spinosaurus_mirabilis",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/newsround/articles/cj9832mvvyxo",
+    "source_quote": "weighing between 5-7 tonnes, about the same as a large African elephant",
+    "date_scraped": "2026-03-02",
+    "verified": false
   }
 ]
