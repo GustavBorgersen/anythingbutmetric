@@ -230,6 +230,7 @@ COMPARISON_KEYWORDS = [
     "the size of", "the area of", "the weight of", "the height of",
     "as big as", "as heavy as", "as tall as", "as wide as", "as long as",
     "around the length", "around the weight", "around the height",
+    "roughly the length", "roughly the weight", "roughly the height", "roughly the size", "roughly the wolume",
     "about the same",
     "weighs as much as",
     "equivalent to",
