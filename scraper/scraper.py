@@ -229,8 +229,11 @@ COMPARISON_KEYWORDS = [
     "times the length", "times the volume", "times larger than", "times bigger than", "times smaller than",
     "the size of", "the area of", "the weight of", "the height of",
     "as big as", "as heavy as", "as tall as", "as wide as", "as long as",
+    "around the length", "around the weight", "around the height",
+    "about the same",
     "weighs as much as",
     "equivalent to",
+    "equal to",
 ]
 
 
