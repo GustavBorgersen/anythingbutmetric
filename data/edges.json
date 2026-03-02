@@ -118,5 +118,15 @@
     "source_quote": "weighing between 5-7 tonnes, about the same as a large African elephant",
     "date_scraped": "2026-03-02",
     "verified": false
+  },
+  {
+    "id": "e013",
+    "from": "giant_phantom_jelly",
+    "to": "double_decker_bus",
+    "factor": 1.0,
+    "source_url": "https://www.smithsonianmag.com/smart-news/see-a-rare-bus-sized-giant-phantom-jelly-wade-through-ocean-waters-off-the-coast-of-argentina-180988161/",
+    "source_quote": "In December, they spied a rare jellyfish roughly the length of a school bus, known as the giant phantom jelly, wading through Atlantic waters at about 820 feet below the surface.",
+    "date_scraped": "2026-03-02",
+    "verified": false
   }
 ]
