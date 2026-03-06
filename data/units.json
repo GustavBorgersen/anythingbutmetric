@@ -529,5 +529,31 @@
       "landmark",
       "height"
     ]
+  },
+  {
+    "id": "asteroid",
+    "label": "Asteroid",
+    "aliases": [
+      "asteroid"
+    ]
+  },
+  {
+    "id": "2021_gw4",
+    "label": "2021 Gw4",
+    "aliases": [
+      "2021 GW4"
+    ]
+  },
+  {
+    "id": "car",
+    "label": "Car",
+    "emoji": "🚗",
+    "aliases": [
+      "automobile",
+      "vehicle"
+    ],
+    "tags": [
+      "transportation"
+    ]
   }
 ]
