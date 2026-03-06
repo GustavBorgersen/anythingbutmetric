@@ -128,5 +128,15 @@
     "source_quote": "In December, they spied a rare jellyfish roughly the length of a school bus, known as the giant phantom jelly, wading through Atlantic waters at about 820 feet below the surface.",
     "date_scraped": "2026-03-02",
     "verified": false
+  },
+  {
+    "id": "e014",
+    "from": "asteroid_2024_yr4",
+    "to": "leaning_tower_of_pisa",
+    "factor": 1.0,
+    "source_url": "https://www.livescience.com/space/asteroids/nasa-updates-odds-that-city-killer-asteroid-2024-yr4-will-hit-the-moon",
+    "source_quote": "Subsequent telescope observations soon showed that the space rock was a whopper, measuring between 174 and 220 feet (53 to 67 meters) in diameter — about as wide as the Leaning Tower of Pisa is tall — and that its trajectory would bring it extremely close to Earth.",
+    "date_scraped": "2026-03-06",
+    "verified": false
   }
 ]

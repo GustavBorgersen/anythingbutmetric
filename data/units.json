@@ -508,5 +508,26 @@
     "tags": [
       "jellyfish"
     ]
+  },
+  {
+    "id": "asteroid_2024_yr4",
+    "label": "Asteroid 2024 Yr4",
+    "aliases": [
+      "asteroid 2024 YR4"
+    ]
+  },
+  {
+    "id": "leaning_tower_of_pisa",
+    "label": "Leaning Tower of Pisa",
+    "emoji": "🏛️",
+    "aliases": [
+      "pisa tower",
+      "leaning tower"
+    ],
+    "tags": [
+      "building",
+      "landmark",
+      "height"
+    ]
   }
 ]
