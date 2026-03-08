@@ -158,5 +158,15 @@
     "source_quote": "Earth experienced a close pass when 2021 GW4, which measured the size of a car, came within 16,300 miles of Earth in April.",
     "date_scraped": "2026-03-06",
     "verified": false
+  },
+  {
+    "id": "e017",
+    "from": "a23a",
+    "to": "greater_london",
+    "factor": 2.0,
+    "source_url": "https://www.bbc.co.uk/news/resources/idt-20f878f1-f4af-4022-9f62-b0515b9f4b20",
+    "source_quote": "The iceberg, known as A23a, was once the largest on Earth, covering an area more than twice the size of Greater London.",
+    "date_scraped": "2026-03-08",
+    "verified": false
   }
 ]
