@@ -168,5 +168,15 @@
     "source_quote": "The iceberg, known as A23a, was once the largest on Earth, covering an area more than twice the size of Greater London.",
     "date_scraped": "2026-03-08",
     "verified": false
+  },
+  {
+    "id": "e018",
+    "from": "white_abalone",
+    "to": "coconut",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/environment/ng-interactive/2026/mar/08/white-abalone-breeding-program-california",
+    "source_quote": "Inside, a mix of volunteers and biologists stand in the aisle holding the abalone, some as big as coconuts.",
+    "date_scraped": "2026-03-09",
+    "verified": false
   }
 ]

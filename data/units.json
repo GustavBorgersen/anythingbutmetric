@@ -569,5 +569,29 @@
     "aliases": [
       "Greater London"
     ]
+  },
+  {
+    "id": "white_abalone",
+    "label": "White Abalone",
+    "emoji": "🐚",
+    "aliases": [
+      "abalone",
+      "sea snail"
+    ],
+    "tags": [
+      "animal",
+      "mollusk"
+    ]
+  },
+  {
+    "id": "coconut",
+    "label": "Coconut",
+    "emoji": "🥥",
+    "aliases": [
+      "coconuts"
+    ],
+    "tags": [
+      "fruit"
+    ]
   }
 ]
