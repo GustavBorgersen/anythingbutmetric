@@ -178,5 +178,15 @@
     "source_quote": "Inside, a mix of volunteers and biologists stand in the aisle holding the abalone, some as big as coconuts.",
     "date_scraped": "2026-03-09",
     "verified": false
+  },
+  {
+    "id": "e019",
+    "from": "industry_melter",
+    "to": "shipping_container",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/world/2026/mar/11/toronto-snow-salt-environment-health",
+    "source_quote": "Plumes of steam rise from industry melters – contraptions roughly the size and shape of a shipping container which slowly reduce the size of the mountain over time.",
+    "date_scraped": "2026-03-12",
+    "verified": false
   }
 ]
