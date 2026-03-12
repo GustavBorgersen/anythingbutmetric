@@ -188,5 +188,15 @@
     "source_quote": "Plumes of steam rise from industry melters – contraptions roughly the size and shape of a shipping container which slowly reduce the size of the mountain over time.",
     "date_scraped": "2026-03-12",
     "verified": false
+  },
+  {
+    "id": "e020",
+    "from": "a84_iceberg",
+    "to": "chicago",
+    "factor": 1.0,
+    "source_url": "https://www.smithsonianmag.com/smart-news/a-chicago-sized-iceberg-broke-off-from-antarctica-revealing-a-hidden-ecosystem-never-seen-before-180986291/?itm_source=related-content&itm_medium=parsely-api",
+    "source_quote": "Earlier this year, an iceberg the size of Chicago broke off the Antarctic Peninsula.",
+    "date_scraped": "2026-03-12",
+    "verified": false
   }
 ]
