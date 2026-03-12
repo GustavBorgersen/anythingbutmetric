@@ -593,5 +593,34 @@
     "tags": [
       "fruit"
     ]
+  },
+  {
+    "id": "industry_melter",
+    "label": "Industry Melter",
+    "emoji": "🏭",
+    "aliases": [
+      "industry melters",
+      "contraption",
+      "contraptions"
+    ],
+    "tags": [
+      "machinery",
+      "industrial"
+    ]
+  },
+  {
+    "id": "shipping_container",
+    "label": "Shipping Container",
+    "emoji": "📦",
+    "aliases": [
+      "container",
+      "freight container",
+      "intermodal container"
+    ],
+    "tags": [
+      "transport",
+      "volume",
+      "storage"
+    ]
   }
 ]
