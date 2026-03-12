@@ -622,5 +622,19 @@
       "volume",
       "storage"
     ]
+  },
+  {
+    "id": "a84_iceberg",
+    "label": "A-84 Iceberg",
+    "aliases": [
+      "A-84 iceberg"
+    ]
+  },
+  {
+    "id": "chicago",
+    "label": "Chicago",
+    "aliases": [
+      "Chicago"
+    ]
   }
 ]
