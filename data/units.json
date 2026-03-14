@@ -636,5 +636,30 @@
     "aliases": [
       "Chicago"
     ]
+  },
+  {
+    "id": "aa_battery",
+    "label": "Standard AA Battery",
+    "emoji": "🔋",
+    "aliases": [
+      "aa battery",
+      "double a battery"
+    ],
+    "tags": [
+      "batteries"
+    ]
+  },
+  {
+    "id": "black_and_rufous_sengi",
+    "label": "Black and Rufous Sengi",
+    "emoji": "🦰",
+    "aliases": [
+      "elephant shrew",
+      "sengi"
+    ],
+    "tags": [
+      "animals",
+      "mammals"
+    ]
   }
 ]

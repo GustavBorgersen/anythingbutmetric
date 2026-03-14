@@ -198,5 +198,15 @@
     "source_quote": "Earlier this year, an iceberg the size of Chicago broke off the Antarctic Peninsula.",
     "date_scraped": "2026-03-12",
     "verified": false
+  },
+  {
+    "id": "e021",
+    "from": "aa_battery",
+    "to": "black_and_rufous_sengi",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/c98q05eygm3o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Weighing just 30g (1oz) at birth, roughly the weight of a standard AA battery, the babies were initially missed by their keepers at Hertfordshire Zoo in Broxbourne.",
+    "date_scraped": "2026-03-14",
+    "verified": false
   }
 ]
