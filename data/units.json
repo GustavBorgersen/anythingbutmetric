@@ -661,5 +661,12 @@
       "animals",
       "mammals"
     ]
+  },
+  {
+    "id": "river",
+    "label": "River",
+    "aliases": [
+      "river"
+    ]
   }
 ]

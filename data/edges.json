@@ -208,5 +208,15 @@
     "source_quote": "Weighing just 30g (1oz) at birth, roughly the weight of a standard AA battery, the babies were initially missed by their keepers at Hertfordshire Zoo in Broxbourne.",
     "date_scraped": "2026-03-14",
     "verified": false
+  },
+  {
+    "id": "e022",
+    "from": "river",
+    "to": "car",
+    "factor": 371.0,
+    "source_url": "https://www.bbc.com/news/articles/c5ykkvn6pqgo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "equivalent to \"371 cars small cars going past your eyes every second\"",
+    "date_scraped": "2026-03-15",
+    "verified": false
   }
 ]
