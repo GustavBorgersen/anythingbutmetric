@@ -208,5 +208,25 @@
     "source_quote": "Weighing just 30g (1oz) at birth, roughly the weight of a standard AA battery, the babies were initially missed by their keepers at Hertfordshire Zoo in Broxbourne.",
     "date_scraped": "2026-03-14",
     "verified": false
+  },
+  {
+    "id": "e022",
+    "from": "neutron_star",
+    "to": "manhattan_island",
+    "factor": 1.0,
+    "source_url": "https://www.space.com/astronomy/stars/deep-underground-a-telescope-may-soon-detect-ghosts-of-stars-that-died-before-earth-existed",
+    "source_quote": "A neutron star is an incredibly dense object, only about 12 miles (20 kilometers) across, roughly the size of a large city or about the length of Manhattan.",
+    "date_scraped": "2026-03-16",
+    "verified": false
+  },
+  {
+    "id": "e023",
+    "from": "neutron_star",
+    "to": "large_city",
+    "factor": 1.0,
+    "source_url": "https://www.space.com/astronomy/stars/a-state-of-matter-last-seen-just-after-the-big-bang-may-exist-inside-neutron-stars-and-scientists-think-they-can-prove-it",
+    "source_quote": "With a diameter about the same as a large city, yet packing a mass several times that of our sun, neutron stars are incredibly dense.",
+    "date_scraped": "2026-03-16",
+    "verified": false
   }
 ]
