@@ -661,5 +661,40 @@
       "animals",
       "mammals"
     ]
+  },
+  {
+    "id": "neutron_star",
+    "label": "Neutron Star",
+    "emoji": "✨",
+    "aliases": [
+      "neutron stars"
+    ],
+    "tags": [
+      "celestial_body"
+    ]
+  },
+  {
+    "id": "manhattan_island",
+    "label": "Manhattan Island",
+    "emoji": "🏙️",
+    "aliases": [
+      "manhattan"
+    ],
+    "tags": [
+      "geographical_feature"
+    ]
+  },
+  {
+    "id": "large_city",
+    "label": "Large City",
+    "emoji": "🏙️",
+    "aliases": [
+      "city",
+      "large cities"
+    ],
+    "tags": [
+      "area",
+      "size"
+    ]
   }
 ]
