@@ -228,5 +228,25 @@
     "source_quote": "With a diameter about the same as a large city, yet packing a mass several times that of our sun, neutron stars are incredibly dense.",
     "date_scraped": "2026-03-16",
     "verified": false
+  },
+  {
+    "id": "e024",
+    "from": "l9859d",
+    "to": "earth",
+    "factor": 1.6,
+    "source_url": "https://www.theguardian.com/science/2026/mar/16/a-molten-mushy-state-scientists-may-have-found-a-new-type-of-liquid-planet",
+    "source_quote": "The distant world, known as L98-59d, is about 1.6 times the size of Earth and orbits a small red star 35 light years away.",
+    "date_scraped": "2026-03-17",
+    "verified": false
+  },
+  {
+    "id": "e025",
+    "from": "glass_chip",
+    "to": "50p_piece",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/games/2026/mar/16/petri-dish-brain-cells-playing-doom-cortical-labs",
+    "source_quote": "“Essentially we reverse the biological clock back to an embryonic state, induce them into neurons, and put them on a glass chip roughly the size of a 50p piece,” explains Chong .",
+    "date_scraped": "2026-03-17",
+    "verified": false
   }
 ]
