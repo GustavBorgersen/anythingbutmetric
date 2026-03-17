@@ -696,5 +696,46 @@
       "area",
       "size"
     ]
+  },
+  {
+    "id": "l9859d",
+    "label": "L98-59D",
+    "aliases": [
+      "L98-59d"
+    ]
+  },
+  {
+    "id": "earth",
+    "label": "Earth",
+    "aliases": [
+      "earth"
+    ]
+  },
+  {
+    "id": "glass_chip",
+    "label": "Glass Chip (biological computer)",
+    "emoji": "💽",
+    "aliases": [
+      "chip",
+      "glass chip"
+    ],
+    "tags": [
+      "technology",
+      "area",
+      "electronics"
+    ]
+  },
+  {
+    "id": "50p_piece",
+    "label": "50p Piece",
+    "emoji": "🪙",
+    "aliases": [
+      "50p coin",
+      "50p"
+    ],
+    "tags": [
+      "money",
+      "area"
+    ]
   }
 ]
