@@ -248,5 +248,15 @@
     "source_quote": "“Essentially we reverse the biological clock back to an embryonic state, induce them into neurons, and put them on a glass chip roughly the size of a 50p piece,” explains Chong .",
     "date_scraped": "2026-03-17",
     "verified": false
+  },
+  {
+    "id": "e026",
+    "from": "rwandan_farm",
+    "to": "hectare",
+    "factor": 0.4,
+    "source_url": "https://www.bbc.com/news/articles/cpd5n2g406do?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Mugoboka grows bananas, beans and tomatoes on her one-hectare (2.5 acre) farm in Rwanda. Although tiny by Northern Ireland standards, it is more than twice the size of the average Rwandan farm.",
+    "date_scraped": "2026-03-26",
+    "verified": false
   }
 ]

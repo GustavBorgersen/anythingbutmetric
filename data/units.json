@@ -737,5 +737,30 @@
       "money",
       "area"
     ]
+  },
+  {
+    "id": "rwandan_farm",
+    "label": "Average Rwandan Farm",
+    "emoji": "🌾",
+    "aliases": [
+      "rwandan farm"
+    ],
+    "tags": [
+      "farm",
+      "agriculture"
+    ]
+  },
+  {
+    "id": "hectare",
+    "label": "Hectare",
+    "emoji": "🌿",
+    "aliases": [
+      "hectare",
+      "2.5 acres"
+    ],
+    "tags": [
+      "area",
+      "land"
+    ]
   }
 ]
