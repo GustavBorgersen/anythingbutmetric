@@ -737,5 +737,17 @@
       "money",
       "area"
     ]
+  },
+  {
+    "id": "small_building",
+    "label": "Small Building",
+    "emoji": "🏢",
+    "aliases": [
+      "building"
+    ],
+    "tags": [
+      "structure",
+      "size"
+    ]
   }
 ]
