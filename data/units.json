@@ -737,5 +737,33 @@
       "money",
       "area"
     ]
+  },
+  {
+    "id": "cairngorms_fire_area",
+    "label": "Cairngorms Fire Area",
+    "emoji": "🔥",
+    "aliases": [
+      "area of 29,225 acres",
+      "11,827 hectares of fire",
+      "cairngorms wildfire area",
+      "the affected area"
+    ],
+    "tags": [
+      "area",
+      "disaster"
+    ]
+  },
+  {
+    "id": "strathclyde_park",
+    "label": "Strathclyde Park",
+    "emoji": "🏞️",
+    "aliases": [
+      "lanarkshire's strathclyde park",
+      "strathclyde country park"
+    ],
+    "tags": [
+      "park",
+      "area"
+    ]
   }
 ]

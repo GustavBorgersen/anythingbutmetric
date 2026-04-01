@@ -248,5 +248,15 @@
     "source_quote": "“Essentially we reverse the biological clock back to an embryonic state, induce them into neurons, and put them on a glass chip roughly the size of a 50p piece,” explains Chong .",
     "date_scraped": "2026-03-17",
     "verified": false
+  },
+  {
+    "id": "e026",
+    "from": "cairngorms_fire_area",
+    "to": "strathclyde_park",
+    "factor": 30.0,
+    "source_url": "https://www.bbc.com/news/articles/cvgepvp3jyxo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Scottish Land and Estates (SLE) estimated the fires affected a total area of 29,225 acres (11,827 hectares) - an area almost 30 times bigger than Lanarkshire's Strathclyde Park.",
+    "date_scraped": "2026-04-01",
+    "verified": false
   }
 ]
