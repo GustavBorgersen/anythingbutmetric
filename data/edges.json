@@ -248,5 +248,15 @@
     "source_quote": "“Essentially we reverse the biological clock back to an embryonic state, induce them into neurons, and put them on a glass chip roughly the size of a 50p piece,” explains Chong .",
     "date_scraped": "2026-03-17",
     "verified": false
+  },
+  {
+    "id": "e026",
+    "from": "asteroid_2024_yr4",
+    "to": "small_building",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/science/ng-interactive/2026/mar/30/asteroid-warning-earth-un-office-for-outer-space-affairs",
+    "source_quote": "On 27 December 2024, a robotic telescope in Chile had spotted a distant rock hurtling through space, initially estimated to be the size of a small building.",
+    "date_scraped": "2026-03-31",
+    "verified": false
   }
 ]
