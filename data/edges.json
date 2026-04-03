@@ -258,5 +258,25 @@
     "source_quote": "On 27 December 2024, a robotic telescope in Chile had spotted a distant rock hurtling through space, initially estimated to be the size of a small building.",
     "date_scraped": "2026-03-31",
     "verified": false
+  },
+  {
+    "id": "e027",
+    "from": "orion_spacecraft",
+    "to": "minibus",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/c7vqre914pzo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "About the size of a minibus, its never been flown in space before by humans so pilot Victor Glover is spending the day pushing it to the extreme.",
+    "date_scraped": "2026-04-03",
+    "verified": false
+  },
+  {
+    "id": "e028",
+    "from": "flywheel_exercise_device",
+    "to": "carry_on_suitcase",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/c7vqre914pzo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Reid Wiseman and Victor Glover went first, testing out Orion's 'flywheel exercise device', which is about the size of a carry-on suitcase.",
+    "date_scraped": "2026-04-03",
+    "verified": false
   }
 ]

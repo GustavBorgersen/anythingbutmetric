@@ -749,5 +749,41 @@
       "structure",
       "size"
     ]
+  },
+  {
+    "id": "orion_spacecraft",
+    "label": "Orion Spacecraft",
+    "aliases": [
+      "Orion spacecraft"
+    ]
+  },
+  {
+    "id": "minibus",
+    "label": "Minibus",
+    "emoji": "🚌",
+    "aliases": [
+      "minivan"
+    ],
+    "tags": [
+      "vehicle"
+    ]
+  },
+  {
+    "id": "flywheel_exercise_device",
+    "label": "Flywheel Exercise Device",
+    "aliases": [
+      "flywheel exercise device"
+    ]
+  },
+  {
+    "id": "carry_on_suitcase",
+    "label": "Carry-On Suitcase",
+    "emoji": "🧳",
+    "aliases": [
+      "carry-on luggage"
+    ],
+    "tags": [
+      "travel"
+    ]
   }
 ]
