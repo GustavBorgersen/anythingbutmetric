@@ -749,5 +749,28 @@
       "structure",
       "size"
     ]
+  },
+  {
+    "id": "camper_van",
+    "label": "Camper Van",
+    "emoji": "🚐",
+    "aliases": [
+      "rv",
+      "motorhome"
+    ],
+    "tags": [
+      "vehicle"
+    ]
+  },
+  {
+    "id": "orion_space_capsule",
+    "label": "Orion Space Capsule",
+    "emoji": "🛰️",
+    "aliases": [
+      "orion capsule"
+    ],
+    "tags": [
+      "spacecraft"
+    ]
   }
 ]
