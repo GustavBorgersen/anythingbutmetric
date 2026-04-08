@@ -258,5 +258,15 @@
     "source_quote": "On 27 December 2024, a robotic telescope in Chile had spotted a distant rock hurtling through space, initially estimated to be the size of a small building.",
     "date_scraped": "2026-03-31",
     "verified": false
+  },
+  {
+    "id": "e027",
+    "from": "orion_capsule",
+    "to": "camper_van",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/commentisfree/2026/apr/07/the-guardian-view-on-artemis-ii-the-light-and-dark-sides-of-the-moon",
+    "source_quote": "But there are good reasons why so many people were thrilled to hear the voices of the astronauts from 250,000 miles away and were captivated by the image of the one Canadian and three American astronauts inside the Orion capsule – which is roughly the size of a camper van – taking photographs from the moon’s far side, where contact was cut off from their mission control centre in Houston for 40 minutes.",
+    "date_scraped": "2026-04-08",
+    "verified": false
   }
 ]
