@@ -288,5 +288,25 @@
     "source_quote": "The site, near Navenby, will cover an area the size of 1,700 football pitches and incorporate a battery storage facility.",
     "date_scraped": "2026-04-09",
     "verified": false
+  },
+  {
+    "id": "e030",
+    "from": "camper_van",
+    "to": "small_cabin",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/c87wy05wr4no",
+    "source_quote": "The four crew members - Nasa's Reid Wiseman, Victor Glover and Christina Koch and Canadian Space Agency astronaut Jeremy Hansen - are in a small cabin about the size of a camper van, just 5m (15ft) wide and 3m (9ft) high.",
+    "date_scraped": "2026-04-09",
+    "verified": false
+  },
+  {
+    "id": "e031",
+    "from": "small_cabin",
+    "to": "camper_van",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/c87wy05wr4no",
+    "source_quote": "The four crew members - Nasa's Reid Wiseman, Victor Glover and Christina Koch and Canadian Space Agency astronaut Jeremy Hansen - are in a small cabin about the size of a camper van, just 5m (15ft) wide and 3m (9ft) high.",
+    "date_scraped": "2026-04-09",
+    "verified": false
   }
 ]

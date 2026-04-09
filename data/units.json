@@ -796,5 +796,25 @@
     "tags": [
       "solar farm"
     ]
+  },
+  {
+    "id": "camper_van",
+    "label": "Camper Van",
+    "aliases": [
+      "camper van"
+    ]
+  },
+  {
+    "id": "small_cabin",
+    "label": "Small Cabin",
+    "emoji": "🏠",
+    "aliases": [
+      "small cabin",
+      "capsule"
+    ],
+    "tags": [
+      "space",
+      "vehicle"
+    ]
   }
 ]
