@@ -796,5 +796,24 @@
     "tags": [
       "solar farm"
     ]
+  },
+  {
+    "id": "orion_capsule",
+    "label": "Orion Capsule",
+    "aliases": [
+      "Orion capsule"
+    ]
+  },
+  {
+    "id": "camper_van",
+    "label": "Camper Van",
+    "emoji": "🚐",
+    "aliases": [
+      "rv",
+      "motorhome"
+    ],
+    "tags": [
+      "vehicle"
+    ]
   }
 ]

@@ -288,5 +288,15 @@
     "source_quote": "The site, near Navenby, will cover an area the size of 1,700 football pitches and incorporate a battery storage facility.",
     "date_scraped": "2026-04-09",
     "verified": false
+  },
+  {
+    "id": "e030",
+    "from": "orion_capsule",
+    "to": "camper_van",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/commentisfree/2026/apr/07/the-guardian-view-on-artemis-ii-the-light-and-dark-sides-of-the-moon",
+    "source_quote": "which is roughly the size of a camper van",
+    "date_scraped": "2026-04-09",
+    "verified": false
   }
 ]
