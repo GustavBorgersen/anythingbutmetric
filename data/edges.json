@@ -278,5 +278,15 @@
     "source_quote": "Reid Wiseman and Victor Glover went first, testing out Orion's 'flywheel exercise device', which is about the size of a carry-on suitcase.",
     "date_scraped": "2026-04-03",
     "verified": false
+  },
+  {
+    "id": "e029",
+    "from": "springwell_solar_farm",
+    "to": "football_pitch",
+    "factor": 1700.0,
+    "source_url": "https://www.bbc.com/news/articles/cd0r4mxevdvo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The site, near Navenby, will cover an area the size of 1,700 football pitches and incorporate a battery storage facility.",
+    "date_scraped": "2026-04-09",
+    "verified": false
   }
 ]
