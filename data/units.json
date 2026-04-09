@@ -785,5 +785,16 @@
     "tags": [
       "travel"
     ]
+  },
+  {
+    "id": "springwell_solar_farm",
+    "label": "Springwell Solar Farm",
+    "emoji": "🌞",
+    "aliases": [
+      "Springwell solar farm"
+    ],
+    "tags": [
+      "solar farm"
+    ]
   }
 ]
