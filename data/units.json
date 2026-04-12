@@ -815,5 +815,39 @@
     "tags": [
       "vehicle"
     ]
+  },
+  {
+    "id": "pine_marten",
+    "label": "Pine Marten",
+    "aliases": [
+      "pine marten"
+    ]
+  },
+  {
+    "id": "small_cat",
+    "label": "Small Cat",
+    "aliases": [
+      "small cat"
+    ]
+  },
+  {
+    "id": "spacecraft_cabin",
+    "label": "Spacecraft Cabin",
+    "emoji": "🛰️",
+    "aliases": [
+      "space cabin",
+      "crew compartment"
+    ],
+    "tags": [
+      "spacecraft",
+      "interior"
+    ]
+  },
+  {
+    "id": "agratas_electric_vehicles_battery_facility",
+    "label": "Agratas Electric Vehicles Battery Facility",
+    "aliases": [
+      "Agratas electric vehicles battery facility"
+    ]
   }
 ]
