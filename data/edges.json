@@ -298,5 +298,35 @@
     "source_quote": "which is roughly the size of a camper van",
     "date_scraped": "2026-04-09",
     "verified": false
+  },
+  {
+    "id": "e031",
+    "from": "pine_marten",
+    "to": "small_cat",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/cn9q7vlwnxno?at_medium=RSS&at_campaign=rss",
+    "source_quote": "She added the tracking had shown some of the pine martens, which are the size of a small cat, had moved more than 20 miles (32km) away from where they were released.",
+    "date_scraped": "2026-04-12",
+    "verified": false
+  },
+  {
+    "id": "e032",
+    "from": "minibus",
+    "to": "spacecraft_cabin",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/clyrdkxvmmpo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "They were living, working, eating and sleeping in a space about the same size as a minibus.",
+    "date_scraped": "2026-04-12",
+    "verified": false
+  },
+  {
+    "id": "e033",
+    "from": "agratas_electric_vehicles_battery_facility",
+    "to": "football_pitch",
+    "factor": 30.0,
+    "source_url": "https://www.bbc.com/news/articles/cnv82v3n6yqo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Right now the site is a lattice of hulking steel frames covering an area the size of 30 football pitches, interspersed with cranes, earth movers and drainage channels.",
+    "date_scraped": "2026-04-12",
+    "verified": false
   }
 ]
