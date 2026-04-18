@@ -328,5 +328,15 @@
     "source_quote": "Right now the site is a lattice of hulking steel frames covering an area the size of 30 football pitches, interspersed with cranes, earth movers and drainage channels.",
     "date_scraped": "2026-04-12",
     "verified": false
+  },
+  {
+    "id": "e034",
+    "from": "oyster_bed",
+    "to": "wales",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/environment/2026/apr/17/more-than-15m-oysters-to-be-released-in-the-north-sea-for-uk-rewilding-project",
+    "source_quote": "Oyster beds used to be a key part of the UK’s marine ecosystems, covering huge areas of coast – some in the North Sea covered an area the size of Wales.",
+    "date_scraped": "2026-04-18",
+    "verified": false
   }
 ]
