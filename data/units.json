@@ -849,5 +849,18 @@
     "aliases": [
       "Agratas electric vehicles battery facility"
     ]
+  },
+  {
+    "id": "oyster_bed",
+    "label": "Oyster Bed",
+    "emoji": "🦪",
+    "aliases": [
+      "oyster beds",
+      "oyster reef"
+    ],
+    "tags": [
+      "ecology",
+      "geography"
+    ]
   }
 ]
