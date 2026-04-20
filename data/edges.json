@@ -328,5 +328,15 @@
     "source_quote": "Right now the site is a lattice of hulking steel frames covering an area the size of 30 football pitches, interspersed with cranes, earth movers and drainage channels.",
     "date_scraped": "2026-04-12",
     "verified": false
+  },
+  {
+    "id": "e034",
+    "from": "st_pauls_cathedral_in_london",
+    "to": "wind_turbine",
+    "factor": 2.0,
+    "source_url": "https://www.bbc.com/news/articles/cx2663lxw00o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "That's twice the height of St Paul's Cathedral in London,",
+    "date_scraped": "2026-04-19",
+    "verified": false
   }
 ]
