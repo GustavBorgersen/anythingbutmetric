@@ -849,5 +849,24 @@
     "aliases": [
       "Agratas electric vehicles battery facility"
     ]
+  },
+  {
+    "id": "st_pauls_cathedral_in_london",
+    "label": "St Paul'S Cathedral In London",
+    "aliases": [
+      "St Paul's Cathedral in London"
+    ]
+  },
+  {
+    "id": "wind_turbine",
+    "label": "Wind Turbine",
+    "emoji": "💨",
+    "aliases": [
+      "turbine",
+      "windmill"
+    ],
+    "tags": [
+      "renewable energy"
+    ]
   }
 ]
