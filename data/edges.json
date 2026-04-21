@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "avocado",
+    "to": "baby",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/cvgkwk95e74o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Specialists at St George's Hospital in London gave the infant what is known as an intrauterine transfusion (IUT) when he was about the size of an avocado and his mother was 16 weeks pregnant.",
+    "date_scraped": "2026-04-21",
+    "verified": false
   }
 ]
