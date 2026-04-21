@@ -868,5 +868,25 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "avocado",
+    "label": "Avocado",
+    "aliases": [
+      "avocado"
+    ]
+  },
+  {
+    "id": "baby",
+    "label": "Newborn Baby",
+    "emoji": "👶",
+    "aliases": [
+      "infant",
+      "newborn"
+    ],
+    "tags": [
+      "human",
+      "baby"
+    ]
   }
 ]
