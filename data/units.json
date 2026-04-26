@@ -868,5 +868,26 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "hectares",
+    "label": "Hectares",
+    "aliases": [
+      "hectares"
+    ]
+  },
+  {
+    "id": "typical_astrolabe_from_17th_century_india",
+    "label": "Typical Astrolabe From 17Th Century India",
+    "aliases": [
+      "typical astrolabe from 17th Century India"
+    ]
+  },
+  {
+    "id": "astrolabe",
+    "label": "Astrolabe",
+    "aliases": [
+      "astrolabe"
+    ]
   }
 ]

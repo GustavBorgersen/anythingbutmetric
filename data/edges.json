@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "hectares",
+    "to": "football_pitch",
+    "factor": 60.0,
+    "source_url": "https://www.bbc.com/news/articles/clyxd6n190zo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "About 25 hectares (62 acres) - the size of about 60 football pitches - of land has been transformed with a mere, channels and reedbeds.",
+    "date_scraped": "2026-04-26",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "typical_astrolabe_from_17th_century_india",
+    "to": "astrolabe",
+    "factor": 4.0,
+    "source_url": "https://www.bbc.com/news/articles/c8x7kw9lp8do?at_medium=RSS&at_campaign=rss",
+    "source_quote": "It weighs 8.2kg, measures nearly 30cm in diameter and stands about 46cm tall - almost four times the size of a typical astrolabe from 17th Century India,",
+    "date_scraped": "2026-04-26",
+    "verified": false
   }
 ]
