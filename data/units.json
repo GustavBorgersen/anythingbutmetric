@@ -868,5 +868,23 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "denmark",
+    "label": "Denmark",
+    "aliases": [
+      "denmark"
+    ]
+  },
+  {
+    "id": "old_growth_tropical_forests",
+    "label": "Old-Growth Tropical Forests",
+    "emoji": "🌳",
+    "aliases": [
+      "tropical forests"
+    ],
+    "tags": [
+      "ecosystem"
+    ]
   }
 ]
