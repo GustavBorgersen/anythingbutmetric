@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "denmark",
+    "to": "old_growth_tropical_forests",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/c78q5pygn66o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Researchers estimate that nearly 43,000 sq km (17,000 sq miles) of old-growth tropical forests were lost globally in 2025 – about the size of Denmark.",
+    "date_scraped": "2026-04-30",
+    "verified": false
   }
 ]
