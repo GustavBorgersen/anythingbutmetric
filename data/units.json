@@ -868,5 +868,25 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "typical_astrolabe_from_17th_century_india",
+    "label": "Typical Astrolabe From 17Th Century India",
+    "aliases": [
+      "typical astrolabe from 17th Century India"
+    ]
+  },
+  {
+    "id": "astrolabe_17th_century_india",
+    "label": "Typical 17th Century Indian Astrolabe",
+    "emoji": "🔍",
+    "aliases": [
+      "17th century indian astrolabe",
+      "typical astrolabe"
+    ],
+    "tags": [
+      "astronomical instrument",
+      "antique"
+    ]
   }
 ]
