@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "typical_astrolabe_from_17th_century_india",
+    "to": "astrolabe_17th_century_india",
+    "factor": 4.0,
+    "source_url": "https://www.bbc.com/news/articles/c8x7kw9lp8do?at_medium=RSS&at_campaign=rss",
+    "source_quote": "It weighs 8.2kg, measures nearly 30cm in diameter and stands about 46cm tall - almost four times the size of a typical astrolabe from 17th Century India,",
+    "date_scraped": "2026-05-01",
+    "verified": false
   }
 ]
