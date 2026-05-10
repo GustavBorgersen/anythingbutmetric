@@ -868,5 +868,19 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "gloucester",
+    "label": "Gloucester",
+    "aliases": [
+      "gloucester"
+    ]
+  },
+  {
+    "id": "nature_recovery_zones",
+    "label": "Nature Recovery Zones",
+    "aliases": [
+      "nature recovery zones"
+    ]
   }
 ]
