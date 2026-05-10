@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "gloucester",
+    "to": "nature_recovery_zones",
+    "factor": 11.0,
+    "source_url": "https://www.bbc.com/news/articles/c62eje88wy3o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The zones encompass an area of 50,000 hectares - equivalent to 11 times the size of Gloucester - and among them are parts of the Forest of Dean, the Cotswolds and Stroud.",
+    "date_scraped": "2026-05-10",
+    "verified": false
   }
 ]
