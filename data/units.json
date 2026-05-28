@@ -868,5 +868,41 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "acre",
+    "label": "Acre",
+    "emoji": "🌳",
+    "aliases": [
+      "acres"
+    ],
+    "tags": [
+      "area",
+      "land"
+    ]
+  },
+  {
+    "id": "giant_rocky_planet",
+    "label": "Giant Rocky Planet",
+    "emoji": "🪨",
+    "aliases": [
+      "super-earth",
+      "mega-earth"
+    ],
+    "tags": [
+      "celestial_body",
+      "exoplanet"
+    ]
+  },
+  {
+    "id": "jupiter",
+    "label": "Jupiter",
+    "emoji": "🪐",
+    "aliases": [
+      "planet jupiter"
+    ],
+    "tags": [
+      "celestial_body"
+    ]
   }
 ]

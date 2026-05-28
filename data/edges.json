@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "football_pitch",
+    "to": "acre",
+    "factor": 0.65,
+    "source_url": "https://www.bbc.com/news/articles/cp8prj928dyo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The area of polluted ground stretches to about 100 acres, or the equivalent of about 65-70 football pitches.",
+    "date_scraped": "2026-05-28",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "giant_rocky_planet",
+    "to": "jupiter",
+    "factor": 1.0,
+    "source_url": "https://www.newscientist.com/article/2528091-millions-of-planets-might-form-around-supermassive-black-holes/?utm_campaign=RSS%7CNSNS&utm_source=NSNS&utm_medium=RSS&utm_content=home",
+    "source_quote": "That could lead to giant rocky planets the size of Jupiter or even bigger forming, something not known to happen anywhere else in the universe, many with surfaces covered in lava because of frequent collisions with other worlds.",
+    "date_scraped": "2026-05-28",
+    "verified": false
   }
 ]
