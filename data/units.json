@@ -868,5 +868,17 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "mobuoy_dump",
+    "label": "Mobuoy Dump",
+    "emoji": "🚮",
+    "aliases": [
+      "Mobuoy site"
+    ],
+    "tags": [
+      "landfill",
+      "waste"
+    ]
   }
 ]
