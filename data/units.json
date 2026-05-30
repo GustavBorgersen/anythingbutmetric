@@ -868,5 +868,12 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "100_acres",
+    "label": "100 Acres",
+    "aliases": [
+      "100 acres"
+    ]
   }
 ]
