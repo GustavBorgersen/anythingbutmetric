@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "100_acres",
+    "to": "football_pitch",
+    "factor": 65.0,
+    "source_url": "https://www.bbc.com/news/articles/cn0pn21e1r2o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The area of polluted ground stretches to about 100 acres, or the equivalent of about 65-70 football pitches.",
+    "date_scraped": "2026-05-30",
+    "verified": false
   }
 ]
