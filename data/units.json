@@ -868,5 +868,16 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "tnt",
+    "label": "TNT",
+    "emoji": "💣",
+    "aliases": [
+      "trinitrotoluene"
+    ],
+    "tags": [
+      "explosive"
+    ]
   }
 ]
