@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "tnt",
+    "to": "meteor",
+    "factor": 300.0,
+    "source_url": "https://www.bbc.com/news/videos/c1m24g0n40ko?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Nasa said the energy released when the meteor broke up was equivalent to about 300 tons of TNT.",
+    "date_scraped": "2026-06-02",
+    "verified": false
   }
 ]
