@@ -868,5 +868,25 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "domestic_cats",
+    "label": "Domestic Cats",
+    "aliases": [
+      "domestic cats"
+    ]
+  },
+  {
+    "id": "rusty_spotted_cat",
+    "label": "Rusty-Spotted Cat",
+    "emoji": "🐈",
+    "aliases": [
+      "rusty spotted cat",
+      "prionailurus rubiginosus"
+    ],
+    "tags": [
+      "wild cat",
+      "small cat"
+    ]
   }
 ]
