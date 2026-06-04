@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "domestic_cats",
+    "to": "rusty_spotted_cat",
+    "factor": 0.5,
+    "source_url": "https://www.bbc.com/news/articles/cj6plxkzx59o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The nocturnal animals - native to India, Sri Lanka, and Nepal - are about half the size of domestic cats, according to the International Union for Conservation of Nature.",
+    "date_scraped": "2026-06-04",
+    "verified": false
   }
 ]
