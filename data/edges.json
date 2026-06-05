@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "jamaica",
+    "to": "square_kilometre",
+    "factor": 12000.0,
+    "source_url": "https://www.bbc.com/news/articles/cn4pk07npvvo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "From the 1980s to 2010, over 12,000 sq km (4,600 sq miles) of mangroves were cleared or destroyed across Asia, Africa and the Americas - an area the size of Jamaica.",
+    "date_scraped": "2026-06-05",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "jamaica",
+    "to": "square_kilometre",
+    "factor": 10900.0,
+    "source_url": "https://www.bbc.com/news/articles/cn4pk07npvvo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "From the 1980s to 2010, over 12,000 sq km (4,600 sq miles) of mangroves were cleared or destroyed across Asia, Africa and the Americas - an area the size of Jamaica.",
+    "date_scraped": "2026-06-05",
+    "verified": false
   }
 ]

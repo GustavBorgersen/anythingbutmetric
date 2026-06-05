@@ -868,5 +868,23 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "jamaica",
+    "label": "Jamaica",
+    "aliases": [
+      "jamaica"
+    ]
+  },
+  {
+    "id": "square_kilometre",
+    "label": "Square Kilometre",
+    "emoji": "🗺️",
+    "aliases": [
+      "sq km"
+    ],
+    "tags": [
+      "area"
+    ]
   }
 ]
