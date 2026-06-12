@@ -868,5 +868,30 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "peter_crouches",
+    "label": "Peter Crouches",
+    "aliases": [
+      "Peter Crouches"
+    ]
+  },
+  {
+    "id": "england_flag",
+    "label": "England Flag",
+    "emoji": "🏴",
+    "aliases": [
+      "St George's Cross"
+    ],
+    "tags": [
+      "flags"
+    ]
+  },
+  {
+    "id": "dan_burns",
+    "label": "Dan Burns",
+    "aliases": [
+      "Dan Burns"
+    ]
   }
 ]
