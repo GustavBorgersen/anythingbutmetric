@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "peter_crouches",
+    "to": "england_flag",
+    "factor": 3.5,
+    "source_url": "https://www.mirror.co.uk/lifestyle/man-covers-house-monster-england-37285731",
+    "source_quote": "To give supporters an idea of the size of the St George’s Cross, it is as long as three-and-a-half Peter Crouches lying down – or as high as two Dan Burns stacked on top of one another.",
+    "date_scraped": "2026-06-12",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "dan_burns",
+    "to": "england_flag",
+    "factor": 2.0,
+    "source_url": "https://www.mirror.co.uk/lifestyle/man-covers-house-monster-england-37285731",
+    "source_quote": "To give supporters an idea of the size of the St George’s Cross, it is as long as three-and-a-half Peter Crouches lying down – or as high as two Dan Burns stacked on top of one another.",
+    "date_scraped": "2026-06-12",
+    "verified": false
   }
 ]
