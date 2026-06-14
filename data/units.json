@@ -868,5 +868,44 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "hectares",
+    "label": "Hectares",
+    "aliases": [
+      "hectares"
+    ]
+  },
+  {
+    "id": "football",
+    "label": "Football",
+    "aliases": [
+      "football"
+    ]
+  },
+  {
+    "id": "dark_objects",
+    "label": "Dark Objects",
+    "aliases": [
+      "dark objects"
+    ]
+  },
+  {
+    "id": "tallest_ride",
+    "label": "Tallest Ride",
+    "aliases": [
+      "tallest ride"
+    ]
+  },
+  {
+    "id": "apartment_block",
+    "label": "Apartment Block",
+    "emoji": "🏢",
+    "aliases": [
+      "block of flats"
+    ],
+    "tags": [
+      "building"
+    ]
   }
 ]

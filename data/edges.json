@@ -338,5 +338,35 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "hectares",
+    "to": "football_pitch",
+    "factor": 42.0,
+    "source_url": "https://www.bbc.com/news/articles/c6213ex52g2o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "roughly the size of 42 football pitches, of chalk grassland in the Surrey Hills.",
+    "date_scraped": "2026-06-14",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "football",
+    "to": "dark_objects",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.com/news/articles/c3929kk7gdjo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "but I still have the image in my mind of what looked like a dozen dark objects, perhaps the size of a football... something like that, that went winging right past our wing tip... and then they were gone.",
+    "date_scraped": "2026-06-14",
+    "verified": false
+  },
+  {
+    "id": "e037",
+    "from": "tallest_ride",
+    "to": "apartment_block",
+    "factor": 35.0,
+    "source_url": "https://www.bbc.com/news/articles/cly045jgqj3o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "That would be roughly equivalent to a 35-storey apartment block.",
+    "date_scraped": "2026-06-14",
+    "verified": false
   }
 ]
