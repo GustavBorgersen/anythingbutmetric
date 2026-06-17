@@ -868,5 +868,46 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "gas_turbine",
+    "label": "Industrial Gas Turbine",
+    "emoji": "⚙️",
+    "aliases": [
+      "gas turbine",
+      "power turbine"
+    ],
+    "tags": [
+      "machinery",
+      "energy"
+    ]
+  },
+  {
+    "id": "plug_in_solar_system",
+    "label": "Plug-in Solar System",
+    "emoji": "☀️",
+    "aliases": [
+      "plug-in panel",
+      "balcony solar panel",
+      "plug-in solar system"
+    ],
+    "tags": [
+      "energy",
+      "technology"
+    ]
+  },
+  {
+    "id": "residential_rooftop_solar_system",
+    "label": "Residential Rooftop Solar System",
+    "emoji": "🏠☀️",
+    "aliases": [
+      "rooftop solar system",
+      "typical residential rooftop solar system",
+      "home solar system"
+    ],
+    "tags": [
+      "energy",
+      "technology"
+    ]
   }
 ]
