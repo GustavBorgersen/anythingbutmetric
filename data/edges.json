@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "gas_turbine",
+    "to": "double_decker_bus",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/technology/2026/jun/16/elon-musk-xai-datacenters-trump-administration",
+    "source_quote": "The NAACP alleges that xAI has illegally installed and is operating 57 gas turbines at its Southaven facility – each one the size of a large bus.",
+    "date_scraped": "2026-06-17",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "plug_in_solar_system",
+    "to": "residential_rooftop_solar_system",
+    "factor": 0.2,
+    "source_url": "https://www.theguardian.com/money/2026/jun/16/retail-giants-join-uk-government-drive-to-boost-plug-in-balcony-solar-panels",
+    "source_quote": "Plug-in systems usually have a capacity of 800 watts, or one-fifth of the size of a typical residential rooftop solar system, so while they would be unable to power a house alone they could help to reduce bills.",
+    "date_scraped": "2026-06-17",
+    "verified": false
   }
 ]
