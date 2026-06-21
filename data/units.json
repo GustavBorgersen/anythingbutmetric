@@ -868,5 +868,32 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "amazon_rainforest",
+    "label": "Amazon Rainforest",
+    "emoji": "🌳",
+    "aliases": [
+      "amazon jungle",
+      "the amazon"
+    ],
+    "tags": [
+      "geography",
+      "area"
+    ]
+  },
+  {
+    "id": "california",
+    "label": "California",
+    "emoji": "☀️",
+    "aliases": [
+      "state of california",
+      "ca"
+    ],
+    "tags": [
+      "geography",
+      "area",
+      "us_state"
+    ]
   }
 ]

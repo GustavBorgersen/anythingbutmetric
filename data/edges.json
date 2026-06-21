@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "amazon_rainforest",
+    "to": "california",
+    "factor": 12.0,
+    "source_url": "https://www.livescience.com/planet-earth/what-will-the-amazon-rainforest-look-like-in-100-years",
+    "source_quote": "The Amazon is the largest rainforest in the world, spanning more than 2 million square miles (5.2 million square kilometers) — an area 12 times the size of California.",
+    "date_scraped": "2026-06-21",
+    "verified": false
   }
 ]
