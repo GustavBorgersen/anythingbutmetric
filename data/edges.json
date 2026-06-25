@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "supercomputer",
+    "to": "medium_sized_supermarket",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c39yr3p8m4xo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Prof Mark Parsons, the director of the supercomputer project at the university, says it will be roughly the size of a medium-sized supermarket.",
+    "date_scraped": "2026-06-25",
+    "verified": false
   }
 ]
