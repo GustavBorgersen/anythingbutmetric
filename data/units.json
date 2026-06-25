@@ -868,5 +868,23 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "supercomputer",
+    "label": "Supercomputer",
+    "aliases": [
+      "supercomputer"
+    ]
+  },
+  {
+    "id": "medium_sized_supermarket",
+    "label": "Medium-Sized Supermarket",
+    "emoji": "🏢",
+    "aliases": [
+      "supermarket"
+    ],
+    "tags": [
+      "building"
+    ]
   }
 ]
