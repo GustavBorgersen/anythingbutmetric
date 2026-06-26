@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "house",
+    "to": "data_centre",
+    "factor": 3.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cddle43jr1go?at_medium=RSS&at_campaign=rss",
+    "source_quote": "If the hub gets the go-ahead, it would be built across the road from Michael's home and his Airbnb. He said that at 35m (114ft) high, it would be \"three times the height of my house\"",
+    "date_scraped": "2026-06-26",
+    "verified": false
   }
 ]

@@ -868,5 +868,19 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "house",
+    "label": "House",
+    "aliases": [
+      "house"
+    ]
+  },
+  {
+    "id": "data_centre",
+    "label": "Data Centre",
+    "aliases": [
+      "data centre"
+    ]
   }
 ]
