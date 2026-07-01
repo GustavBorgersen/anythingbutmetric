@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "mv_glen_sannox",
+    "to": "ferry",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c8725jryg0qo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "For perspective, that's about the same length as MV Glen Sannox, the second-largest ferry in Scotland's CalMac fleet.",
+    "date_scraped": "2026-07-01",
+    "verified": false
   }
 ]

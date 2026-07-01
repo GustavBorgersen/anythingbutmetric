@@ -868,5 +868,25 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "mv_glen_sannox",
+    "label": "Mv Glen Sannox",
+    "aliases": [
+      "MV Glen Sannox"
+    ]
+  },
+  {
+    "id": "ferry",
+    "label": "Ferry",
+    "emoji": "🛥️",
+    "aliases": [
+      "boat",
+      "ship"
+    ],
+    "tags": [
+      "transport",
+      "vehicle"
+    ]
   }
 ]
