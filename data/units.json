@@ -868,5 +868,28 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "tangerine",
+    "label": "Tangerine",
+    "emoji": "🍊",
+    "aliases": [
+      "tangerines"
+    ],
+    "tags": [
+      "fruit"
+    ]
+  },
+  {
+    "id": "brain_tumour",
+    "label": "Brain Tumour",
+    "emoji": "🧠",
+    "aliases": [
+      "brain tumor",
+      "tumour"
+    ],
+    "tags": [
+      "medical"
+    ]
   }
 ]
