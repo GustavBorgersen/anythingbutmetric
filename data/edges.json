@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "tangerine",
+    "to": "brain_tumour",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c36y4g4y289o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "It totally blindsided me - I had a tumour the size of a tangerine which had a cyst attached to it,",
+    "date_scraped": "2026-07-02",
+    "verified": false
   }
 ]
