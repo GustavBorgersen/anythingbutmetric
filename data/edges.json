@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "lesser_yellowlegs",
+    "to": "greenshank",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cly78e07jzyo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "It was quite a striking bird, about the size of a greenshank and it's got very long yellow legs.",
+    "date_scraped": "2026-07-03",
+    "verified": false
   }
 ]

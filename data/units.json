@@ -868,5 +868,19 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "lesser_yellowlegs",
+    "label": "Lesser Yellowlegs",
+    "aliases": [
+      "lesser yellowlegs"
+    ]
+  },
+  {
+    "id": "greenshank",
+    "label": "Greenshank",
+    "aliases": [
+      "greenshank"
+    ]
   }
 ]
