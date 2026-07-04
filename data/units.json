@@ -868,5 +868,26 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "swift_observatory",
+    "label": "Swift Observatory",
+    "aliases": [
+      "Swift observatory"
+    ]
+  },
+  {
+    "id": "fridge",
+    "label": "Fridge",
+    "aliases": [
+      "fridge"
+    ]
+  },
+  {
+    "id": "link_spacecraft",
+    "label": "Link Spacecraft",
+    "aliases": [
+      "LINK spacecraft"
+    ]
   }
 ]
