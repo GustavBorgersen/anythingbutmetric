@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "car",
+    "to": "swift_observatory",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c0ry4xx7rk8o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The observatory, which is the size of a large car, was launched in 2004, with three telescopes aboard, to study the most powerful explosions in the Universe.",
+    "date_scraped": "2026-07-04",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "fridge",
+    "to": "link_spacecraft",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c0ry4xx7rk8o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The LINK spacecraft, which Lee's team came up with, is a three-armed robot, about the size of a fridge, bristling with cameras and guidance systems and driven by small thrusters.",
+    "date_scraped": "2026-07-04",
+    "verified": false
   }
 ]
