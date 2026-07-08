@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "haul",
+    "to": "large_passenger_jets",
+    "factor": 2.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c982g5322q6o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The haul - equivalent to two fully loaded large passenger jets - included 28 tonnes of cannabis flown in suitcases by 800 couriers who were arrested by the National Crime Agency (NCA).",
+    "date_scraped": "2026-07-08",
+    "verified": false
   }
 ]
