@@ -868,5 +868,19 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "haul",
+    "label": "Haul",
+    "aliases": [
+      "haul"
+    ]
+  },
+  {
+    "id": "large_passenger_jets",
+    "label": "Large Passenger Jets",
+    "aliases": [
+      "large passenger jets"
+    ]
   }
 ]
