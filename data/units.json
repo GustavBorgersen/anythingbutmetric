@@ -868,5 +868,31 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "brown_huntsman_spider",
+    "label": "Brown Huntsman Spider",
+    "emoji": "🕷️",
+    "aliases": [
+      "huntsman",
+      "huntsman spider",
+      "Heteropoda jugulans",
+      "brown huntsman"
+    ],
+    "tags": [
+      "animal",
+      "invertebrate"
+    ]
+  },
+  {
+    "id": "human_hand",
+    "label": "Human Hand",
+    "emoji": "✋",
+    "aliases": [
+      "hand"
+    ],
+    "tags": [
+      "body_part"
+    ]
   }
 ]
