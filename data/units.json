@@ -868,5 +868,19 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "uragasaurus_kalasinensis",
+    "label": "Uragasaurus Kalasinensis",
+    "aliases": [
+      "Uragasaurus kalasinensis"
+    ]
+  },
+  {
+    "id": "cricket_pitch",
+    "label": "Cricket Pitch",
+    "aliases": [
+      "cricket pitch"
+    ]
   }
 ]
