@@ -868,5 +868,44 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "uragasaurus_kalasinensis",
+    "label": "Uragasaurus Kalasinensis",
+    "aliases": [
+      "Uragasaurus kalasinensis"
+    ]
+  },
+  {
+    "id": "cricket_pitch",
+    "label": "Cricket Pitch",
+    "aliases": [
+      "cricket pitch"
+    ]
+  },
+  {
+    "id": "brown_huntsman_spider",
+    "label": "Brown Huntsman Spider",
+    "emoji": "🕷️",
+    "aliases": [
+      "huntsman spider",
+      "Heteropoda jugulans"
+    ],
+    "tags": [
+      "animal",
+      "spider"
+    ]
+  },
+  {
+    "id": "human_hand",
+    "label": "Human Hand",
+    "emoji": "🖐️",
+    "aliases": [
+      "hand",
+      "average hand"
+    ],
+    "tags": [
+      "body_part"
+    ]
   }
 ]

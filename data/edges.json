@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "uragasaurus_kalasinensis",
+    "to": "cricket_pitch",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/crely7g8xepo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "It had an unusually long neck and measured up to 20m (66ft) - roughly the length of a cricket pitch.",
+    "date_scraped": "2026-07-12",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "brown_huntsman_spider",
+    "to": "human_hand",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/australia-news/2026/jul/09/fastest-spider-on-the-planet-brown-huntsman",
+    "source_quote": "They are about the size of a hand, and while they are venomous, they very rarely bite humans and when they do, the effects are mild.",
+    "date_scraped": "2026-07-12",
+    "verified": false
   }
 ]
