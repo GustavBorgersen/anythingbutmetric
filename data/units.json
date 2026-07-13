@@ -868,5 +868,43 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "giant_bracket_fungi",
+    "label": "Giant Bracket Fungi",
+    "emoji": "🍄",
+    "aliases": [
+      "bracket fungi"
+    ],
+    "tags": [
+      "fungi",
+      "organism",
+      "size"
+    ]
+  },
+  {
+    "id": "dinner_plate",
+    "label": "Dinner Plate",
+    "emoji": "🍽️",
+    "aliases": [
+      "plate"
+    ],
+    "tags": [
+      "household_item",
+      "size"
+    ]
+  },
+  {
+    "id": "heavy_goods_vehicle",
+    "label": "Heavy Goods Vehicle (HGV)",
+    "emoji": "🚚",
+    "aliases": [
+      "HGV",
+      "lorry",
+      "truck"
+    ],
+    "tags": [
+      "vehicle"
+    ]
   }
 ]

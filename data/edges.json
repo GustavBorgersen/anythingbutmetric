@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "giant_bracket_fungi",
+    "to": "dinner_plate",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/science/ng-interactive/2026/jul/13/mushroom-trip-a-mycologists-tour-of-the-tarkine",
+    "source_quote": "There are delicate blue pixie’s parasols and fields of ruby bonnets that look like bright red berries scattered across the forest floor, slime-covered earth tongues that resemble worms pushing up through the ground, giant bracket fungi the size of dinner plates and echidna fungi with thousands of spiky teeth beneath their caps.",
+    "date_scraped": "2026-07-13",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "car",
+    "to": "heavy_goods_vehicle",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/commentisfree/2026/jul/12/britain-car-suv-big-large-vehicle-road-pedestrians",
+    "source_quote": "As there is, remarkably, no width restriction for cars, no law can stop this growth until they reach the size of HGVs – that is, 2.55m wide – which are restricted.",
+    "date_scraped": "2026-07-13",
+    "verified": false
   }
 ]
