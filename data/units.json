@@ -868,5 +868,86 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "glasgow",
+    "label": "Glasgow",
+    "aliases": [
+      "Glasgow"
+    ]
+  },
+  {
+    "id": "whitelee_windfarm",
+    "label": "Whitelee Windfarm",
+    "emoji": "🏞️",
+    "aliases": [
+      "whitelee"
+    ],
+    "tags": [
+      "wind farm",
+      "scotland"
+    ]
+  },
+  {
+    "id": "unfed_tick",
+    "label": "Unfed Tick",
+    "emoji": "🪲",
+    "aliases": [
+      "unfed tick",
+      "hungry tick"
+    ],
+    "tags": [
+      "animal",
+      "insect"
+    ]
+  },
+  {
+    "id": "poppy_seed",
+    "label": "Poppy Seed",
+    "emoji": "⚫",
+    "aliases": [
+      "poppy seeds"
+    ],
+    "tags": [
+      "food",
+      "plant_part"
+    ]
+  },
+  {
+    "id": "sesame_seed",
+    "label": "Sesame Seed",
+    "emoji": "🟤",
+    "aliases": [
+      "sesame seeds"
+    ],
+    "tags": [
+      "food",
+      "plant_part"
+    ]
+  },
+  {
+    "id": "fed_tick",
+    "label": "Fed Tick",
+    "emoji": "🪲",
+    "aliases": [
+      "fed tick",
+      "engorged tick"
+    ],
+    "tags": [
+      "animal",
+      "insect"
+    ]
+  },
+  {
+    "id": "blueberry",
+    "label": "Blueberry",
+    "emoji": "🫐",
+    "aliases": [
+      "blueberries"
+    ],
+    "tags": [
+      "food",
+      "fruit"
+    ]
   }
 ]

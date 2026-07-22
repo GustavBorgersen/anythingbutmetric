@@ -338,5 +338,45 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "glasgow",
+    "to": "whitelee_windfarm",
+    "factor": 0.5,
+    "source_url": "https://www.bbc.co.uk/news/articles/cvgl9vp4vqvo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "It covers an area of approximately 83 sq km (32 sq miles) which is almost half the size of neighbouring Glasgow.",
+    "date_scraped": "2026-07-22",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "unfed_tick",
+    "to": "poppy_seed",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/wellness/2026/jul/21/tick-bites-how-to-protect-yourself",
+    "source_quote": "Unfed ticks will feel like bumps the size of a poppy seed or a sesame seed.",
+    "date_scraped": "2026-07-22",
+    "verified": false
+  },
+  {
+    "id": "e037",
+    "from": "unfed_tick",
+    "to": "sesame_seed",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/wellness/2026/jul/21/tick-bites-how-to-protect-yourself",
+    "source_quote": "Unfed ticks will feel like bumps the size of a poppy seed or a sesame seed.",
+    "date_scraped": "2026-07-22",
+    "verified": false
+  },
+  {
+    "id": "e038",
+    "from": "fed_tick",
+    "to": "blueberry",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/wellness/2026/jul/21/tick-bites-how-to-protect-yourself",
+    "source_quote": "A fed tick can swell to the size of a blueberry.",
+    "date_scraped": "2026-07-22",
+    "verified": false
   }
 ]
