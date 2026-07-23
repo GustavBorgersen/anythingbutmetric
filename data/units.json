@@ -868,5 +868,24 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "glasgow",
+    "label": "Glasgow",
+    "aliases": [
+      "Glasgow"
+    ]
+  },
+  {
+    "id": "whitelee_windfarm",
+    "label": "Whitelee Windfarm",
+    "emoji": "🏞️",
+    "aliases": [
+      "whitelee"
+    ],
+    "tags": [
+      "wind farm",
+      "scotland"
+    ]
   }
 ]
