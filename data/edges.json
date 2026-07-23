@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "glasgow",
+    "to": "whitelee_windfarm",
+    "factor": 0.5,
+    "source_url": "https://www.bbc.co.uk/news/articles/cvgl9vp4vqvo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "It covers an area of approximately 83 sq km (32 sq miles) which is almost half the size of neighbouring Glasgow.",
+    "date_scraped": "2026-07-23",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "wales",
+    "to": "football_pitch",
+    "factor": 120.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cx25pgg440wo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Mid and West Wales Fire Service said it was also tackling a blaze about the size of 120 football pitches - 90 hectares - in the Presteigne area on Thursday morning.",
+    "date_scraped": "2026-07-23",
+    "verified": false
   }
 ]
