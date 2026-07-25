@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "wildfire",
+    "to": "small_town",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c4gwpvq6q03o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "More than a month on, the Tintwistle Moor fire is now a sprawling, smouldering blaze the size of a small town, which can be seen from space.",
+    "date_scraped": "2026-07-25",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "wildfire",
+    "to": "football_pitch",
+    "factor": 900.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c4gwpvq6q03o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Analysis of data from the European Forest Fire Information System (Effis) by BBC Verify estimates the fire, which first began on 24 June, has burned 606 hectares (1,630 acres) - equivalent to 900 football pitches.",
+    "date_scraped": "2026-07-25",
+    "verified": false
   }
 ]
