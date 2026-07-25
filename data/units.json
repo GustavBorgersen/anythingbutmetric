@@ -868,5 +868,32 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "wildfire",
+    "label": "Wildfire",
+    "emoji": "🔥",
+    "aliases": [
+      "forest fire",
+      "bushfire",
+      "blaze",
+      "fire",
+      "moor fire"
+    ],
+    "tags": [
+      "area"
+    ]
+  },
+  {
+    "id": "small_town",
+    "label": "Small Town",
+    "emoji": "🏡",
+    "aliases": [
+      "town",
+      "small towns"
+    ],
+    "tags": [
+      "area"
+    ]
   }
 ]
