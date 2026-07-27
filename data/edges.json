@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "stone_cloak_jammers",
+    "to": "tablet_computer",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cy8me5vyjg2o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The Stone Cloak jammers are the size of a tablet computer and are designed to block the detection of any drones they are fitted to.",
+    "date_scraped": "2026-07-27",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "dinghy",
+    "to": "standard_bus",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/clyq5nqw13lo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "Border Security Command was pictured towing a dinghy - estimated to be about the same size as a standard bus at 13m (42ft) long - when it arrived in Dover in Kent on Thursday afternoon.",
+    "date_scraped": "2026-07-27",
+    "verified": false
   }
 ]

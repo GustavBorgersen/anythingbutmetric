@@ -868,5 +868,38 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "stone_cloak_jammers",
+    "label": "Stone Cloak Jammers",
+    "aliases": [
+      "Stone Cloak jammers"
+    ]
+  },
+  {
+    "id": "tablet_computer",
+    "label": "Tablet Computer",
+    "emoji": "📱",
+    "aliases": [
+      "tablet",
+      "ipad"
+    ],
+    "tags": [
+      "electronics"
+    ]
+  },
+  {
+    "id": "dinghy",
+    "label": "Dinghy",
+    "aliases": [
+      "dinghy"
+    ]
+  },
+  {
+    "id": "standard_bus",
+    "label": "Standard Bus",
+    "aliases": [
+      "standard bus"
+    ]
   }
 ]
