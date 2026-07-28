@@ -868,5 +868,19 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "paris",
+    "label": "Paris",
+    "aliases": [
+      "Paris"
+    ]
+  },
+  {
+    "id": "gironde_fire_area",
+    "label": "Gironde Fire Area",
+    "aliases": [
+      "Gironde fire area"
+    ]
   }
 ]
