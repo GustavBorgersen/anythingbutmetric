@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "paris",
+    "to": "wales",
+    "factor": 4.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cj638jx0l53o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "an area roughly four times the size of Paris.",
+    "date_scraped": "2026-07-30",
+    "verified": false
   }
 ]
