@@ -868,5 +868,12 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "paris",
+    "label": "Paris",
+    "aliases": [
+      "Paris"
+    ]
   }
 ]
