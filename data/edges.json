@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "wildfire",
+    "to": "football_pitch",
+    "factor": 200.0,
+    "source_url": "https://www.bbc.co.uk/weather/articles/cddjznv86p3o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "A major incident was declared in Suffolk on Wednesday as firefighters tackled a wildfire 'the size of 200 football pitches'.",
+    "date_scraped": "2026-08-01",
+    "verified": false
   }
 ]
