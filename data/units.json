@@ -868,5 +868,12 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "wildfire",
+    "label": "Wildfire",
+    "aliases": [
+      "wildfire"
+    ]
   }
 ]
