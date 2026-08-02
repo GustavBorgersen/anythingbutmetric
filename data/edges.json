@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "371_acres",
+    "to": "football_pitch",
+    "factor": 210.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cy5dpzk115wo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The fire affecting RSPB Minsmere and Dunwich Heath started at about 17:00 BST on Wednesday and engulfed 371 acres (150 hectares) at its height - equivalent to the size of 210 football pitches.",
+    "date_scraped": "2026-08-02",
+    "verified": false
   }
 ]
