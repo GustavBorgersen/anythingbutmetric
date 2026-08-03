@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "mega_fire_area",
+    "to": "paris",
+    "factor": 4.0,
+    "source_url": "https://www.theguardian.com/world/2026/aug/02/western-europe-wildfire-crisis-retreats-greece-evacuates-hundreds-athens",
+    "source_quote": "As the advance of wildfires in Spain was finally curbed and officials in France announced that a mega-fire – four times the size of Paris – had begun to be contained, the blazes in Greece have prompted mass evacuations and devastated huge swathes of land from Crete to the southern Peloponnese, the Ionian isle of Cephalonia and islands across the Aegean.",
+    "date_scraped": "2026-08-03",
+    "verified": false
   }
 ]

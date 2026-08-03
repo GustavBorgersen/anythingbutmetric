@@ -868,5 +868,31 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "mega_fire_area",
+    "label": "Mega-fire Area",
+    "emoji": "🔥",
+    "aliases": [
+      "megafire area",
+      "wildfire area"
+    ],
+    "tags": [
+      "area",
+      "natural_disaster"
+    ]
+  },
+  {
+    "id": "paris",
+    "label": "Paris (City Area)",
+    "emoji": "🇫🇷",
+    "aliases": [
+      "city of paris",
+      "paris"
+    ],
+    "tags": [
+      "city",
+      "area"
+    ]
   }
 ]
