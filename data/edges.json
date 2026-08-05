@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "falcon_9_rocket_upper_stage",
+    "to": "small_building",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cx25yn22l97o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The piece in question is the upper stage of the rocket, and is about the size of a five-storey building, with a mass on Earth of at least 4,000kg (8,800 lbs).",
+    "date_scraped": "2026-08-05",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "falcon_9_rocket_upper_stage",
+    "to": "small_building",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/science/2026/aug/05/spacex-rocket-moon-crash-impact-falcon-9",
+    "source_quote": "The object, the size of a building, is part of the SpaceX Falcon 9 rocket that had launched a lunar lander from the US company Firefly Aerospace toward the moon in January 2025.",
+    "date_scraped": "2026-08-05",
+    "verified": false
   }
 ]

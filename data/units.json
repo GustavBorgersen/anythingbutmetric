@@ -868,5 +868,16 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "falcon_9_rocket_upper_stage",
+    "label": "Falcon 9 Rocket Upper Stage",
+    "emoji": "🚀",
+    "aliases": [
+      "Falcon 9 upper stage"
+    ],
+    "tags": [
+      "spacecraft"
+    ]
   }
 ]
