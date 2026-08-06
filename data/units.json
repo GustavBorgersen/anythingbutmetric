@@ -868,5 +868,50 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "fivestorey_building",
+    "label": "Five-Storey Building",
+    "emoji": "🏢",
+    "aliases": [
+      "5-storey building"
+    ],
+    "tags": [
+      "building"
+    ]
+  },
+  {
+    "id": "rocket",
+    "label": "Rocket",
+    "aliases": [
+      "rocket"
+    ]
+  },
+  {
+    "id": "spacex_rocket_stage",
+    "label": "SpaceX Rocket Stage",
+    "emoji": "🚀",
+    "aliases": [
+      "piece of the rocket",
+      "rocket stage",
+      "upper stage"
+    ],
+    "tags": [
+      "space",
+      "vehicle"
+    ]
+  },
+  {
+    "id": "solar_granular_structure",
+    "label": "Solar Granular Structure",
+    "emoji": "☀️",
+    "aliases": [
+      "granular structures",
+      "sun's granular structures"
+    ],
+    "tags": [
+      "astronomy",
+      "size"
+    ]
   }
 ]
