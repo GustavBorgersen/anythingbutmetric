@@ -338,5 +338,35 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "fivestorey_building",
+    "to": "rocket",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c62q0xerzrno?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The spent stage - which is about the size of a five-storey building and weighs at least 4,000kg - was left drifting in a long, looping orbit that swung out towards the Moon and back again.",
+    "date_scraped": "2026-08-06",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "spacex_rocket_stage",
+    "to": "fivestorey_building",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/science/2026/aug/06/spacex-rocket-crash-into-moon-impact",
+    "source_quote": "The piece of the rocket was the height of a five-storey building and weighed four tonnes.",
+    "date_scraped": "2026-08-06",
+    "verified": false
+  },
+  {
+    "id": "e037",
+    "from": "solar_granular_structure",
+    "to": "france",
+    "factor": 1.0,
+    "source_url": "https://www.theguardian.com/science/2026/aug/05/unprecedented-images-may-explain-one-of-greatest-mysteries-of-the-sun",
+    "source_quote": "Previous observations with the telescope found the sun’s surface to be a patchwork of granular structures each about the size of France.",
+    "date_scraped": "2026-08-06",
+    "verified": false
   }
 ]
