@@ -868,5 +868,12 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "fivestorey_building",
+    "label": "Five-Storey Building",
+    "aliases": [
+      "five-storey building"
+    ]
   }
 ]
