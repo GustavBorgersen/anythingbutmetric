@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "fivestorey_building",
+    "to": "small_building",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cqjxgx5y51lo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The empty upper stage of this Falcon 9 rocket, which scientists predicted would hit the Moon at a speed of about 5,400mph (8,700km/h), is about the size of a five-storey building and weighs approximately 4,000kg (630st) on Earth.",
+    "date_scraped": "2026-08-07",
+    "verified": false
   }
 ]
