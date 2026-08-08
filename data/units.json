@@ -868,5 +868,27 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "case",
+    "label": "Case of Guinness",
+    "emoji": "📦",
+    "aliases": [
+      "case of beer"
+    ],
+    "tags": [
+      "beverage"
+    ]
+  },
+  {
+    "id": "bottle",
+    "label": "Bottle of Guinness",
+    "emoji": "🍺",
+    "aliases": [
+      "bottle of beer"
+    ],
+    "tags": [
+      "beverage"
+    ]
   }
 ]
