@@ -868,5 +868,19 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "syria",
+    "label": "Syria",
+    "aliases": [
+      "syria"
+    ]
+  },
+  {
+    "id": "forest_land",
+    "label": "Forest Land",
+    "aliases": [
+      "forest land"
+    ]
   }
 ]
