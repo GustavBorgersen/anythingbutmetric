@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "moon",
+    "to": "sun",
+    "factor": 400.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c89n5lxp84wo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The event is unique in the solar system because the moon is 400 times smaller than the sun, but 400 times closer to it, making them appear the same size.",
+    "date_scraped": "2026-08-11",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "sun",
+    "to": "moon",
+    "factor": 0.0025,
+    "source_url": "https://www.bbc.co.uk/news/articles/c89n5lxp84wo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The event is unique in the solar system because the moon is 400 times smaller than the sun, but 400 times closer to it, making them appear the same size.",
+    "date_scraped": "2026-08-11",
+    "verified": false
   }
 ]
