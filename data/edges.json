@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "grapefruit",
+    "to": "piglet",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cr591lz48dro?at_medium=RSS&at_campaign=rss",
+    "source_quote": "An endangered piglet the size of a \"grapefruit with legs\" when she was born has made her debut at Chester Zoo, conservationists have said.",
+    "date_scraped": "2026-08-12",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "moon",
+    "to": "sun",
+    "factor": 0.0025,
+    "source_url": "https://www.bbc.co.uk/news/articles/czjlgm21dy1o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The Moon is about 400 times smaller than the sun, but also about 400 times closer to the Earth, meaning they always appear the same size from Earth, and when they line up they create what Bothwell calls an \"extraordinary cosmic coincidence\".",
+    "date_scraped": "2026-08-12",
+    "verified": false
   }
 ]
