@@ -868,5 +868,41 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "grapefruit",
+    "label": "Grapefruit",
+    "emoji": "🍊",
+    "aliases": [
+      "grapefruits"
+    ],
+    "tags": [
+      "fruit"
+    ]
+  },
+  {
+    "id": "piglet",
+    "label": "Piglet",
+    "emoji": "🐖",
+    "aliases": [
+      "baby pig"
+    ],
+    "tags": [
+      "animal"
+    ]
+  },
+  {
+    "id": "moon",
+    "label": "Moon",
+    "aliases": [
+      "moon"
+    ]
+  },
+  {
+    "id": "sun",
+    "label": "Sun",
+    "aliases": [
+      "sun"
+    ]
   }
 ]
