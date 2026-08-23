@@ -868,5 +868,19 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "blaze_area",
+    "label": "Area of a Wildfire Blaze",
+    "emoji": "🔥",
+    "aliases": [
+      "fire area",
+      "wildfire area",
+      "blaze"
+    ],
+    "tags": [
+      "area",
+      "disaster"
+    ]
   }
 ]
