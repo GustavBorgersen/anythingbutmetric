@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "blaze_area",
+    "to": "football_pitch",
+    "factor": 300.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cp9e9rg255vo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "A blaze the size of about 300 football pitches broke out on Mynydd Garnclochdy, between Abersychan and Blaenavon, with people reporting smelling smoke about 30 (48km) miles away in Cardiff.",
+    "date_scraped": "2026-08-23",
+    "verified": false
   }
 ]
