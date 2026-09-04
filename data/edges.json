@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "fly_brain",
+    "to": "pin_head",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cqjkd2ylq1yo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "It is the size of a pin head yet in many ways more efficient than a supercomputer and able to outsmart the smartest AI.",
+    "date_scraped": "2026-09-04",
+    "verified": false
   }
 ]

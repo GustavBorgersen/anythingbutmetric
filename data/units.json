@@ -868,5 +868,29 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "fly_brain",
+    "label": "Fly's Brain",
+    "emoji": "🧠",
+    "aliases": [
+      "fruit fly brain"
+    ],
+    "tags": [
+      "biology",
+      "animal_anatomy"
+    ]
+  },
+  {
+    "id": "pin_head",
+    "label": "Pin Head",
+    "emoji": "📍",
+    "aliases": [
+      "head of a pin"
+    ],
+    "tags": [
+      "household",
+      "small_object"
+    ]
   }
 ]
