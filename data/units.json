@@ -868,5 +868,19 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "leopardus_tilcayo",
+    "label": "Leopardus Tilcayo",
+    "emoji": "🐅",
+    "aliases": [
+      "tilcaya cat",
+      "new wild cat species"
+    ],
+    "tags": [
+      "animal",
+      "mammal",
+      "cat"
+    ]
   }
 ]

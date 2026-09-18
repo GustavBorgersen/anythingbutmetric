@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "leopardus_tilcayo",
+    "to": "small_cat",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c6x2zgv9rr4ro?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The small feline, about the size of a domestic moggy, went under the radar because it was confused with other wild cats that share similar spots and stripes.",
+    "date_scraped": "2026-09-18",
+    "verified": false
   }
 ]
