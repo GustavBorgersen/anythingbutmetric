@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "future_circular_collider",
+    "to": "large_hadron_collider",
+    "factor": 3.4,
+    "source_url": "https://www.bbc.co.uk/sounds/play/w3ct9787?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The FCC is due to be 3.4 times larger than the LHC and cost around £14 billion.",
+    "date_scraped": "2026-10-02",
+    "verified": false
   }
 ]
