@@ -868,5 +868,29 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "future_circular_collider",
+    "label": "Future Circular Collider",
+    "emoji": "⚛️",
+    "aliases": [
+      "FCC"
+    ],
+    "tags": [
+      "science",
+      "infrastructure"
+    ]
+  },
+  {
+    "id": "large_hadron_collider",
+    "label": "Large Hadron Collider",
+    "emoji": "⚛️",
+    "aliases": [
+      "LHC"
+    ],
+    "tags": [
+      "science",
+      "infrastructure"
+    ]
   }
 ]
