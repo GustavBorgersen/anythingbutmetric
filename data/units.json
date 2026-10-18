@@ -868,5 +868,18 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "ancient_woodland",
+    "label": "Ancient Woodland",
+    "emoji": "🌳",
+    "aliases": [
+      "ancient woods",
+      "ancient forest"
+    ],
+    "tags": [
+      "ecology",
+      "land_area"
+    ]
   }
 ]

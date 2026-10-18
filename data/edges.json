@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "ancient_woodland",
+    "to": "football_pitch",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cwg5jvnqv28go?at_medium=RSS&at_campaign=rss",
+    "source_quote": "An ancient woodland, the size of a football pitch, was turned back into coppice management, to allow more light to reach the woodland floor and encourage flowers, insects and birds to thrive.",
+    "date_scraped": "2026-10-18",
+    "verified": false
   }
 ]
