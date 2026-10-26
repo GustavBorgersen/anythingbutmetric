@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "nurdle",
+    "to": "lentil",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c34g1e81e9jeo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "These are pre-production plastic pellets, about the size of a lentil, which are used as the raw material to manufacture nearly all everyday plastic goods.",
+    "date_scraped": "2026-10-26",
+    "verified": false
   }
 ]

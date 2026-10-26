@@ -868,5 +868,33 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "nurdle",
+    "label": "Plastic Nurdle",
+    "emoji": "⚪",
+    "aliases": [
+      "nurdles",
+      "pre-production plastic pellet",
+      "plastic pellet",
+      "pellet"
+    ],
+    "tags": [
+      "industry",
+      "material",
+      "pollution"
+    ]
+  },
+  {
+    "id": "lentil",
+    "label": "Lentil",
+    "emoji": "🫘",
+    "aliases": [
+      "lentils"
+    ],
+    "tags": [
+      "food",
+      "small object"
+    ]
   }
 ]
