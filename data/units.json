@@ -868,5 +868,21 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "hyperscale_data_centre_project",
+    "label": "Hyperscale Data Centre Project",
+    "emoji": "🏢",
+    "aliases": [
+      "data centre project",
+      "hyperscale data centre",
+      "data center project",
+      "data center",
+      "hyperscale data center"
+    ],
+    "tags": [
+      "building",
+      "technology"
+    ]
   }
 ]
