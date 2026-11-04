@@ -868,5 +868,17 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "badger_cub",
+    "label": "Badger Cub",
+    "emoji": "🦡",
+    "aliases": [
+      "badger cub",
+      "young badger"
+    ],
+    "tags": [
+      "animal"
+    ]
   }
 ]
