@@ -868,5 +868,32 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "indoor_heat_pump_unit",
+    "label": "Indoor Heat Pump Unit",
+    "emoji": "🏠",
+    "aliases": [
+      "heat pump indoor unit",
+      "internal heat pump unit"
+    ],
+    "tags": [
+      "appliance",
+      "household"
+    ]
+  },
+  {
+    "id": "gas_boiler",
+    "label": "Gas Boiler",
+    "emoji": "♨️",
+    "aliases": [
+      "boiler",
+      "home boiler",
+      "heating boiler"
+    ],
+    "tags": [
+      "appliance",
+      "household"
+    ]
   }
 ]

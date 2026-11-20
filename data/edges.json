@@ -338,5 +338,15 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "indoor_heat_pump_unit",
+    "to": "gas_boiler",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/c8xgdv9e007o?at_medium=RSS&at_campaign=rss",
+    "source_quote": "The indoor unit is about the size of a gas boiler, while the size of the cylinder depends on the property.",
+    "date_scraped": "2026-11-20",
+    "verified": false
   }
 ]
