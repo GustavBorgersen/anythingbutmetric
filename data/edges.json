@@ -338,5 +338,25 @@
     "source_quote": "That's twice the height of St Paul's Cathedral in London,",
     "date_scraped": "2026-04-19",
     "verified": false
+  },
+  {
+    "id": "e035",
+    "from": "boulder",
+    "to": "car",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cw8dv112r5gmo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "So what we're seeing here is boulders the size of cars and buses sitting on a world with almost no gravity.",
+    "date_scraped": "2026-11-26",
+    "verified": false
+  },
+  {
+    "id": "e036",
+    "from": "boulder",
+    "to": "double_decker_bus",
+    "factor": 1.0,
+    "source_url": "https://www.bbc.co.uk/news/articles/cw8dv112r5gmo?at_medium=RSS&at_campaign=rss",
+    "source_quote": "So what we're seeing here is boulders the size of cars and buses sitting on a world with almost no gravity.",
+    "date_scraped": "2026-11-26",
+    "verified": false
   }
 ]

@@ -868,5 +868,18 @@
     "tags": [
       "renewable energy"
     ]
+  },
+  {
+    "id": "boulder",
+    "label": "Boulder",
+    "emoji": "🪨",
+    "aliases": [
+      "rock",
+      "large rock"
+    ],
+    "tags": [
+      "geology",
+      "natural"
+    ]
   }
 ]
